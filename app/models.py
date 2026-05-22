@@ -25,7 +25,7 @@ class Post(db.Model):
     edited = db.Column(db.Boolean, default=False, nullable=False)
     num_of_likes = db.Column(db.Integer, default=0, nullable=False)
     num_of_comments = db.Column(db.Integer, default=0, nullable=False)
-    user_id = db.Column(db.Integer, db.Foreignkey("user.id",ondelete="CASCADE"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
     comments = db.relationship("Comments", backref="post", cascade="all, delete-orphan", passive_deletes=True, lazy="dynamic")
 
 
@@ -36,8 +36,8 @@ class Comment(db.Model):
     edited = db.Column(db.Boolean, default=False, nullable=False)
     num_of_likes = db.Column(db.Integer, default=0, nullable=False)
     num_of_comments = db.Column(db.Integer, default=0, nullable=False)
-    post_id = db.Column(db.Integer, db.Foreignkey("post.id", ondelete="CASCADE"), nullable=False)
-    user_id = db.Column(db.Integer, db.Foreignkey("user.id",ondelete="CASCADE"), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id", ondelete="CASCADE"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id",ondelete="CASCADE"), nullable=False)
     author = db.relationship("User", backref="comments")
 
 

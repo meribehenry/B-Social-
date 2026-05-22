@@ -16,4 +16,13 @@ def create_app(Config):
     login_manager.login_message = "Please login in to access this page"
     login_manager.login_message_category = "danger"
 
+    from .models import User
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
+
+
+    from app.main.routes import main
+    app.register_blueprint(main)
+
     return app

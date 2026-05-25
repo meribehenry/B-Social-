@@ -2,7 +2,7 @@ from flask import Flask
 from app.extensions import db, migrate, bcrypt, login_manager, mail
 
 
-def create_app(Config):
+def create_app(Config="config.Config"):
     app = Flask(__name__)
     app.config.from_object(Config)
 
@@ -26,5 +26,7 @@ def create_app(Config):
     app.register_blueprint(main)
     from app.auth.routes import auth
     app.register_blueprint(auth, url_prefix="/auth")
+    from app.posts.routes import posts
+    app.register_blueprint(posts, url_prefix="/post")
 
     return app

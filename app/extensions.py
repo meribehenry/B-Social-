@@ -2,6 +2,8 @@ from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
 from flask_migrate import Migrate
 from flask_mail import Mail
 
@@ -20,3 +22,10 @@ bcrypt = Bcrypt()
 migrate = Migrate()
 login_manager = LoginManager()
 mail = Mail()
+
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragms(dbapi_connection, connection_record):
+    if db.engine.url.drivername.startswith("sqlite"):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()

@@ -28,5 +28,7 @@ def create_app(Config="config.Config"):
     app.register_blueprint(auth, url_prefix="/auth")
     from app.posts.routes import posts
     app.register_blueprint(posts, url_prefix="/post")
+    from app.comments.routes import comments
+    app.register_blueprint(comments, url_prefix="/comment")
 
     return app

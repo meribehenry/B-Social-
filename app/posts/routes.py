@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, request, url_for, flash, abort
-from app.models import Post
+from app.models import Post, Comment
 from app.extensions import db
 from .forms import NewPostForm
 from flask_login import login_required, current_user
@@ -51,8 +51,8 @@ def update_post(post_id):
 
     if form.validate_on_submit():
         if form.photo.data:
-            if posts.photo_url:
-                delete_photo(posts.photo_id)
+            if post.photo_url:
+                delete_photo(post.photo_id)
 
             post_type = "photo"
             photo_url, photo_id = save_photo(form.photo.data)
@@ -83,24 +83,33 @@ def update_post(post_id):
 @posts.route("/view/<int:post_id>")
 @login_required
 def view_post(post_id):
-    post = Post.query.get_or_404(post_id)
-    return render_template("posts/view_post.html", post=post, title="View Post")
+    post = Post.query.get_or_404(post_id) 
+    if post.author != current_user:
+        post.num_of_clicks = post.num_of_clicks + 1
+        db.session.commit()
+
+    page = request.args.get("page", 1, type=int)
+    comments = post.comments.order_by(Comment.date_created.desc()).paginate(page=page, per_page=20)
+    return render_template("posts/view_post.html", post=post, title="View Post", comments=comments)
 
 @posts.route("/delete/<int:post_id>")
 @login_required
 def delete_post(post_id):
     post = Post.query.get_or_404(post_id)
+    photo_id = post.photo_id
     if post.author != current_user:
         abort(403)
 
     try:
         db.session.delete(post)
+        current_user.num_of_posts = current_user.num_of_posts - 1
         db.session.commit()
-        delete_photo(post.photo_id) if post.photo_id else None
+        db.session.expire_all()
+        delete_photo(photo_id) if photo_id else None
     except Exception as e:
         db.session.rollback()
         flash(f"Error: {e}. Please try again", "danger")
         return redirect(url_for("posts.view_post", post_id=post_id))
     
     flash("Post successfully deleted", "success")
-    return redirect("main.home")
+    return redirect(url_for("main.home"))

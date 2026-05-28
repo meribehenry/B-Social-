@@ -15,4 +15,4 @@ def save_photo(photo):
 
 
 def delete_photo(public_id):
-    cloudinary.uploader.destroy(public_id, invalidat=True)
+    cloudinary.uploader.destroy(public_id, invalidate=True)

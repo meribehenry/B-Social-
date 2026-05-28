@@ -29,7 +29,7 @@ def register():
             flash(f"Error: {e}", "danger")
             return redirect(url_for("auth.register"))
         
-        flash("Successfully created an account. Login in to access it", "success")
+        flash("Successfully created an account", "success")
         return redirect(url_for("auth.set_display_name", username=username))
 
     return render_template("auth/register.html", form=form, title="Sign Up")
@@ -97,10 +97,13 @@ def reset_request():
     form = ResetRequestForm()
 
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data)
+        user = User.query.filter_by(email=form.email.data).first()
+        if not user:
+            flash("No account with that email exists", "danger")
+            return redirect(url_for("auth.reset_request"))
         send_email(user)
         flash("An email containing the reset link was sent to you", "success")
-        return redirect("auth.login")
+        return redirect(url_for("auth.login"))
     
     return render_template("auth/reset_request.html", form=form, title="Password Reset Request")
     
@@ -123,17 +126,17 @@ def reset_password(token):
             flash("New password cannot be the same as old password", "danger")
             return redirect(url_for("auth.reset_password", token=token))
         
-        new_password_hash = bcrypt.generate_password_hash(form.data)
+        new_password_hash = bcrypt.generate_password_hash(form.password.data).decode("utf-8")
         user.password = new_password_hash
 
         try:
-            db.session.add(user)
             db.session.commit()
-            flash("Successfully changed password. Login to access your account")
         except Exception as e:
             db.session.rollback()
             flash(f"Error: {e}. Please try again", "danger")
+            return redirect(url_for("auth.reset_password", token=token))
         
+        flash("Successfully changed password. Login to access your account")
         return redirect(url_for("auth.login"))
     
-    return render_template("auth/reset_request.html", form=form, title="Password Reset Request")
+    return render_template("auth/reset_password.html", form=form, title="Password Reset Request")

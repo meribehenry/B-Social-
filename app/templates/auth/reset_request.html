@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+    
+    <section>
+        <h2>Password Reset Request</h2>
+
+        <form action="", method="POST">
+            {{ form.hidden_tag() }}
+
+            <div>
+                {{ form.email.label() }}
+                {{ form.email()}}
+
+                {% if form.email.errors %}
+                    {% for error in form.email.errors %}
+                        <br><small style="color: red;"> {{ error }}</small><br>
+                    {% endfor %}
+                {% endif %}
+                <br><br>
+            </div>
+
+            </div>
+                {{ form.submit()}}
+            </div>
+        </form>
+    </section>
+
+{% endblock %}

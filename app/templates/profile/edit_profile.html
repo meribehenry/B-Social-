@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <h2>Edit Profile</h2>
+
+    <div>
+        {% if current_user.profile_pic_id == "default" %}
+            <img src="{{ url_for('static', filename='profile_pics/default.jpg')}}" alt="Profile Picture" width="90" height="90", style="border-radius: 70cap;">
+        {% else %}
+            <img src="{{ current_user.profile_pic_url }}" alt="Profile Picture" width="90" height="90", style="border-radius: 70cap;">
+        {% endif %}
+    </div>
+
+    <section>
+        <form action="" method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag()}}
+
+            <div>
+                {{ form.firstname.label() }}
+                {{ form.firstname()}}
+
+                {% if form.firstname.errors %}
+                    {% for error in form.firstname.errors %}
+                        <br><small style="color: red;"> {{ error }}</small><br>
+                    {% endfor %}
+                {% endif %}
+                <br><br>
+            </div>
+
+            <div>
+                {{ form.lastname.label() }}
+                {{ form.lastname()}}
+
+                {% if form.lastname.errors %}
+                    {% for error in form.lastname.errors %}
+                        <br><small style="color: red;"> {{ error }}</small><br>
+                    {% endfor %}
+                {% endif %}
+                <br><br>
+            </div>
+
+            <div>
+                {{ form.username.label() }}
+                {{ form.username()}}
+
+                {% if form.username.errors %}
+                    {% for error in form.username.errors %}
+                        <br><small style="color: red;"> {{ error }}</small><br>
+                    {% endfor %}
+                {% endif %}
+                <br><br>
+            </div>
+
+            <div>
+                {{ form.bio.label() }}
+                {{ form.bio()}}
+
+                {% if form.bio.errors %}
+                    {% for error in form.bio.errors %}
+                        <br><small style="color: red;"> {{ error }}</small><br>
+                    {% endfor %}
+                {% endif %}
+                <br><br>
+            </div>
+
+            <div>
+                {{ form.profile_pic.label() }}
+                {{ form.profile_pic()}}
+                <br><br>
+            </div>
+
+            </div>
+                {{ form.submit()}}
+            </div>
+        </form>
+    </section>
+
+{% endblock %}

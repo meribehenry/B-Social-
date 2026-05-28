@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <header>
+        <h3>B-SOCIAL</h3>
+    </header>
+
+    <nav>
+        {% if current_user.is_anonymous %}
+            <a href="{{url_for('main.landing_page')}}"><button type="button">B-Social</button></a>
+            <a href="{{url_for('auth.login')}}"><button type="button">Login</button></a>
+            <a href="{{url_for('auth.register')}}"><button type="button">Sign Up</button></a>
+            <a href="{{url_for('main.about')}}"><button type="button">About</button></a>
+        {% else %}
+            <a href="{{url_for('main.home')}}"><button type="button">Home</button></a>
+            <a href="{{url_for('posts.new_post')}}"><button type="button">New Post</button></a>
+            <a href="{{ url_for('profile.view_profile', user_id=current_user.id)}}"><button type="button">Profile</button></a>
+            <a href="{{url_for('auth.logout')}}"><button type="button">Logout</button></a>
+        {% endif %}
+    </nav>
+    <hr>
+
+    <main>
+        {% for category, message in get_flashed_messages(with_categories=True) %}
+            {% if category == "danger" %}
+                <p style="color: red;">{{message}}</p>
+            {% elif category == "success" %}
+                <p style="color: rgb(2, 221, 2);">{{message}}</p>
+            {% endif %}
+        {% endfor %}
+
+        {% block content %}{% endblock %}
+    </main>
+    
+</body>
+</html>

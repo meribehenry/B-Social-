@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>New comment</h2>
+    
+    <section>
+        <form action="" enctype="multipart/form-data" method="POST">
+            {{ form.hidden_tag() }}
+
+            <div>
+                {{ form.content.label() }} <br>
+                {{ form.content() }}
+
+                {% if form.content.errors %}
+                    {% for error in form.content.errors %}
+                        <br><small style="color: red;">{{ error }}</small>
+                    {% endfor %}
+                {% endif %}
+                <br><br>
+            </div>
+
+            <div>
+                {{ form.submit() }}
+            </div>
+        </form>
+    </section>
+
+{% endblock %}

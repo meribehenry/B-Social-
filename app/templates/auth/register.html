@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+    
+    <section>
+        <h2>Sign Up</h2>
+
+        <form action="", method="POST">
+            {{ form.hidden_tag() }}
+
+            <div>
+                {{ form.username.label() }}
+                {{ form.username()}}
+
+                {% if form.username.errors %}
+                    {% for error in form.username.errors %}
+                        <br><small style="color: red;"> {{ error }}</small><br>
+                    {% endfor %}
+                {% endif %}
+                <br><br>
+            </div>
+
+            <div>
+                {{ form.email.label() }}
+                {{ form.email()}}
+
+                {% if form.email.errors %}
+                    {% for error in form.email.errors %}
+                        <br><small style="color: red;"> {{ error }}</small><br>
+                    {% endfor %}
+                {% endif %}
+                <br><br>
+            </div>
+
+            <div>
+                {{ form.password.label() }}
+                {{ form.password()}}
+
+                {% if form.password.errors %}
+                    {% for error in form.password.errors %}
+                        <br><small style="color: red;"> {{ error }}</small><br>
+                    {% endfor %}
+                {% endif %}
+                <br><br>
+            </div>
+
+            <div>
+                {{ form.confirm_password.label() }}
+                {{ form.confirm_password()}}
+
+                {% if form.confirm_password.errors %}
+                    {% for error in form.confirm_password.errors %}
+                        <br><small style="color: red;"> {{ error }}</small><br>
+                    {% endfor %}
+                {% endif %}
+                <br><br>
+            </div>
+
+            <div>
+                {{ form.gender.label() }}
+                {{ form.gender()}}
+
+                {% if form.gender.errors %}
+                    {% for error in form.gender.errors %}
+                        <br><small style="color: red;"> {{ error }}</small><br>
+                    {% endfor %}
+                {% endif %}
+                <br><br>
+            </div>
+
+            </div>
+                {{ form.submit()}}
+            </div>
+        </form>
+        <br><br>
+        <p>Already have an account? <a href="{{url_for('auth.login')}}">Login</a></p>
+
+    </section>
+
+{% endblock %}

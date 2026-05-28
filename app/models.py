@@ -21,7 +21,7 @@ class User(db.Model, UserMixin):
 
     def generate_reset_token(self):
         s = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
-        return s.dumps(f"{'user_id': self.id, 'password_hash': self.passowrd}")    
+        return s.dumps({'user_id': self.id, 'password_hash': self.password})    
 
     @staticmethod
     def verify_reset_token(token, max_age=1800):

@@ -24,8 +24,8 @@
                 <img src="{{ post.photo_url }}" alt="Photo" width="300"><br><br>
             {% endif %}
 
-            <small><a href="#">Like</a></small>
-            <small><a href="#">Dislike</a></small>
+            <small><a href="{{ url_for('posts.view_post', post_id=post.id, reaction='like')}}">Like</a></small>
+            <small><a href="{{ url_for('posts.view_post', post_id=post.id, reaction='dislike')}}">Dislike</a></small>
             <small><a href="{{ url_for('comments.new_comment', post_id=post.id)}}">Comment</a></small>
             
             <p>
@@ -72,8 +72,8 @@
                         <p>{{comment.content}}</p>
                     </a>
 
-                    <small><a href="#">Like</a></small>
-                    <small><a href="#">Dislike</a></small>
+                    <small><a href="{{ url_for('comments.view_comment', comment_id=comment.id, reaction='like') }}">Like</a></small>
+                    <small><a href="{{ url_for('comments.view_comment', comment_id=comment.id, reaction='dislike') }}">Dislike</a></small>
                     <small><a href="#">Follow</a></small>
                     
                     <p>

@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, redirect, request, url_for, flash, abort
+from app.likes.utils import like_comment, dislike_comment
 from app.models import Post, Comment
 from app.extensions import db
 from .forms import CommentForm
@@ -50,7 +51,6 @@ def edit_comment(comment_id):
         comment.edited = True
 
         try:
-            db.session.add(comment)
             db.session.commit()
         except Exception as e:
             db.session.rollback()
@@ -58,7 +58,7 @@ def edit_comment(comment_id):
             return redirect(url_for("comments.edit_comment", comment_id=comment.id))
         
         flash("Comment successfully edited", "success")
-        return redirect(url_for("comment.view_comment", comment_id=comment.id))
+        return redirect(url_for("comments.view_comment", comment_id=comment.id))
     
     elif request.method == "GET":
         form.content.data = comment.content
@@ -70,7 +70,17 @@ def edit_comment(comment_id):
 @login_required
 def view_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id)
-    return render_template("comments/view_comment.html", comment=comment, title="View Comment")
+
+    post_reaction = None
+    if request.args.get("reaction", type=str):
+        reaction = request.args.get("reaction", type=str)
+        if reaction == "like":
+            post_reaction = like_comment(comment, current_user)
+        else:
+            post_reaction = dislike_comment(comment, current_user)
+        return redirect(url_for("comments.view_comment", comment_id=comment.id))
+        
+    return render_template("comments/view_comment.html", comment=comment, title="View Comment", post_reaction=post_reaction)
 
 
 @comments.route("/delete/<int:comment_id>")

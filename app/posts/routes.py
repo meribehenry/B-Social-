@@ -3,7 +3,8 @@ from app.models import Post, Comment
 from app.extensions import db
 from .forms import NewPostForm
 from flask_login import login_required, current_user
-from .utils import save_photo, delete_photo
+from .utils import save_photo, delete_photo, count_clicks
+from app.likes.utils import dislike_post, like_post
 
 posts = Blueprint("posts", __name__)
 
@@ -80,17 +81,24 @@ def update_post(post_id):
     return render_template("posts/new_post.html", form=form, title="Update Post", photo_url=post.photo_url if post.photo_url else None)
         
 
-@posts.route("/view/<int:post_id>")
+@posts.route("/view/<int:post_id>", methods=["GET", "POST"])
 @login_required
 def view_post(post_id):
     post = Post.query.get_or_404(post_id) 
-    if post.author != current_user:
-        post.num_of_clicks = post.num_of_clicks + 1
-        db.session.commit()
+    count_clicks(post, current_user)
+
+    post_reaction = None
+    if request.args.get("reaction", type=str):
+        reaction = request.args.get("reaction", type=str)
+        if reaction == "like":
+            post_reaction = like_post(post, current_user)
+        else:
+            post_reaction = dislike_post(post, current_user)
+        return redirect(url_for("posts.view_post", post_id=post.id))
 
     page = request.args.get("page", 1, type=int)
     comments = post.comments.order_by(Comment.date_created.desc()).paginate(page=page, per_page=20)
-    return render_template("posts/view_post.html", post=post, title="View Post", comments=comments)
+    return render_template("posts/view_post.html", post=post, title="View Post", comments=comments, post_reaction=post_reaction)
 
 @posts.route("/delete/<int:post_id>")
 @login_required

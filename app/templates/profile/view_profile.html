@@ -32,7 +32,7 @@
         {% for post in posts.items %}
             <article>
                 <div>
-                    {% if not post.photo_id %}
+                    {% if post.author.profile_pic_id == "default" %}
                     <img src="{{ url_for('static', filename='profile_pics/default.jpg')}}" alt="Profile Picture" width="60" height="60", style="border-radius: 70cap;">
                     {% else %}
                         <img src="{{ post.author.profile_pic_url }}" alt="Profile Picture" width="60" height="60", style="border-radius: 70cap;">
@@ -49,8 +49,8 @@
                         {% endif %}
                     </a>
 
-                    <small><a href="#">Like</a></small>
-                    <small><a href="#">Dislike</a></small>
+                    <small><a href="{{ url_for('posts.view_post', post_id=post.id, reaction='like') }}">Like</a></small>
+                    <small><a href="{{ url_for('posts.view_post', post_id=post.id, reaction='dislike') }}">Dislike</a></small>
                     <small><a href="{{ url_for('comments.new_comment', post_id=post.id)}}">Comment</a></small>
                     <small><a href="#">Follow</a></small>
                     

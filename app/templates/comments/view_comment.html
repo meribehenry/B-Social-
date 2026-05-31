@@ -4,14 +4,14 @@
     <article>
         <div>
             <a href="{{ url_for('profile.view_profile', user_id=comment.post.author.id)}}"></a>
-                {% if not comment.post.photo_id %}
+                {% if comment.author.profile_pic_id == 'default' %}
                     <img src="{{ url_for('static', filename='profile_pics/default.jpg')}}" alt="Profile Picture" width="60" height="60", style="border-radius: 70cap;">
                 {% else %}
                     <img src="{{ comment.author.profile_pic_url }}" alt="Profile Picture" width="60" height="60", style="border-radius: 70cap;">
                 {% endif %}
 
-                <h3>{{comment.post.author.firstname}} {{ comment.post.author.lastname}}</h3>
-                <p>@{{ comment.post.author.username }}</p>
+                <h3>{{comment.author.firstname}} {{ comment.author.lastname}}</h3>
+                <p>@{{ comment.author.username }}</p>
             </a> 
         </div>
 
@@ -19,9 +19,9 @@
             <h4>COMMENT</h4>
             <p>{{comment.content}}</p>
 
-            <small><a href="#">Like</a></small>
-            <small><a href="#">Dislike</a></small>
-            
+            <small><a href="{{ url_for('comments.view_comment', comment_id=comment.id, reaction='like') }}">Like</a></small>
+            <small><a href="{{ url_for('comments.view_comment', comment_id=comment.id, reaction='dislike') }}">Dislike</a></small>
+
             <p>
                 <small>Likes: {{comment.num_of_likes}}</small><br> 
                 <small>Date: {{ comment.date_created.strftime("%Y-%m-%d")}}</small>

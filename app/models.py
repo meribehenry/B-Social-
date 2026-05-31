@@ -55,6 +55,7 @@ class Post(db.Model):
     num_of_comments = db.Column(db.Integer, default=0, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
     comments = db.relationship("Comment", backref="post", cascade="all, delete-orphan", passive_deletes=True, lazy="dynamic")
+    likes = db.relationship("LikePost", backref="post", cascade="all, delete-orphan", passive_deletes=True, lazy="dynamic")
 
 
 class Comment(db.Model):
@@ -68,3 +69,29 @@ class Comment(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey("post.id", ondelete="CASCADE"), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id",ondelete="CASCADE"), nullable=False)
     author = db.relationship("User", backref="comments")
+    likes = db.relationship("LikeComment", backref="comment", cascade="all, delete-orphan", passive_deletes=True, lazy="dynamic")
+
+
+class LikePost(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    liked = db.Column(db.Boolean, default=False, nullable=False)
+    disliked = db.Column(db.Boolean, default=False, nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id", ondelete="CASCADE"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id",ondelete="CASCADE"), nullable=False)
+    username = db.Column(db.String(20), nullable=False)
+
+class LikeComment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    liked = db.Column(db.Boolean, default=False, nullable=False)
+    disliked = db.Column(db.Boolean, default=False, nullable=False)
+    comment_id = db.Column(db.Integer, db.ForeignKey("comment.id", ondelete="CASCADE"), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id", ondelete="CASCADE"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id",ondelete="CASCADE"), nullable=False)
+    username = db.Column(db.String(20), nullable=False)
+ 
+class Clicks(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    viewed= db.Column(db.Boolean, default=False, nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id", ondelete="CASCADE"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id",ondelete="CASCADE"), nullable=False)
+    username = db.Column(db.String(20), nullable=False)

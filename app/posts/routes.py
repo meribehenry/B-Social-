@@ -1,79 +1,52 @@
-from flask import Blueprint, render_template, redirect, request, url_for, flash, abort
+from flask import Blueprint, render_template, redirect, request, url_for, abort
 from app.models import Post, Comment
-from app.extensions import db
 from .forms import NewPostForm
 from flask_login import login_required, current_user
-from .utils import save_photo, delete_photo, count_clicks
-from app.likes.utils import dislike_post, like_post
+from app.utils.count_clicks import count_clicks
+from app.services.post_service import PostService
+from app.services.reaction_service import ReactionService
+from app.utils.decorators import verification_required
+from app.utils.reaction_dict import get_user_comment_reactions_dict, get_user_post_reactions_dict
 
 posts = Blueprint("posts", __name__)
 
 
 @posts.route("/new_post", methods=["GET", "POST"])
 @login_required
+@verification_required
 def new_post():
     form = NewPostForm()
-    post_type = "text"
-    photo_url, photo_id = "",""
 
     if form.validate_on_submit():
-        if form.photo.data:
-            post_type = "photo"
-            photo_url, photo_id = save_photo(form.photo.data)
-            
-        post = Post(content=form.content.data, photo_url=photo_url, photo_id=photo_id, post_type=post_type, author=current_user)
-        current_user.num_of_posts += 1
+        post_service = PostService(current_user)
+        result = post_service.create_post(form)
 
-        try:
-            db.session.add(post)
-            db.session.add(current_user)
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            flash(f"Error: {e}. Please try again", "danger")
+        if result is None:
             return redirect(url_for("posts.new_post"))
         
-        flash("You created a new post", "success")
         return redirect(url_for("main.home"))
 
     return render_template("posts/new_post.html", form=form, title="New Post")
 
 
-@posts.route("/update/<int:post_id>", methods=["GET", "POST"])
+@posts.route("/update/<post_public_id>", methods=["GET", "POST"])
 @login_required
-def update_post(post_id):
-    post = Post.query.get_or_404(post_id)
+@verification_required
+def update_post(post_public_id):
+    post = Post.query.filter_by(public_id=post_public_id).first_or_404()
     if post.author != current_user:
         abort(403)
 
     form = NewPostForm()
-    post_type = "text"
-    photo_url, photo_id = "",""
 
     if form.validate_on_submit():
-        if form.photo.data:
-            if post.photo_url:
-                delete_photo(post.photo_id)
+        post_service = PostService(current_user)
+        result = post_service.edit_post(form, post)
 
-            post_type = "photo"
-            photo_url, photo_id = save_photo(form.photo.data)
-            
-        post.content = form.content.data
-        post.photo_url = photo_url
-        post.photo_id = photo_id
-        post.post_type = post_type
-        post.edited = True
-
-        try:
-            db.session.add(post)
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            flash(f"Error: {e}. Please try again", "danger")
-            return redirect(url_for("posts.update_post", post_id=post_id))
-        
-        flash("Post successfully updated", "success")
-        return redirect(url_for("posts.view_post", post_id=post.id))
+        if result is None:
+            return redirect(url_for("posts.update_post", post_public_id=post.public_id))  
+        else:
+            return redirect(url_for("posts.view_post", post_public_id=post.public_id))
     
     elif request.method == "GET":
         form.content.data = post.content
@@ -81,43 +54,49 @@ def update_post(post_id):
     return render_template("posts/new_post.html", form=form, title="Update Post", photo_url=post.photo_url if post.photo_url else None)
         
 
-@posts.route("/view/<int:post_id>", methods=["GET", "POST"])
+@posts.route("/view/<post_public_id>", methods=["GET", "POST"])
 @login_required
-def view_post(post_id):
-    post = Post.query.get_or_404(post_id) 
+@verification_required
+def view_post(post_public_id):
+    post = Post.query.filter_by(public_id=post_public_id).first_or_404()
     count_clicks(post, current_user)
-
-    post_reaction = None
+    
     if request.args.get("reaction", type=str):
         reaction = request.args.get("reaction", type=str)
+        reaction_service = ReactionService()
+      
         if reaction == "like":
-            post_reaction = like_post(post, current_user)
+            reaction_service.like_post(post, current_user)
         else:
-            post_reaction = dislike_post(post, current_user)
-        return redirect(url_for("posts.view_post", post_id=post.id))
+            reaction_service.dislike_post(post, current_user)
 
+        return redirect(url_for("posts.view_post", post_public_id=post.public_id))
+    
     page = request.args.get("page", 1, type=int)
     comments = post.comments.order_by(Comment.date_created.desc()).paginate(page=page, per_page=20)
-    return render_template("posts/view_post.html", post=post, title="View Post", comments=comments, post_reaction=post_reaction)
+    comment_reactions_dict =  get_user_comment_reactions_dict(current_user)
+    post_reactions_dict = get_user_post_reactions_dict(current_user)
+    return render_template("posts/view_post.html", 
+                            post=post, 
+                            title="View Post", 
+                            comments=comments, 
+                            comment_reactions_dict=comment_reactions_dict,
+                            post_reactions_dict=post_reactions_dict
+                            )
 
-@posts.route("/delete/<int:post_id>")
+
+@posts.route("/delete/<post_public_id>")
 @login_required
-def delete_post(post_id):
-    post = Post.query.get_or_404(post_id)
-    photo_id = post.photo_id
+@verification_required
+def delete_post(post_public_id):
+    post = Post.query.filter_by(public_id=post_public_id).first_or_404()
     if post.author != current_user:
         abort(403)
 
-    try:
-        db.session.delete(post)
-        current_user.num_of_posts = current_user.num_of_posts - 1
-        db.session.commit()
-        db.session.expire_all()
-        delete_photo(photo_id) if photo_id else None
-    except Exception as e:
-        db.session.rollback()
-        flash(f"Error: {e}. Please try again", "danger")
-        return redirect(url_for("posts.view_post", post_id=post_id))
-    
-    flash("Post successfully deleted", "success")
-    return redirect(url_for("main.home"))
+    post_service = PostService(current_user)
+    result = post_service.delete_post(post)
+
+    if result is None:
+        return redirect(url_for("posts.view_post", post_public_id=post.public_id))
+    else:
+        return redirect(url_for("main.home"))

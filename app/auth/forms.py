@@ -1,10 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, BooleanField, EmailField, PasswordField, RadioField, SubmitField
+from wtforms import IntegerField, StringField, BooleanField, EmailField, PasswordField, RadioField, SubmitField
 from wtforms.validators import Email, EqualTo, DataRequired, Length, ValidationError
 from app.models import User
 
 
 class RegistrationForm(FlaskForm):
+    firstname = StringField("Firstname:", validators=[DataRequired(), Length(min=3, max=20)])
+    lastname = StringField("Lastname:", validators=[DataRequired(), Length(min=3, max=20)])
     username = StringField("Username:", validators=[DataRequired(), Length(min=3, max=20)])
     email = EmailField("Email:", validators=[Email(), DataRequired(), Length(max=100)])
     password = PasswordField("Password:", validators=[DataRequired(), Length(min=5, max=100)])
@@ -37,10 +39,9 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Login")
 
 
-class SetDisplayNameForm(FlaskForm):
-    firstname = StringField("Firstname:", validators=[DataRequired(), Length(min=3, max=20)])
-    lastname = StringField("Lastname:", validators=[DataRequired(), Length(min=3, max=20)])
-    submit = SubmitField("Continue")
+class VerifyEmailForm(FlaskForm):
+    otp_code = IntegerField("Otp Code", validators=[DataRequired()])
+    submit = SubmitField("Verify")
 
 class ResetRequestForm(FlaskForm):
     email = EmailField("Email:", validators=[Email(), DataRequired(), Length(max=100)])

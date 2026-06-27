@@ -8,6 +8,30 @@
             {{ form.hidden_tag() }}
 
             <div>
+                {{ form.firstname.label() }}
+                {{ form.firstname()}}
+
+                {% if form.firstname.errors %}
+                    {% for error in form.firstname.errors %}
+                        <br><small style="color: red;"> {{ error }}</small><br>
+                    {% endfor %}
+                {% endif %}
+                <br><br>
+            </div>
+
+            <div>
+                {{ form.lastname.label() }}
+                {{ form.lastname()}}
+
+                {% if form.lastname.errors %}
+                    {% for error in form.lastname.errors %}
+                        <br><small style="color: red;"> {{ error }}</small><br>
+                    {% endfor %}
+                {% endif %}
+                <br><br>
+            </div>
+
+            <div>
                 {{ form.username.label() }}
                 {{ form.username()}}
 

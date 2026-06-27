@@ -1,22 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
+    {% import "macros/form.html" as render_form %}
+    
     <h2>New comment</h2>
     
     <section>
         <form action="" enctype="multipart/form-data" method="POST">
             {{ form.hidden_tag() }}
 
-            <div>
-                {{ form.content.label() }} <br>
-                {{ form.content() }}
-
-                {% if form.content.errors %}
-                    {% for error in form.content.errors %}
-                        <br><small style="color: red;">{{ error }}</small>
-                    {% endfor %}
-                {% endif %}
-                <br><br>
-            </div>
+            {{ render_form.render_field(form.content) }}
 
             <div>
                 {{ form.submit() }}

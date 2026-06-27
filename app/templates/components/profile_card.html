@@ -1,0 +1,28 @@
+<div>
+    {% if user.profile.profile_pic_id == "default" %}
+        <img src="{{ url_for('static', filename='profile_pics/default.jpg')}}" alt="Profile Picture" width="90" height="90", style="border-radius: 70cap;">
+    {% else %}
+        <img src="{{ user.profile.profile_pic_url }}" alt="Profile Picture" width="90" height="90", style="border-radius: 70cap;">
+    {% endif %}
+    <div>
+        {% if current_user != user %}
+            {% if follower is none %}
+                <a href="{{url_for('profile.view_profile', user_public_id=user.public_id, follower='follow')}}">Follow</a>
+            {% else %}
+                <a href="{{url_for('profile.view_profile', user_public_id=user.public_id, follower='unfollow')}}">Unfollow</a>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <h3>{{user.profile.firstname}} {{ user.profile.lastname}}</h3>
+    <p>@{{ user.username }}</p>
+
+    {% if user.profile.bio %}
+        <p>{{ user.profile.bio }}</p>
+    {% endif %}
+
+    {% if user == current_user %}
+        <p><a href="{{url_for('profile.edit_profile', user_public_id=user.public_id)}}">Edit</a></p>
+    {% endif %}
+    
+</div>

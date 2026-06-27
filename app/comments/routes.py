@@ -1,64 +1,54 @@
 from flask import Blueprint, render_template, redirect, request, url_for, flash, abort
-from app.likes.utils import like_comment, dislike_comment
 from app.models import Post, Comment
-from app.extensions import db
 from .forms import CommentForm
 from flask_login import login_required, current_user
+from app.services.comment_service import CommentService
+from app.services.reaction_service import ReactionService
+from app.utils.decorators import verification_required
+from app.utils.reaction_dict import get_user_comment_reactions_dict
 
 
 comments= Blueprint("comments", __name__)
 
 
-@comments.route("/post/<int:post_id>/new", methods=["GET", "POST"])
+@comments.route("/post/<post_public_id>/new", methods=["GET", "POST"])
 @login_required
-def new_comment(post_id):
-    post = Post.query.get_or_404(post_id)
+@verification_required
+def new_comment(post_public_id):
+    post = Post.query.filter_by(public_id=post_public_id).first_or_404()
 
     form = CommentForm()
 
     if form.validate_on_submit():
-        comment = Comment(content=form.content.data, user_id=current_user.id, post=post)
+        comment_service = CommentService(current_user)
+        result = comment_service.create_comment(form, post)
 
-        post.num_of_comments = post.num_of_comments + 1
-
-        try:
-            db.session.add(comment)
-            db.session.add(post)
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            flash(f"Error: {e}. Please try again", "danger")
-            return redirect(url_for("comments.new_comment", post_id=post.id))
+        if result is None:
+            return redirect(url_for("comments.new_comment", post_public_id=post.public_id))
         
-        flash("Comment sent successfully", "success")
-        return redirect(url_for("posts.view_post", post_id=post.id))
+        return redirect(url_for("posts.view_post", post_public_id=post.public_id))
 
     return render_template("comments/new_comment.html", form=form, title="New Comment")
 
 
-@comments.route("/edit/<int:comment_id>", methods=["GET", "POST"])
+@comments.route("/edit/<comment_public_id>", methods=["GET", "POST"])
 @login_required
-def edit_comment(comment_id):
-    comment = Comment.query.get_or_404(comment_id)
+@verification_required
+def edit_comment(comment_public_id):
+    comment = Comment.query.filter_by(public_id=comment_public_id).first_or_404()
     if comment.author != current_user:
         abort(403)
 
     form = CommentForm()
 
     if form.validate_on_submit():
+        comment_service = CommentService(current_user)
+        result = comment_service.edit_comment(form, comment)
             
-        comment.content = form.content.data
-        comment.edited = True
-
-        try:
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            flash(f"Error: {e}. Please try again", "danger")
-            return redirect(url_for("comments.edit_comment", comment_id=comment.id))
+        if not result:
+            return redirect(url_for("comments.edit_comment", comment_public_id=comment.public_id))
         
-        flash("Comment successfully edited", "success")
-        return redirect(url_for("comments.view_comment", comment_id=comment.id))
+        return redirect(url_for("comments.view_comment", comment_public_id=comment.public_id))
     
     elif request.method == "GET":
         form.content.data = comment.content
@@ -66,40 +56,39 @@ def edit_comment(comment_id):
     return render_template("comments/new_comment.html", form=form, title="Edit Comment")
         
 
-@comments.route("/view/<int:comment_id>")
+@comments.route("/view/<comment_public_id>")
 @login_required
-def view_comment(comment_id):
-    comment = Comment.query.get_or_404(comment_id)
+@verification_required
+def view_comment(comment_public_id):
+    comment = Comment.query.filter_by(public_id=comment_public_id).first_or_404()
 
     post_reaction = None
     if request.args.get("reaction", type=str):
+        reaction_service = ReactionService()
         reaction = request.args.get("reaction", type=str)
         if reaction == "like":
-            post_reaction = like_comment(comment, current_user)
+            post_reaction = reaction_service.like_comment(comment, current_user)
         else:
-            post_reaction = dislike_comment(comment, current_user)
-        return redirect(url_for("comments.view_comment", comment_id=comment.id))
-        
-    return render_template("comments/view_comment.html", comment=comment, title="View Comment", post_reaction=post_reaction)
+            post_reaction = reaction_service.dislike_comment(comment, current_user)
+        return redirect(url_for("comments.view_comment", comment_public_id=comment.public_id))
+    
+    comment_reactions_dict =  get_user_comment_reactions_dict(current_user)
+    return render_template("comments/view_comment.html", comment=comment, title="View Comment", post_reaction=post_reaction, comment_reactions_dict=comment_reactions_dict)
 
 
-@comments.route("/delete/<int:comment_id>")
+@comments.route("/delete/<comment_public_id>")
 @login_required
-def delete_comment(comment_id):
-    comment = Comment.query.get_or_404(comment_id)
-    post_id = comment.post.id
+@verification_required
+def delete_comment(comment_public_id):
+    comment = Comment.query.filter_by(public_id=comment_public_id).first_or_404()
+
     if comment.author != current_user:
         abort(403)
 
-    try:
-        db.session.delete(comment)
-        post = Post.query.get(post_id)
-        post.num_of_comments = post.num_of_comments - 1
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        flash(f"Error: {e}. Please try again", "danger")
-        return redirect(url_for("comments.view_comment", comment_id=comment.id))
+    comment_service = CommentService(current_user)
+    post_public_id = comment_service.delete_comment(comment)
+
+    if not post_public_id:
+        return redirect(url_for("comments.view_comment", comment_public_id=comment.public_id))
     
-    flash("Comment successfully deleted", "success")
-    return redirect(url_for("posts.view_post", post_id=post_id))
+    return redirect(url_for("posts.view_post", post_public_id=post_public_id))

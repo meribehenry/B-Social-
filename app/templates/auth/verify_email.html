@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+    
+    <section>
+        <h2>Verify Email</h2>
+
+        <form action="", method="POST">
+            {{ form.hidden_tag() }}
+
+            <div>
+                {{ form.otp_code.label() }}
+                {{ form.otp_code()}}
+
+                {% if form.otp_code.errors %}
+                    {% for error in form.otp_code.errors %}
+                        <br><small style="color: red;"> {{ error }}</small><br>
+                    {% endfor %}
+                {% endif %}
+                <br><br>
+            </div>
+
+            </div>
+                {{ form.submit()}}
+
+                &nbsp;&nbsp;<a href="{{url_for('auth.resend_otp', user_public_id=current_user.public_id)}}">Resend Otp</a>
+                
+            </div>
+        </form>
+
+    </section>
+
+{% endblock %}

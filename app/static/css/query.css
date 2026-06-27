@@ -1,0 +1,57 @@
+/* SCREEN SIZE: 1050px - 1280px */
+@media (max-width:73.5rem ) {
+    html {
+        font-size:  56.25%;
+    }
+
+}
+
+
+/* SCREEN SIZE: 940px - 1050px */
+@media (max-width: 66rem ) {
+    html {
+        font-size:  50%;
+    }
+
+}
+
+/* SCREEN SIZE: 820px - 940px */
+@media (max-width: 58.75rem ) {
+    html {
+        font-size:  43.75%;
+    }
+
+}
+
+/* SCREEN SIZE: 688px - 820px */
+@media (max-width: 58.75rem ) {
+    html {
+        font-size:  37.5%;
+    }
+
+    
+    .features-section-card-container {
+        column-gap: 8rem;
+        row-gap: 5rem;
+
+    }
+
+    .features-heading {
+        font-style: oblique;
+        font-size: 5rem;
+    }
+
+    .features-section {
+        padding: 2rem 0rem;
+    }
+
+}
+
+
+/* SCREEN SIZE: 500px - 688px */
+@media (max-width: 58.75rem ) {
+    html {
+        font-size:  37.5%;
+    }
+
+}

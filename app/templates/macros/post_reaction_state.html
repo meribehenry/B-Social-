@@ -1,0 +1,34 @@
+{% macro render_post_reaction(post, post_reactions_dict) %}
+<div>
+    {% set user_post_reaction = post_reactions_dict.get(post.id) %}
+    {% if user_post_reaction %}
+        {% if user_post_reaction.liked %}
+            <small><a style="color: red;" href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">Like</a></small>
+            <small><a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">Dislike</a></small>
+        {% else %}
+            <small><a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">Like</a></small>
+            <small><a style="color: red;"  href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">Dislike</a></small>
+        {% endif %}    
+    {% else %}
+        <small><a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">Like</a></small>
+        <small><a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">Dislike</a></small>
+    {% endif %}
+    <small><a href="{{ url_for('comments.new_comment', post_public_id=post.public_id)}}">Comment</a></small>
+</div>
+{% endmacro %}
+
+
+{% macro render_post_reaction_single(post, current_user) %}
+    <div>
+        {% if post.is_liked_by(current_user) %}
+            <small><a style="color: red;" href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">Like</a></small>
+            <small><a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">Dislike</a></small>
+        {% elif post.is_disliked_by(current_user) %}
+            <small><a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">Like</a></small>
+            <small><a style="color: red;"  href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">Dislike</a></small>
+        {% else %}
+            <small><a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">Like</a></small>
+            <small><a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">Dislike</a></small>
+        {% endif %}
+    </div>
+{% endmacro %}

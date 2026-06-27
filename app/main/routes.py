@@ -1,5 +1,8 @@
 from flask import Blueprint, render_template, request
+from flask_login import current_user
 from app.models import Post
+from app.utils.decorators import verification_required
+from app.utils.reaction_dict import get_user_post_reactions_dict
 
 
 main = Blueprint("main", __name__)
@@ -11,10 +14,12 @@ def landing_page():
 
 
 @main.route("/home")
+@verification_required
 def home():
     page = request.args.get("page", 1, type=int)
     posts = Post.query.order_by(Post.date_created.desc()).paginate(per_page=20, page=page)
-    return render_template("main/home.html", posts=posts, title="Home")
+    post_reactions_dict = get_user_post_reactions_dict(current_user)
+    return render_template("main/home.html", posts=posts, title="Home", post_reactions_dict=post_reactions_dict)
 
 
 @main.route("/about")

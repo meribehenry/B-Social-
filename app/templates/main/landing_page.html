@@ -1,4 +1,125 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Landing Page</h1>
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <div>
+            <h1 class="hero-heading">Post what's on your mind anytime any day</h1>
+            <div class="hero-section-link">
+                <a class="btn btn-primary" href="#">Start today</a>
+                <a href="#">Learn more</a>
+            </div>
+        </div>
+        <div class="hero-image-grid-container">
+            <img class="hero-image" src="{{url_for('static', filename='images/hero-image-1.jpg')}}" alt="Hero 1">
+            <img class="hero-image" src="{{url_for('static', filename='images/hero-image-2.jpg')}}" alt="Hero 1">
+            <img class="hero-image" src="{{url_for('static', filename='images/hero-image-3.jpg')}}" alt="Hero 1">
+            <img class="hero-image" src="{{url_for('static', filename='images/hero-image-4.jpg')}}" alt="Hero 1">
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="features-section">
+        <h2 class="features-heading">Share your <span class="highlight highlight-tertiary-base">thoughts and engage</span> with others creator</h2>
+        <div class="features-section-card-container">
+            <div class="features-card">
+                <div class="features-image-container">
+                    <img class="features-image" src="{{url_for('static', filename='svgs/add-outline.svg')}}" alt="Features 1">
+                </div> 
+                <div>
+                    <h4 class="features-card-heading">Create post</h4>
+                    <p>Share text and images that reflects you mood and opinion</p>
+                </div>
+            </div>
+            <div class="features-card">
+                <div class="features-image-container">
+                    <img class="features-image" src="{{url_for('static', filename='svgs/chatbubble-outline.svg')}}" alt="Features 2">
+                </div> 
+                <div>
+                    <h4 class="features-card-heading">Comment on posts</h4>
+                    <p>Share text and images that reflects you mood and opinion</p>
+            </div>
+            </div>
+                <div class="features-card">
+                    <div class="features-image-container">
+                        <img class="features-image" src="{{url_for('static', filename='svgs/bar-chart-outline.svg')}}" alt="Features 3">
+                    </div> 
+                <div>
+                    <h4 class="features-card-heading">Grow your profile</h4>
+                    <p>Gain followers, likes and clicks from your posts and comments</p>
+                </div>
+            </div>
+            <div class="features-card">
+                <div class="features-image-container">
+                    <img class="features-image" src="{{url_for('static', filename='svgs/happy-outline.svg')}}" alt="Features 4">
+                </div> 
+                <div>
+                    <h4 class="features-card-heading">Share your reaction</h4>
+                    <p>Reacts on different posts based on your perception on it</p>
+                </div>
+            </div>
+            <div class="features-card">
+                <div class="features-image-container">
+                    <img class="features-image" src="{{url_for('static', filename='svgs/eye-outline.svg')}}" alt="Features 5">
+                </div> 
+                <div>
+                    <h4 class="features-card-heading">View you profile</h4>
+                    <p>See the profile of different creator and engage with their posts</p>
+                </div>
+            </div>
+            <div class="features-card">
+                <div class="features-image-container">
+                    <img class="features-image" src="{{url_for('static', filename='svgs/notifications-outline.svg')}}" alt="Features 6">
+                </div> 
+                <div>
+                    <h4 class="features-card-heading">Stay up-to-date</h4>
+                    <p>Get lastest post from different creator and react on them</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="cta-card">
+            <div class="cta-card-left-col">
+                <h2 class="cta-card-heading">What's on your mind today</h2>
+                <p class="cta-card-text">Be among the first set of people to try out B-Social and share your thoughts</p>
+                <div class="cta-card-link">
+                    <a class="btn btn-tertiary" href="#">Create a post</a>
+
+                </div>
+            </div>
+            <img class="cta-card-image" src="{{url_for('static', filename='images/cta-image-1.jpg')}}" alt="Cta 1">
+        </div>
+    </section>
+    
+    <footer class="footer">
+        <div class="footer-grid-container">
+            <div class="footer-grid-col-1">
+                <h3>B-Social</h3>
+                <div  class="footer-social-image-container">
+                    <img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/facebook.svg')}}" alt="facebook-Logo">
+                    <img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/tiktok.svg')}}" alt="tikTok-Logo">
+                    <img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/x.svg')}}" alt="x-Logo">
+                    <img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/linkedin.svg')}}" alt="LinkedIn Logo">
+                    <img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/github.svg')}}" alt="GitHub">
+                </div>
+            </div>
+            <div class="footer-link-container">
+                <h4>Go</h4>
+                <a href="#">B-Social</a>
+                <a href="#">Login</a>
+                <a href="#">Sign up</a>
+                <a href="#">About</a>
+                <a href="#">Feedback</a>
+            </div>
+            <div class="footer-link-container">
+                <h4>Follow us:</h4>
+                <a href="#">Facebook</a>
+                <a href="#">X</a>
+                <a href="#">LinkedIn</a>
+                <a href="#">Github</a>
+                <a href="#">TikTok</a>
+            </div>
+        </div>
+    </footer>
 {% endblock %}

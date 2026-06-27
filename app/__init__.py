@@ -13,13 +13,14 @@ def create_app(Config="config.Config"):
     mail.init_app(app)
     login_manager.init_app(app)
 
+    login_manager.login_view = "auth.login"
     login_manager.login_message = "Please login in to access this page"
     login_manager.login_message_category = "danger"
 
     from .models import User
     @login_manager.user_loader
-    def load_user(user_id):
-        return User.query.get(int(user_id))
+    def load_user(alternative_id):
+        return User.query.filter_by(alternative_id=alternative_id).first()
 
 
     from app.main.routes import main

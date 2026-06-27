@@ -1,0 +1,33 @@
+{% macro render_comment_reaction(comment, comment_reactions_dict) %}
+    <div>
+        {% set user_comment_reaction = comment_reactions_dict.get(comment.id) %}
+        {% if user_comment_reaction %}
+            {% if user_comment_reaction.liked %}
+                <small><a style="color: red;" href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='like') }}">Like</a></small>
+                <small><a href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='dislike') }}">Dislike</a></small>
+            {% else %}
+                <small><a href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='like') }}">Like</a></small>
+                <small><a style="color: red;" href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='dislike') }}">Dislike</a></small> 
+            {% endif %}    
+        {% else %}
+            <small><a href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='like') }}">Like</a></small>
+            <small><a href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='dislike') }}">Dislike</a></small>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+
+{% macro render_comment_reaction_single(comment, current_user) %}
+    <div>
+        {% if comment.is_liked_by(current_user) %}
+            <small><a style="color: red;" href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='like') }}">Like</a></small>
+            <small><a href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='dislike') }}">Dislike</a></small>
+        {% elif comment.is_disliked_by(current_user) %}
+            <small><a href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='like') }}">Like</a></small>
+            <small><a style="color: red;" href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='dislike') }}">Dislike</a></small> 
+        {% else %}
+            <small><a href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='like') }}">Like</a></small>
+            <small><a href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='dislike') }}">Dislike</a></small>
+        {% endif %}
+    </div>
+{% endmacro %}

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+    {% import "macros/form.html" as render_form %}
     
     <section>
         <h2>Password Reset Request</h2>
@@ -7,17 +8,7 @@
         <form action="", method="POST">
             {{ form.hidden_tag() }}
 
-            <div>
-                {{ form.email.label() }}
-                {{ form.email()}}
-
-                {% if form.email.errors %}
-                    {% for error in form.email.errors %}
-                        <br><small style="color: red;"> {{ error }}</small><br>
-                    {% endfor %}
-                {% endif %}
-                <br><br>
-            </div>
+            {{ render_form.render_field(form.email)}}
 
             </div>
                 {{ form.submit()}}

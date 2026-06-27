@@ -1,0 +1,33 @@
+{% import "macros/post_profile.html" as render_post_profile %}
+{% import "macros/comment_reaction_state.html" as render_comment_reaction %}
+{% macro render_comment(comment, comment_reactions_dict)%}
+
+<article>
+    <div>
+        {{ render_post_profile.render_post_profile(comment)}}
+    </div>
+
+    <div>
+        <h4>Comment:</h4>
+
+        <a href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id) }}">    
+            <p>{{comment.content}}</p>
+        </a>
+
+        {{ render_comment_reaction.render_comment_reaction(comment, comment_reactions_dict) }}
+        <!-- <small><a href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='like') }}">Like</a></small>
+        <small><a href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='dislike') }}">Dislike</a></small> -->
+        
+        <p>
+            <small>Likes: {{comment.num_of_likes}}</small><br>
+            <small>Comments: {{comment.num_of_comments}}</small><br>  
+            <small>Date: {{ comment.date_created.strftime("%Y-%m-%d")}}</small>
+            <small>&nbsp; &nbsp;Time: {{ comment.date_created.strftime("%H:%M")}}</small>
+            {% if comment.edited %}
+                <br>
+                <small>Edited</small>
+            {% endif %}
+        </p>
+    </div>
+</article>
+{% endmacro %}

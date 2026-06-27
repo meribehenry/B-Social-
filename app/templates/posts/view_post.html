@@ -1,103 +1,33 @@
 {% extends "base.html" %}
 {% block content %}
+    {% import "macros/post_article.html" as render_post %}
+    {% import "macros/comment.html" as render_comment %}
+    {% import "macros/pagination.html" as render_pagination %}
 
-    <article>
-        <div>
-            <a href="{{ url_for('profile.view_profile', user_id=post.author.id)}}">
-                {% if post.author.profile_pic_id == "default" %}
-                    <img src="{{ url_for('static', filename='profile_pics/default.jpg')}}" alt="Profile Picture" width="90" height="90", style="border-radius: 70cap;">
-                {% else %}
-                    <img src="{{ post.author.profile_pic_url }}" alt="Profile Picture" width="90" height="90", style="border-radius: 70cap;">
-                {% endif %}
+<!-- POST SECTION -->
+    {{ render_post.render_post(post, post_reactions_dict) }}
+    <br>
+    {% if current_user.is_authenticated and current_user == post.author %}
+        <a href="{{ url_for('posts.update_post', post_public_id=post.public_id)}}"><button type="button" style="color: rgb(255, 255, 42);">Update</button></a>
+        <a href="{{ url_for('posts.delete_post', post_public_id=post.public_id)}}"><button type="button" style="color: red;">Delete</button></a>
+    {% endif %}
 
-            
-                <h3>{{post.author.firstname}} {{ post.author.lastname}}</h3>
-                <p>@{{ post.author.username }}</p>
-            </a> 
-        </div>
-
-        <div>
-            <h4>POST</h4>
-            <p>{{post.content}}</p>
-
-            {% if post.photo_url%}
-                <img src="{{ post.photo_url }}" alt="Photo" width="300"><br><br>
-            {% endif %}
-
-            <small><a href="{{ url_for('posts.view_post', post_id=post.id, reaction='like')}}">Like</a></small>
-            <small><a href="{{ url_for('posts.view_post', post_id=post.id, reaction='dislike')}}">Dislike</a></small>
-            <small><a href="{{ url_for('comments.new_comment', post_id=post.id)}}">Comment</a></small>
-            
-            <p>
-                <small>Clicks: {{post.num_of_clicks}}</small><br>
-                <small>Likes: {{post.num_of_likes}}</small><br>
-                <small>Comments: {{post.num_of_comments}}</small><br>  
-                <small>Date: {{ post.date_created.strftime("%Y-%m-%d")}}</small>
-                <small>&nbsp; &nbsp;Time: {{ post.date_created.strftime("%H:%M")}}</small>
-                {% if post.edited %}
-                    <br>
-                    <small>Edited</small>
-                {% endif %}
-            </p>
-        </div>
-
-        {% if current_user.is_authenticated and current_user == post.author %}
-            <a href="{{ url_for('posts.update_post', post_id=post.id)}}"><button type="button" style="color: rgb(255, 255, 42);">Update</button></a>
-            <a href="{{ url_for('posts.delete_post', post_id=post.id)}}"><button type="button" style="color: red;">Delete</button></a>
-        {% endif %}
-    </article>
-
-    <!--Comment Section Area-->
+<!--COMMENT SECTION-->
     <section>
         <h2>COMMENTS</h2>
         {% for comment in comments.items %}
-            <article>
-                <div>
-                    <a href="{{ url_for('profile.view_profile', user_id=comment.user_id)}}">
-                        {% if comment.author.profile_pic_id == "default" %}
-                            <img src="{{ url_for('static', filename ='profile_pics/default.jpg')}}" alt="Profile Picture" width="60" height="60", style="border-radius: 70cap;">
-                        {% else %}
-                            <img src="{{ comment.author.profile_pic_url }}" alt="Profile Picture" width="60" height="60", style="border-radius: 70cap;">
-                        {% endif %}
-
-                        <h3>{{comment.author.firstname}} {{ comment.author.lastname}}</h3>
-                        <p>{{ comment.author.username }}</p>
-                    </a>
-                </div>
-
-                <div>
-                    <h4>Comment:</h4>
-
-                    <a href="{{ url_for('comments.view_comment', comment_id=comment.id)}}">    
-                        <p>{{comment.content}}</p>
-                    </a>
-
-                    <small><a href="{{ url_for('comments.view_comment', comment_id=comment.id, reaction='like') }}">Like</a></small>
-                    <small><a href="{{ url_for('comments.view_comment', comment_id=comment.id, reaction='dislike') }}">Dislike</a></small>
-                    <small><a href="#">Follow</a></small>
-                    
-                    <p>
-                        <small>Likes: {{comment.num_of_likes}}</small><br>
-                        <small>Comments: {{comment.num_of_comments}}</small><br>  
-                        <small>Date: {{ comment.date_created.strftime("%Y-%m-%d")}}</small>
-                        <small>&nbsp; &nbsp;Time: {{ comment.date_created.strftime("%H:%M")}}</small>
-                        {% if comment.edited %}
-                            <br>
-                            <small>Edited</small>
-                        {% endif %}
-                    </p>
-                </div>
-            </article>
+            {{ render_comment.render_comment(comment, comment_reactions_dict) }}
             <hr>      
         {% endfor %}
     </section>
 
+<!-- PAGINATION AREA -->
     <div>
         {% for page_num in comments.iter_pages(left_edge=1, left_current=2, right_edge=2, right_current=2) %}
             {% if page_num == comments.page %}
-                <a href="{{url_for('posts.view_post', post_id=post.id, page=page_num)}}"><button type="button" style="color: blue;"><strong>{{ page_num}}</strong></button></a>
+                <a href="{{url_for('posts.view_post', post_public_id=post.public_id, page=page_num)}}"><button type="button" style="color: blue;"><strong>{{ page_num}}</strong></button></a>
             {% else %}
-                <a href="{{url_for('posts.view_post', post_id=post.id, page=page_num)}}"><button type="button">{{ page_num}}</button></a>
+                <a href="{{url_for('posts.view_post', post_public_id=post.public_id, page=page_num)}}"><button type="button">{{ page_num}}</button></a>
             {% endif %}
         {% endfor %}
     </div>    

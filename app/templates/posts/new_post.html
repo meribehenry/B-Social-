@@ -1,40 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
+    {% import "macros/form.html" as render_form %}
+
     <h2>New Post</h2>
     
     <section>
         <form action="" enctype="multipart/form-data" method="POST">
             {{ form.hidden_tag() }}
 
-            <div>
-                {{ form.content.label() }} <br>
-                {{ form.content() }}
+            {{ render_form.render_field(form.content)}}
 
-                {% if form.content.errors %}
-                    {% for error in form.content.errors %}
-                        <br><small style="color: red;">{{ error }}</small>
-                    {% endfor %}
-                {% endif %}
-                <br><br>
-            </div>
-
+            <!--  POST PHOTO IF ANY (FOR UPDATE POST ONLY) -->
             <div>
                 {% if photo_url%}
                     <img src="{{ photo_url }}" alt="Photo" width="300"><br><br>
                 {% endif %}
             </div>
 
-            <div>
-                {{ form.photo.label() }} <br>
-                {{ form.photo() }}
-
-                {% if form.photo.errors %}
-                    {% for error in form.photo.errors %}
-                        <br><small style="color: red;">{{ error }}</small>
-                    {% endfor %}
-                {% endif %}
-                <br><br>
-            </div>
+            {{ render_form.render_field(form.photo)}}
 
             <div>
                 {{ form.submit() }}

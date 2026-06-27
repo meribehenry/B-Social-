@@ -213,49 +213,49 @@ ul {
 .btn-primary:link, .btn-primary:visited {
     background-color: var(--primary-base);
     color: var(--white-1);
-    border: 3px solid var(--primary-base);
+    border: 2px solid var(--primary-base);
 }
 
 .btn-primary:hover, .btn-primary:active {
     background-color: var(--primary-shade);
     color: var(--white-1);
-    border: 3px solid var(--primary-shade);
+    border: 2px solid var(--primary-shade);
 }
 
 .btn-primary-outline:link, .btn-primary-outline:visited {
     background-color: var(--white-1);
     color: var(--primary-base);
-    border: 3px solid var(--primary-base);
+    border: 2px solid var(--primary-base);
 }
 
 .btn-primary-outline:hover, .btn-primary-outline:active {
     background-color: var(--white-2);
     color: var(--primary-shade);
-    border: 3px solid var(--primary-shade);
+    border: 2px solid var(--primary-shade);
 }
 
 .btn-secondary:link, .btn-secondary:visited {
     background-color: var(--secondary-base);
     color: var(--white-1);
-    border: 3px solid var(--secondary-base);
+    border: 2px solid var(--secondary-base);
 }
 
 .btn-secondary:hover, .btn-secondary:active {
     background-color: var(--secondary-shade-2);
     color: var(--white-1);
-    border: 3px solid var(--secondary-shade-2);
+    border: 2px solid var(--secondary-shade-2);
 }
 
 .btn-tertiary:link, .btn-tertiary:visited {
     background-color: var(--tertiary-base);
     color: var(--white-1);
-    border: 3px solid var(--tertiary-base);
+    border: 2px solid var(--tertiary-base);
 }
 
 .btn-tertiary:hover, .btn-tertiary:active {
     background-color: var(--tertiary-shade);
     color: var(--white-1);
-    border: 3px solid var(--tertiary-shade);
+    border: 2px solid var(--tertiary-shade);
 }
 
 .highlight {
@@ -496,7 +496,7 @@ ul {
 }
 
 .footer-social-image {
-    width: 25px;
+    width: 20px;
 }
 
 .footer-last {

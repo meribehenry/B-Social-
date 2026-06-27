@@ -2,12 +2,13 @@
 {% block content %}
     {% import "macros/post_article.html" as render_post %}
     {% import "macros/pagination.html" as render_pagination %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/post/style.css')}}">
 
+<div class="home-posts">
 <!-- POST SECTION -->
     <section>
         {% for post in posts.items %}
-            {{ render_post.render_post(post, post_reactions_dict) }}
-            <hr>      
+            {{ render_post.render_post(post, post_reactions_dict) }}      
         {% endfor %}
     </section>
 
@@ -15,5 +16,7 @@
     <div>
         {{ render_pagination.render_pagination(posts, "main.home")}}  
     </div>
+</div>
+
     
 {% endblock %}

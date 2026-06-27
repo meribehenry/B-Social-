@@ -1,31 +1,27 @@
 {% import "macros/post_profile.html" as render_post_profile %}
 {% import "macros/post_reaction_state.html" as render_post_reaction %}
 {% macro render_post(post, post_reactions_dict) %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/post/style.css')}}">
 
-
-<article>
+<article class="post-article">
     {{ render_post_profile.render_post_profile(post) }}
     <div>
         <a href="{{ url_for('posts.view_post', post_public_id=post.public_id)}}">
-            <h4>POST</h4>
             <p>{{post.content}}</p>
 
             {% if post.photo_url%}
-                <img src="{{ post.photo_url }}" alt="Photo" width="300"><br><br>
+                <img class="post-image" src="{{ post.photo_url }}" alt="Photo">
             {% endif %}
 
             
             {{ render_post_reaction.render_post_reaction(post, post_reactions_dict) }}
-            <!-- <small><a  href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">Like</a></small>
-            <small><a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">Dislike</a></small>
-            <small><a href="{{ url_for('comments.new_comment', post_public_id=post.public_id)}}">Comment</a></small> -->
-            
+    
             <div>
-                <small>Clicks: {{post.num_of_clicks}}</small><br>
-                <small>Likes: {{post.num_of_likes}}</small><br>
-                <small>Comments: {{post.num_of_comments}}</small><br>  
-                <small>Date: {{ post.date_created.strftime("%Y-%m-%d")}}</small>
-                <small>&nbsp; &nbsp;Time: {{ post.date_created.strftime("%H:%M")}}</small>
+                Clicks: {{post.num_of_clicks}}  <br>
+                Likes: {{post.num_of_likes}}    <br>
+                Comments: {{post.num_of_comments}}  <br>  
+                Date: {{ post.date_created.strftime("%Y-%m-%d")}}   
+                &nbsp; &nbsp;Time: {{ post.date_created.strftime("%H:%M")}} 
                 {% if post.edited %}
                     <br>
                     <small>Edited</small>

@@ -1,14 +1,18 @@
 {% macro render_post_profile(post) %}
-<div>
-    <a href="{{ url_for('profile.view_profile', user_public_id=post.author.public_id)}}">
-        {% if post.author.profile.profile_pic_id == "default" %}
-            <img src="{{ url_for('static', filename='profile_pics/default.jpg')}}" alt="Profile Picture" width="90" height="90", style="border-radius: 70cap;">
-        {% else %}
-            <img src="{{ post.author.profile.profile_pic_url }}" alt="Profile Picture" width="90" height="90", style="border-radius: 70cap;">
-        {% endif %}
-    
-        <h3>{{post.author.profile.firstname}} {{ post.author.profile.lastname}}</h3>
-        <p>@{{ post.author.username }}</p>
-    </a> 
-</div>
+<!-- <link rel="stylesheet" href="{{url_for('static', filename='css/post/style.css')}}"> -->
+<a class="post-profile-link" href="{{ url_for('profile.view_profile', user_public_id=post.author.public_id)}}">
+    <div class="post-profile">
+        <div>
+            {% if post.author.profile.profile_pic_id == "default" %}
+                <img class="post-profile-image" src="{{ url_for('static', filename='profile_pics/default.jpg')}}" alt="Profile Picture">
+            {% else %}
+                <img class="post-profile-image" src="{{ post.author.profile.profile_pic_url }}" alt="Profile Picture">
+            {% endif %}
+        </div>
+        <div>
+            <h3>{{post.author.profile.firstname}} {{ post.author.profile.lastname}}</h3>
+            <p>@{{ post.author.username }}</p>
+        </div>
+    </div>
+</a>
 {% endmacro %}

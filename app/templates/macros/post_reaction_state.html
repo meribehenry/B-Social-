@@ -3,17 +3,17 @@
     {% set user_post_reaction = post_reactions_dict.get(post.id) %}
     {% if user_post_reaction %}
         {% if user_post_reaction.liked %}
-            <small><a style="color: red;" href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">Like</a></small>
-            <small><a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">Dislike</a></small>
+            <a style="color: red;" href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">Like</a>
+            <a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">Dislike</a>
         {% else %}
-            <small><a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">Like</a></small>
-            <small><a style="color: red;"  href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">Dislike</a></small>
+            <a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">Like</a>
+            <small><a style="color: red;"  href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">Dislike</a>
         {% endif %}    
     {% else %}
-        <small><a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">Like</a></small>
-        <small><a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">Dislike</a></small>
+        <a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">Like</a>
+        <a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">Dislike</a>
     {% endif %}
-    <small><a href="{{ url_for('comments.new_comment', post_public_id=post.public_id)}}">Comment</a></small>
+    <a href="{{ url_for('comments.new_comment', post_public_id=post.public_id)}}">Comment</a>
 </div>
 {% endmacro %}
 

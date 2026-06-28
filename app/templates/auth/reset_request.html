@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-    {% import "macros/form.html" as render_form %}
+    {% import "macros/form.html" as render_auth_field %}
     
     <section>
         <h2>Password Reset Request</h2>
@@ -8,7 +8,7 @@
         <form action="", method="POST">
             {{ form.hidden_tag() }}
 
-            {{ render_form.render_field(form.email)}}
+            {{ render_auth_field.render_auth_field(form.email)}}
 
             </div>
                 {{ form.submit()}}

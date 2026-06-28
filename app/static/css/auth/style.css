@@ -61,7 +61,7 @@ body {
 
 .auth-field {
     display: flex;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .auth-field-input-container {
@@ -78,7 +78,7 @@ body {
 
 .auth-field-input {
     width: 100%;
-    height: 4rem;
+    height: 3.5rem;
     font-size: var(--text-base);
     border-radius: 20px;
     padding: 0.5rem 1rem;
@@ -101,10 +101,12 @@ body {
 
 /* -----------REGISTER PAGE-------------- */
 
-.register-page-grid-container {
+.register-page-container {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-
+    margin-bottom: 10rem;
+    align-items: center;
+    justify-items: center;
+    padding: 1rem 1rem;
 }
 
 .register-page-display-name-container {
@@ -113,7 +115,28 @@ body {
     gap: 1rem;
 }
 
-.sign-up-question {
+.register-page {
+    padding: 2rem 2rem;
+    width: 50rem;
+    border: 2px solid var(--primary-base);
+    border-radius: 20px;
+    
+}
+
+.register-page-heading {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.register-image {
+    width: 50rem;
+    border-radius: 50%;
+    height: 50rem;
+    justify-self: center;
+
+}
+
+.sign-up-question, .sign-in-question {
     font-size: var(--text-base);
 }
 
@@ -123,7 +146,7 @@ body {
     border: 2px solid var(--primary-base);
 }
 
-.form-submit-area {
+.register-form-submit-area {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -134,4 +157,45 @@ body {
     margin-bottom: 1rem;
     gap: 2rem;
     display: flex;
+}
+
+/* -----------LOGIN PAGE-------------- */
+
+.login-page-container {
+    display: grid;
+    margin-bottom: 10rem;
+    align-items: center;
+    justify-items: center;
+    padding: 1rem 1rem;
+}
+
+.login-page {
+    padding: 2rem 2rem;
+    width: 50rem;
+    border: 2px solid var(--primary-base);
+    border-radius: 20px;
+}
+
+.login-page-heading {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.login-remember-me {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    width: 18rem;
+    margin-bottom: 1.5rem;
+}
+
+.login-form-submit-area {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.remember-box {
+    justify-self: start;
+    height: 2rem;
 }

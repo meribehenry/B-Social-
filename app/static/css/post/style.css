@@ -69,6 +69,7 @@
     flex-direction: column;
     border: 1px solid var(--primary-base);
     box-shadow: 2px 2px 2px 0px var(--primary-tint-2);
+    background-color: var(--white-1);
     gap: 2rem;
     border-radius: 20px;
     padding: 2rem 2rem;

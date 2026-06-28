@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
     {% import "macros/form.html" as render_auth_field %}
-    
+
+<link rel="stylesheet" href="{{url_for('static', filename='css/auth/style.css')}}">
     <section>
-        <h2>Password Reset Request</h2>
+        <h4>Password Reset Request</h4>
 
         <form action="", method="POST">
             {{ form.hidden_tag() }}

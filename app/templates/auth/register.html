@@ -3,41 +3,39 @@
 {% block content %}
 
 <link rel="stylesheet" href="{{url_for('static', filename='css/auth/style.css')}}">
-    <section class="register-page-grid-container">
+    <section class="register-page-container">
 
-        <form action="", method="POST">
-            <h4>Sign Up</h4>
-            <div class="register-page-grid-col-1">
-                {{ form.hidden_tag() }}
-                <div class="register-page-display-name-container">
-                    {{ render_auth_field.render_auth_field(form.firstname) }}
-                    {{ render_auth_field.render_auth_field(form.lastname) }}
-                </div>
-                
-                {{ render_auth_field.render_auth_field(form.email) }}
-                {{ render_auth_field.render_auth_field(form.username) }}
-                {{ render_auth_field.render_auth_field(form.password) }}
-                {{ render_auth_field.render_auth_field(form.confirm_password) }}
-                <div>
-                    <div class="gender-field">
-                        {{ form.gender(class="auth-field-input")}}
-                    </div>
-                    {% if form.gender.errors %}
-                        {% for error in form.gender.errors %}
-                            <br><small style="color: red;"> {{ error }}</small><br>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                
+        <form class="register-page" action="", method="POST">
+            <h4 class="register-page-heading">Sign up</h4>
 
-                <div class="form-submit-area">
-                    <p class="sign-up-question">Already have an account? <a href="{{url_for('auth.login')}}">Login</a></p> 
-                    {{ form.submit(class="submit-button btn btn-primary")}}
+            {{ form.hidden_tag() }}
+            
+            <div class="register-page-display-name-container">
+                {{ render_auth_field.render_auth_field(form.firstname) }}
+                {{ render_auth_field.render_auth_field(form.lastname) }}
+            </div>
+            
+            {{ render_auth_field.render_auth_field(form.email) }}
+            {{ render_auth_field.render_auth_field(form.username) }}
+            {{ render_auth_field.render_auth_field(form.password) }}
+            {{ render_auth_field.render_auth_field(form.confirm_password) }}
+            
+            <div>
+                <div class="gender-field">
+                    {{ form.gender(class="auth-field-input")}}
                 </div>
-            </div>   
-        </form>
-        
-
+                {% if form.gender.errors %}
+                    {% for error in form.gender.errors %}
+                        <p class="form-error">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            <div class="register-form-submit-area">
+                <p class="sign-in-question">Already have an account? <a href="{{url_for('auth.login')}}">Login</a></p> 
+                {{ form.submit(class="submit-button btn btn-primary")}}
+            </div>
+        </form> 
     </section>
 
 {% endblock %}

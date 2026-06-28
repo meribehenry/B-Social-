@@ -11,3 +11,17 @@
         <br><br>
     </div>
 {% endmacro %}
+
+{% macro render_auth_field(field) %}
+    <div>
+        {{ field.label }}
+        {{ field()}}
+
+        {% if field.errors %}
+            {% for error in field.errors %}
+                <br><small style="color: red;"> {{ error }}</small><br>
+            {% endfor %}
+        {% endif %}
+        <br><br>
+    </div>
+{% endmacro %}

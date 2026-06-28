@@ -18,7 +18,7 @@
 {% endmacro %}
 
 
-{% macro render_post_reaction_single(post, current_user) %}
+<!-- {% macro render_post_reaction_single(post, current_user) %}
     <div>
         {% if post.is_liked_by(current_user) %}
             <small><a style="color: red;" href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">Like</a></small>
@@ -31,4 +31,4 @@
             <small><a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">Dislike</a></small>
         {% endif %}
     </div>
-{% endmacro %}
+{% endmacro %} -->

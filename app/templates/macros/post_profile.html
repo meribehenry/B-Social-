@@ -1,5 +1,4 @@
 {% macro render_post_profile(post) %}
-<!-- <link rel="stylesheet" href="{{url_for('static', filename='css/post/style.css')}}"> -->
 <a class="post-profile-link" href="{{ url_for('profile.view_profile', user_public_id=post.author.public_id)}}">
     <div class="post-profile">
         <div>

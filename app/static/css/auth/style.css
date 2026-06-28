@@ -199,3 +199,28 @@ body {
     justify-self: start;
     height: 2rem;
 }
+
+
+/* ------------OTHER AUTH PAGES------------- */
+
+.auth-page-container {
+    display: grid;
+    margin-bottom: 10rem;
+    align-items: center;
+    justify-items: center;
+    padding: 1rem 1rem;
+    margin-bottom: 30rem;
+}
+
+
+.auth-page {
+    padding: 2rem 2rem;
+    width: 50rem;
+    border: 2px solid var(--primary-base);
+    border-radius: 20px;
+}
+
+.auth-page-heading {
+    text-align: center;
+    margin-bottom: 2rem;
+}

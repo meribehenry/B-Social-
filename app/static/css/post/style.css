@@ -55,13 +55,22 @@
     --nav-height: 8rem;
 }
 
-.home-posts {
+/* --------ROUTE TEMPLATES------------- */
+.home-posts, .profile-posts-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
     gap: 3rem;
 }
+
+.view-post-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
 
 .post-article {
     width: 60rem;
@@ -99,7 +108,7 @@
 }
 
 .post-image {
-    max-width: 95%;
+    max-width: 100%;
     min-width: 50rem;
     border-radius: 6px;
     max-height: 60rem;

@@ -4,32 +4,35 @@
     {% import "macros/comment.html" as render_comment %}
     {% import "macros/pagination.html" as render_pagination %}
 
-<!-- POST SECTION -->
-    {{ render_post.render_post(post, post_reactions_dict) }}
-    <br>
-    {% if current_user.is_authenticated and current_user == post.author %}
-        <a href="{{ url_for('posts.update_post', post_public_id=post.public_id)}}"><button type="button" style="color: rgb(255, 255, 42);">Update</button></a>
-        <a href="{{ url_for('posts.delete_post', post_public_id=post.public_id)}}"><button type="button" style="color: red;">Delete</button></a>
-    {% endif %}
+    <div class="view-post-container">
+    <!-- POST SECTION -->
+        {{ render_post.render_post(post, post_reactions_dict) }}
+        <br>
+        {% if current_user.is_authenticated and current_user == post.author %}
+            <a href="{{ url_for('posts.update_post', post_public_id=post.public_id)}}"><button type="button" style="color: rgb(255, 255, 42);">Update</button></a>
+            <a href="{{ url_for('posts.delete_post', post_public_id=post.public_id)}}"><button type="button" style="color: red;">Delete</button></a>
+        {% endif %}
 
-<!--COMMENT SECTION-->
-    <section>
-        <h2>COMMENTS</h2>
-        {% for comment in comments.items %}
-            {{ render_comment.render_comment(comment, comment_reactions_dict) }}
-            <hr>      
-        {% endfor %}
-    </section>
+    <!--COMMENT SECTION-->
+        <section>
+            <h2>COMMENTS</h2>
+            {% for comment in comments.items %}
+                {{ render_comment.render_comment(comment, comment_reactions_dict) }}
+                <hr>      
+            {% endfor %}
+        </section>
 
-<!-- PAGINATION AREA -->
-    <div>
-        {% for page_num in comments.iter_pages(left_edge=1, left_current=2, right_edge=2, right_current=2) %}
-            {% if page_num == comments.page %}
-                <a href="{{url_for('posts.view_post', post_public_id=post.public_id, page=page_num)}}"><button type="button" style="color: blue;"><strong>{{ page_num}}</strong></button></a>
-            {% else %}
-                <a href="{{url_for('posts.view_post', post_public_id=post.public_id, page=page_num)}}"><button type="button">{{ page_num}}</button></a>
-            {% endif %}
-        {% endfor %}
-    </div>    
+    <!-- PAGINATION AREA -->
+        <div>
+            {% for page_num in comments.iter_pages(left_edge=1, left_current=2, right_edge=2, right_current=2) %}
+                {% if page_num == comments.page %}
+                    <a href="{{url_for('posts.view_post', post_public_id=post.public_id, page=page_num)}}"><button type="button" style="color: blue;"><strong>{{ page_num}}</strong></button></a>
+                {% else %}
+                    <a href="{{url_for('posts.view_post', post_public_id=post.public_id, page=page_num)}}"><button type="button">{{ page_num}}</button></a>
+                {% endif %}
+            {% endfor %}
+        </div>    
+    </div>
+
 
 {% endblock %}

@@ -1,17 +1,19 @@
 {% extends "base.html" %}
 {% import "macros/form.html" as render_auth_field %}
 {% block content %}
-    
-    <section>
-        <h2>Verify Email</h2>
 
-        <form action="", method="POST">
+<link rel="stylesheet" href="{{url_for('static', filename='css/auth/style.css')}}">
+    <section class="auth-page-container">
+
+        <form class="auth-page" action="", method="POST">
+            <h2 class="auth-page-heading">Verify Email</h2>
+            
             {{ form.hidden_tag() }}
 
             {{ render_auth_field.render_auth_field(form.otp_code) }}
 
-            </div>
-                {{ form.submit()}}
+            <div>
+                {{ form.submit(class="submit-button btn btn-primary")}}
                 <a href="{{url_for('auth.resend_otp', user_public_id=current_user.public_id)}}">Resend Otp</a>
             </div>
 

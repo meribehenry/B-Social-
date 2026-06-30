@@ -14,8 +14,8 @@
 
             <div>
                 <div class="login-remember-me">
-                    {{ form.remember.label(class="auth-field-label")}}
-                    {{ form.remember(class="auth-field-input remember-box")}}  
+                    {{ form.remember.label(class="field-label")}}
+                    {{ form.remember(class="field-input remember-box")}}  
                 </div>
                 {% if form.remember.errors %}
                     {% for error in form.remember.errors %}

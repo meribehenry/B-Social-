@@ -14,12 +14,11 @@
 
 
 {% macro render_auth_field(field) %}
-    <div class="auth-field">
-
+    <div>
         {% if field.errors %}
-            <div class="auth-field-input-container">
-                {{ field.label(class="auth-field-label field-label-error") }}
-                {{ field(class="auth-field-input field-input-box-error")}}
+            <div class="field-input-container">
+                {{ field.label(class="field-label field-label-error") }}
+                {{ field(class="field-input field-input-box-error")}}
                 {% for error in field.errors %}
                     <p class="form-error">{{ error }}</p>
                 {% endfor %}
@@ -27,9 +26,32 @@
             
             
         {% else %}
-            <div class="auth-field-input-container">
-                {{ field.label(class="auth-field-label") }}
-                {{ field(class="auth-field-input")}}
+            <div class="field-input-container">
+                {{ field.label(class="field-label") }}
+                {{ field(class="field-input")}}
+            </div>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+
+{% macro render_post_field(field) %}
+    <div>
+
+        {% if field.errors %}
+            <div class="field-input-container">
+                {{ field.label(class="field-label field-label-error") }}
+                {{ field(class="field-input post-field-input field-input-box-error")}}
+                {% for error in field.errors %}
+                    <p class="form-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+            
+            
+        {% else %}
+            <div class="field-input-container">
+                {{ field.label(class="field-label") }}
+                {{ field(class="field-input post-field-input")}}
             </div>
         {% endif %}
     </div>

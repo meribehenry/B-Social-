@@ -272,6 +272,62 @@ ul {
     background-color: var(--tertiary-base);
 }
 
+.field-input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    width: 100%;
+    margin-bottom: 1.5rem;
+
+}
+
+
+.field-label {
+    font-size: var(--text-base);
+}
+
+.field-input {
+    width: 100%;
+    height: 3.5rem;
+    font-size: var(--text-base);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+
+}
+
+.form-error {
+    font-size: var(--text-base);
+    color: red;
+}
+
+.field-input-box-error {
+    border: 2px solid red;
+}
+
+.field-label-error {
+    color: red;
+}
+
+.submit-button {
+    background-color: var(--primary-base);
+    color: white;
+    border: 2px solid var(--primary-base);
+}
+
+.upload-photo {
+    margin-bottom: 4rem;
+}
+
+.upload-photo .field-label {
+    margin-bottom: 0.5rem;
+}
+.upload-photo input{
+    padding: 0px;
+    height: auto;
+}
+
+
+
 /* -------------------SECTIONS------------------------- */
 
 /* -----------NAVBAR------------ */
@@ -298,6 +354,7 @@ ul {
     display: flex;
     align-items: center;
     gap: 1rem;
+    height: 100%;
 }
 
 .navbar-right-g2 {
@@ -312,6 +369,7 @@ ul {
 .flash-message {
     height: 3rem;
     margin-bottom: 1rem;
+    position: absolute;
 }
 
 /* --------------HERO SECTION----------- */
@@ -506,4 +564,10 @@ ul {
     text-align: center;
     border-radius: 2px;
     width: 100%;
+}
+
+
+/* ---------ABOUT-------- */
+.about-page {
+    margin-bottom: 50rem;
 }

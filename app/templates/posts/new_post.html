@@ -1,26 +1,35 @@
 {% extends "base.html" %}
 {% block content %}
-    {% import "macros/form.html" as render_form %}
+    {% import "macros/form.html" as render_post_field %}
 
-    <h2>New Post</h2>
     
-    <section>
-        <form action="" enctype="multipart/form-data" method="POST">
+<link rel="stylesheet" href="{{url_for('static', filename='css/post/style.css')}}"> 
+    <section class="new-post-container">
+        <form class="new-post-page" action="" enctype="multipart/form-data" method="POST">
+
             {{ form.hidden_tag() }}
 
-            {{ render_form.render_field(form.content)}}
 
             <!--  POST PHOTO IF ANY (FOR UPDATE POST ONLY) -->
-            <div>
-                {% if photo_url%}
-                    <img src="{{ photo_url }}" alt="Photo" width="300"><br><br>
-                {% endif %}
-            </div>
+            {% if photo_url%}
+                <h3 class="new-post-page-heading ">Edit Post</h3>
+                <div class="edit-post-field-input">
+                    {{ render_post_field.render_post_field(form.content)}}
+                    <img class="edit-post-photo" src="{{ photo_url }}" alt="Photo"><br><br>
+                    <div class="upload-photo">
+                        {{ render_post_field.render_post_field(form.photo)}}
+                    </div>  
+                </div>
+            {% else %}
+                <h3 class="new-post-page-heading ">New Post</h3>
+                {{ render_post_field.render_post_field(form.content)}}
+                <div class="upload-photo">
+                    {{ render_post_field.render_post_field(form.photo)}}
+                </div>
+            {% endif %}
 
-            {{ render_form.render_field(form.photo)}}
-
             <div>
-                {{ form.submit() }}
+                {{ form.submit(class="submit-button btn btn-primary") }}
             </div>
         </form>
     </section>

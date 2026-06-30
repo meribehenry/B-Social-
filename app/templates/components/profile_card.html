@@ -1,28 +1,31 @@
-<div>
-    {% if user.profile.profile_pic_id == "default" %}
-        <img src="{{ url_for('static', filename='profile_pics/default.jpg')}}" alt="Profile Picture" width="90" height="90", style="border-radius: 70cap;">
-    {% else %}
-        <img src="{{ user.profile.profile_pic_url }}" alt="Profile Picture" width="90" height="90", style="border-radius: 70cap;">
-    {% endif %}
-    <div>
-        {% if current_user != user %}
-            {% if follower is none %}
-                <a href="{{url_for('profile.view_profile', user_public_id=user.public_id, follower='follow')}}">Follow</a>
-            {% else %}
-                <a href="{{url_for('profile.view_profile', user_public_id=user.public_id, follower='unfollow')}}">Unfollow</a>
+{% import "macros/follower_button.html" as render_follow_button %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/profile/style.css')}}">
+    <section class="profile-section">
+        <div class="profile-section-border">
+            <div class="profile-section-flex-container">
+                <div class="profile-section-flex-left">
+                    {% if user.profile.profile_pic_id == "default" %}
+                        <img class="profile-section-image" src="{{ url_for('static', filename='profile_pics/default.jpg')}}" alt="Profile Picture">
+                    {% else %}
+                        <img class="profile-section-image" src="{{ user.profile.profile_pic_url }}" alt="Profile Picture">
+                    {% endif %} 
+
+                    <div>
+                        <h3>{{user.profile.firstname}} {{ user.profile.lastname}}</h3>
+                        <p >@{{ user.username }}</p>
+                    </div>
+                </div>
+                {{ render_follow_button.render_follow_button(user, follower) }}
+            </div>
+            
+
+            {% if user.profile.bio %}
+                <p>{{ user.profile.bio }}</p>
             {% endif %}
-        {% endif %}
-    </div>
 
-    <h3>{{user.profile.firstname}} {{ user.profile.lastname}}</h3>
-    <p>@{{ user.username }}</p>
-
-    {% if user.profile.bio %}
-        <p>{{ user.profile.bio }}</p>
-    {% endif %}
-
-    {% if user == current_user %}
-        <p><a href="{{url_for('profile.edit_profile', user_public_id=user.public_id)}}">Edit</a></p>
-    {% endif %}
-    
-</div>
+            {% if user == current_user %}
+                <p><a href="{{url_for('profile.edit_profile', user_public_id=user.public_id)}}">Edit</a></p>
+            {% endif %}
+        </div>
+        
+    </section>

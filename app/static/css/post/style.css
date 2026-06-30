@@ -56,6 +56,7 @@
 }
 
 /* --------ROUTE TEMPLATES------------- */
+
 .home-posts, .profile-posts-container {
     display: flex;
     flex-direction: column;
@@ -64,19 +65,63 @@
     gap: 3rem;
 }
 
-.view-post-container {
+.view-post-container, .new-post-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
 }
 
+.new-post-container {
+    margin-bottom: 30rem;
+}
+
+.new-post-page {
+    padding: 2rem 2rem;
+    width: 60rem;
+    border: 2px solid var(--primary-base);
+    border-radius: 20px;
+    background-color: var(--white-1);
+}
+
+.new-post-page-heading {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.edit-post-field-input .field-label {
+    display: none;
+}
+
+.edit-post-field-input .post-field-input  {
+    border: none;
+    height: auto;
+    padding: 0;
+    margin-top: 1rem;
+    overflow: visible;
+}
+
+.edit-post-photo {
+    width: 60%;
+    border-radius: 2px;
+    margin-bottom: 1rem
+}
+
+.post-field-input {
+    border-radius: 5px;
+    height: 10rem;
+    background-color: var(--white-1);
+    max-width: 100%;
+    min-height: 4rem;
+    min-width: 100%;
+    max-height: 200rem;
+}
 
 .post-article {
-    width: 60rem;
+    max-width: 60rem;
     display: flex;
     flex-direction: column;
-    border: 1px solid var(--primary-base);
+    border: 0.2px solid var(--primary-base);
     box-shadow: 2px 2px 2px 0px var(--primary-tint-2);
     background-color: var(--white-1);
     gap: 2rem;

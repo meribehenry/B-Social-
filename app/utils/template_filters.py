@@ -1,7 +1,6 @@
 from flask import current_app
 from datetime import datetime, timezone
 
-@current_app.template_filter("timeago")
 def timeago_filter(dt):
     if not dt:
         return ""
@@ -16,15 +15,15 @@ def timeago_filter(dt):
     if seconds < 10:
         return "now"
     elif seconds < 60:
-        return f"{int(seconds)}s ago"
+        return f"{int(seconds)}s"
     elif seconds < 3600:
-        return f"{int(seconds//60)}m ago"
+        return f"{int(seconds//60)}m"
     elif seconds < 86400:
-        return f"{int(seconds//3600)}h ago"
+        return f"{int(seconds//3600)}h"
     elif seconds < 604800:
-        return f"{int(seconds//86400)}d ago"
+        return f"{int(seconds//86400)}d"
     elif seconds < 2419200:
-        return f"{int(seconds//604800)}w ago"
+        return f"{int(seconds//604800)}w"
     else:
         return dt.strf("%B%d%Y")
     

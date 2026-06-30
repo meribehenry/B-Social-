@@ -1,35 +1,39 @@
 {% extends "base.html" %}
 {% block content %}
-    {% import "macros/form.html" as render_form %}
+    {% import "macros/form.html" as render_auth_field %}
 
-    <h2>Edit Profile</h2>
+    
+<link rel="stylesheet" href="{{url_for('static', filename='css/profile/style.css')}}">
+<!----------- USER PROFILE -------------->
+    <section class="edit-profile-container">
 
-<!-- USER PROFILE PICTURE -->
-    <div>
-        {% if current_user.profile.profile_pic_id == "default" %}
-            <img src="{{ url_for('static', filename='profile_pics/default.jpg')}}" alt="Profile Picture" width="90" height="90", style="border-radius: 70cap;">
-        {% else %}
-            <img src="{{ current_user.profile.profile_pic_url }}" alt="Profile Picture" width="90" height="90", style="border-radius: 70cap;">
-        {% endif %}
-    </div>
+        <form class="edit-profile" action="" method="POST" enctype="multipart/form-data">
+            <h4 class="edit-profile-heading">Edit Profile</h4>
+            <!-- USER PROFILE PICTURE -->
+            <div class="edit-profile-image-container">
+                {% if current_user.profile.profile_pic_id == "default" %}
+                    <img src="{{ url_for('static', filename='profile_pics/default.jpg')}}" alt="Profile Picture" width="90" height="90", style="border-radius: 70cap;">
+                {% else %}
+                    <img src="{{ current_user.profile.profile_pic_url }}" alt="Profile Picture" width="90" height="90", style="border-radius: 70cap;">
+                {% endif %}
+            </div>
 
-<!-- USER PROFILE -->
-    <section>
-        <form action="" method="POST" enctype="multipart/form-data">
             {{ form.hidden_tag()}}
 
-            {{ render_form.render_field(form.firstname) }}
+            {{render_auth_field.render_auth_field(form.firstname) }}
 
-            {{ render_form.render_field(form.lastname) }}
+            {{render_auth_field.render_auth_field(form.lastname) }}
             
-            {{ render_form.render_field(form.username) }}
+            {{render_auth_field.render_auth_field(form.username) }}
 
-            {{ render_form.render_field(form.bio) }}
+            {{render_auth_field.render_auth_field(form.bio) }}
             
-            {{ render_form.render_field(form.profile_pic) }}
+            <div class="upload-photo">
+                {{ render_auth_field.render_auth_field(form.profile_pic)}}
+            </div> 
 
             <div>
-                {{ form.submit() }}
+                {{ form.submit(class="submit-button btn btn-primary") }}
             </div>
         </form>
     </section>

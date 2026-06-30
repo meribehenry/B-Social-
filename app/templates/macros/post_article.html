@@ -12,16 +12,10 @@
             {% if post.photo_url%}
                 <img class="post-image" src="{{ post.photo_url }}" alt="Photo">
             {% endif %}
-
             
             {{ render_post_reaction.render_post_reaction(post, post_reactions_dict) }}
-    
+            
             <div>
-                Clicks: {{post.num_of_clicks}}  <br>
-                Likes: {{post.num_of_likes}}    <br>
-                Comments: {{post.num_of_comments}}  <br>  
-                Date: {{ post.date_created.strftime("%Y-%m-%d")}}   
-                &nbsp; &nbsp;Time: {{ post.date_created.strftime("%H:%M")}} 
                 {% if post.edited %}
                     <br>
                     <small>Edited</small>

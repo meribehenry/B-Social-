@@ -34,4 +34,7 @@ def create_app(Config="config.Config"):
     from app.profile.routes import profile
     app.register_blueprint(profile, url_prefix="/profile")
 
+    from app.utils.template_filters import timeago_filter
+    app.template_filter('timeago')(timeago_filter)
+
     return app

@@ -1,17 +1,17 @@
 {% macro render_post_profile(post) %}
-<a class="post-profile-link" href="{{ url_for('profile.view_profile', user_public_id=post.author.public_id)}}">
-    <div class="post-profile">
-        <div>
-            {% if post.author.profile.profile_pic_id == "default" %}
-                <img class="post-profile-image" src="{{ url_for('static', filename='profile_pics/default.jpg')}}" alt="Profile Picture">
-            {% else %}
-                <img class="post-profile-image" src="{{ post.author.profile.profile_pic_url }}" alt="Profile Picture">
-            {% endif %}
+    <a class="post-profile-link" href="{{ url_for('profile.view_profile', user_public_id=post.author.public_id)}}">
+        <div class="post-profile">
+            <div>
+                {% if post.author.profile.profile_pic_id == "default" %}
+                    <img class="post-profile-image" src="{{ url_for('static', filename='profile_pics/default.jpg')}}" alt="Profile Picture">
+                {% else %}
+                    <img class="post-profile-image" src="{{ post.author.profile.profile_pic_url }}" alt="Profile Picture">
+                {% endif %}
+            </div>
+            <div class="post-profile-display-name">
+                <h4>{{post.author.profile.firstname}} {{ post.author.profile.lastname}}</h4>
+                <p class="post-profile-username">@{{ post.author.username }}</p>
+            </div>
         </div>
-        <div>
-            <h3>{{post.author.profile.firstname}} {{ post.author.profile.lastname}}</h3>
-            <p>@{{ post.author.username }}</p>
-        </div>
-    </div>
-</a>
+    </a>
 {% endmacro %}

@@ -5,6 +5,7 @@
 
 <article class="post-article">
     {{ render_post_profile.render_post_profile(post) }}
+    
     <div>
         <a href="{{ url_for('posts.view_post', post_public_id=post.public_id)}}">
             <p>{{post.content}}</p>
@@ -12,16 +13,17 @@
             {% if post.photo_url%}
                 <img class="post-image" src="{{ post.photo_url }}" alt="Photo">
             {% endif %}
-            
-            {{ render_post_reaction.render_post_reaction(post, post_reactions_dict) }}
-            
-            <div>
-                {% if post.edited %}
-                    <br>
-                    <small>Edited</small>
-                {% endif %}
-            </div>
-        </a>
+        </a>  
+
+        {{ render_post_reaction.render_post_reaction(post, post_reactions_dict) }}
+        
+        <div>
+            {% if post.edited %}
+                <br>
+                <small>Edited</small>
+            {% endif %}
+        </div>
+        
     </div>
 </article>
 {% endmacro %}

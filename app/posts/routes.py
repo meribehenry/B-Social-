@@ -51,7 +51,7 @@ def update_post(post_public_id):
     elif request.method == "GET":
         form.content.data = post.content
     
-    return render_template("posts/new_post.html", form=form, title="Update Post", photo_url=post.photo_url if post.photo_url else None)
+    return render_template("posts/new_post.html", form=form, title="Update Post",post=post, photo_url=post.photo_url if post.photo_url else None)
         
 
 @posts.route("/view/<post_public_id>", methods=["GET", "POST"])

@@ -9,10 +9,14 @@
 
             {{ form.hidden_tag() }}
 
+            {% if post %}
+                <h3 class="new-post-page-heading ">Edit Post</h3>
+            {%else%}
+                <h3 class="new-post-page-heading">New Post</h3>
+            {% endif %}
 
             <!--  POST PHOTO IF ANY (FOR UPDATE POST ONLY) -->
             {% if photo_url%}
-                <h3 class="new-post-page-heading ">Edit Post</h3>
                 <div class="edit-post-field-input">
                     {{ render_post_field.render_post_field(form.content)}}
                     <img class="edit-post-photo" src="{{ photo_url }}" alt="Photo"><br><br>
@@ -21,7 +25,7 @@
                     </div>  
                 </div>
             {% else %}
-                <h3 class="new-post-page-heading ">New Post</h3>
+            <!-- --------FOR NEW POST/ EDIT POST WITHOUT IMAGE-------- -->
                 {{ render_post_field.render_post_field(form.content)}}
                 <div class="upload-photo">
                     {{ render_post_field.render_post_field(form.photo)}}

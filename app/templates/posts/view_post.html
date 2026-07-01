@@ -17,12 +17,13 @@
         {% endif %}
 
     <!--COMMENT SECTION-->
-        <section>
-            <h2>COMMENTS</h2>
-            {% for comment in comments.items %}
-                {{ render_comment.render_comment(comment, comment_reactions_dict) }}
-                <hr>      
-            {% endfor %}
+        <section class="post-comments">
+            <h5>Comments</h5>
+            <div class="comments-area">
+                {% for comment in comments.items %}
+                    {{ render_comment.render_comment(comment, comment_reactions_dict) }}   
+                {% endfor %}
+            </div>
         </section>
 
     <!-- PAGINATION AREA -->

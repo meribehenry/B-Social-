@@ -53,7 +53,7 @@ def edit_comment(comment_public_id):
     elif request.method == "GET":
         form.content.data = comment.content
     
-    return render_template("comments/new_comment.html", form=form, title="Edit Comment")
+    return render_template("comments/new_comment.html", comment=comment, form=form, title="Edit Comment")
         
 
 @comments.route("/view/<comment_public_id>")

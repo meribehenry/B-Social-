@@ -12,9 +12,9 @@
             <!-- USER PROFILE PICTURE -->
             <div class="edit-profile-image-container">
                 {% if current_user.profile.profile_pic_id == "default" %}
-                    <img src="{{ url_for('static', filename='profile_pics/default.jpg')}}" alt="Profile Picture" width="90" height="90", style="border-radius: 70cap;">
+                    <img class="profile-section-image" src="{{ url_for('static', filename='profile_pics/default.jpg')}}" alt="Profile Picture" >
                 {% else %}
-                    <img src="{{ current_user.profile.profile_pic_url }}" alt="Profile Picture" width="90" height="90", style="border-radius: 70cap;">
+                    <img class="profile-section-image" src="{{ current_user.profile.profile_pic_url }}" alt="Profile Picture">
                 {% endif %}
             </div>
 

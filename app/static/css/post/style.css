@@ -193,6 +193,6 @@
 .show-likes-num, .show-comments-num {
     display: flex;
     gap: 0.5rem;
-    align-items: center;
-    padding-top: 1rem;
+    align-items: start;
+    padding-top: 2rem;
 }

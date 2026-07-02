@@ -5,32 +5,46 @@
         {% if user_post_reaction %}
             {% if user_post_reaction.liked %}
                 <div class="show-likes-num">
-                    <a style="color: red;" href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">Like</a>
-                    <p>{{post.num_of_likes}} </p>
+                    <a class="reaction-link" href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">
+                        <img src="{{url_for('static', filename='svgs/reaction/thumbs-up-solid.svg')}}" alt="Like">
+                    </a>
+                    <p class="reaction-num-text">{{post.num_of_likes}} </p>
                 </div> 
-                <a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">Dislike</a>
+                <a class="reaction-link" href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">
+                    <img src="{{url_for('static', filename='svgs/reaction/thumbs-down-outline.svg')}}" alt="Dislike">
+                </a>
             {% else %}
                 <div class="show-likes-num">
-                    <a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">Like</a>
-                    <p>{{post.num_of_likes}} </p>
+                    <a class="reaction-link" href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">
+                        <img src="{{url_for('static', filename='svgs/reaction/thumbs-up-outline.svg')}}" alt="Like">
+                    </a>
+                    <p class="reaction-num-text">{{post.num_of_likes}} </p>
                 </div>
-                <a style="color: red;"  href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">Dislike</a>        
+                <a class="reaction-link" href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">
+                    <img src="{{url_for('static', filename='svgs/reaction/thumbs-down-solid.svg')}}" alt="Dislike">
+                </a>        
             {% endif %}    
         {% else %}
             <div class="show-likes-num">
-                <a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">Like</a>
-                <p>{{post.num_of_likes}}</p>
+                <a class="reaction-link" href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='like')}}">
+                    <img src="{{url_for('static', filename='svgs/reaction/thumbs-up-outline.svg')}}" alt="Like">
+                </a>
+                <p class="reaction-num-text">{{post.num_of_likes}}</p>
             </div>
             
-            <a href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">Dislike</a>      
+            <a class="reaction-link" href="{{ url_for('posts.view_post', post_public_id=post.public_id, reaction='dislike')}}">
+                <img src="{{url_for('static', filename='svgs/reaction/thumbs-down-outline.svg')}}" alt="Dislike">
+            </a>      
         {% endif %}
         
         <div class="show-comments-num">
-            <a href="{{ url_for('comments.new_comment', post_public_id=post.public_id)}}">Comment</a>
-            <p>{{post.num_of_comments}} </p> 
+            <a class="reaction-link" href="{{ url_for('comments.new_comment', post_public_id=post.public_id)}}">
+                <img src="{{url_for('static', filename='svgs/reaction/chatbubble-ellipses-outline.svg')}}" alt="Comment">
+            </a>
+            <p class="reaction-num-text">{{post.num_of_comments}} </p> 
         </div>
         
-        <p>{{ post.date_created | timeago }}</p> 
+        <p class="reaction-num-text">{{ post.date_created | timeago }}</p> 
     </div>
 {% endmacro %}
 

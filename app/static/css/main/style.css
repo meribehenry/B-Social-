@@ -326,6 +326,19 @@ ul {
     height: auto;
 }
 
+.reaction-svg {
+    width: 15px
+}
+
+.reaction-link {
+    width: 20px;
+    height: 15px;
+    display: inline-block;
+}
+
+.reaction-num-text {
+    font-size: var(--text-base);
+}
 
 
 /* -------------------SECTIONS------------------------- */

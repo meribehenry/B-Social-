@@ -15,17 +15,18 @@
                         <p >@{{ user.username }}</p>
                     </div>
                 </div>
-                {{ render_follow_button.render_follow_button(user, follower) }}
+
+                {% if current_user != user %}
+                    {{ render_follow_button.render_follow_button(user, current_user, follower) }}
+                {% else %}
+                    <a class="btn btn-primary" href="{{url_for('profile.edit_profile', user_public_id=user.public_id)}}">Edit</a>
+                {% endif %}
             </div>
-            
 
             {% if user.profile.bio %}
                 <p>{{ user.profile.bio }}</p>
             {% endif %}
 
-            {% if user == current_user %}
-                <p><a href="{{url_for('profile.edit_profile', user_public_id=user.public_id)}}">Edit</a></p>
-            {% endif %}
         </div>
         
     </section>

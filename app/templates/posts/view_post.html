@@ -10,11 +10,12 @@
             {{ render_post.render_post(post, post_reactions_dict) }}
         </div>
         
-
-        {% if current_user.is_authenticated and current_user == post.author %}
-            <a href="{{ url_for('posts.update_post', post_public_id=post.public_id)}}"><button type="button" style="color: rgb(255, 255, 42);">Update</button></a>
-            <a href="{{ url_for('posts.delete_post', post_public_id=post.public_id)}}"><button type="button" style="color: red;">Delete</button></a>
-        {% endif %}
+        <div class="post-edit-delete-container">
+            {% if current_user.is_authenticated and current_user == post.author %}
+                <a class="btn btn-secondary" href="{{ url_for('posts.update_post', post_public_id=post.public_id)}}">Edit</a>
+                <a class="btn btn-tertiary" href="{{ url_for('posts.delete_post', post_public_id=post.public_id)}}">Delete</a>
+            {% endif %}
+        </div>
 
     <!--COMMENT SECTION-->
         <section class="post-comments">

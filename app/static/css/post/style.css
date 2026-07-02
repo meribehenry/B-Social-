@@ -188,11 +188,19 @@
     justify-content: space-between;
     align-items: baseline;
     padding: 0rem 5rem;
+    padding-top: 2rem;
 }
 
 .show-likes-num, .show-comments-num {
     display: flex;
     gap: 0.5rem;
     align-items: start;
-    padding-top: 2rem;
+    /* padding-top: 2rem; */
+}
+
+.post-edit-delete-container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
 }

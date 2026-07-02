@@ -1,7 +1,7 @@
-{% macro render_follow_button(user_to_follow, follower) %}
+{% macro render_follow_button(user_to_follow, current_user, follower) %}
     <div>
         {% if current_user != user_to_follow %}
-            {% if follower is none %}
+            {% if follower is none  %}
                 <a class="btn btn-primary" href="{{url_for('profile.view_profile', user_public_id=user_to_follow.public_id, follower='follow')}}">Follow</a>
             {% else %}
                 <a class="btn btn-primary-outline" href="{{url_for('profile.view_profile', user_public_id=user_to_follow.public_id, follower='unfollow')}}">Unfollow</a>

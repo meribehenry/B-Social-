@@ -258,6 +258,12 @@ ul {
     border: 2px solid var(--tertiary-shade);
 }
 
+.btn-danger:link, .btn-danger:visited {
+    background-color: red;
+    color: var(--white-1);
+    border: 2px solid red;
+}
+
 .highlight {
     padding: 0.5rem;
     border-radius: 5px;
@@ -337,9 +343,8 @@ ul {
 }
 
 .reaction-num-text {
-    font-size: var(--text-base);
+    font-size: 15px;
 }
-
 
 /* -------------------SECTIONS------------------------- */
 

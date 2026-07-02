@@ -11,8 +11,8 @@
         </div>
 
         {% if current_user == comment.author %}
-            <a href="{{ url_for('comments.edit_comment', comment_public_id=comment.public_id)}}"><button type="button" style="color: yellow;">Edit</button></a>
-            <a href="{{ url_for('comments.delete_comment', comment_public_id=comment.public_id)}}"><button type="button" style="color: red;">Delete</button></a>
+            <a class="btn btn-secondary" href="{{ url_for('comments.edit_comment', comment_public_id=comment.public_id)}}">Edit</a>
+            <a class="btn btn-tertiary" href="{{ url_for('comments.delete_comment', comment_public_id=comment.public_id)}}">Delete</a>
         {% endif %}
     </section>
 

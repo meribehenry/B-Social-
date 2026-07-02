@@ -100,3 +100,9 @@
     padding: 1rem 2rem;
 }
 
+.comment-reaction-container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+

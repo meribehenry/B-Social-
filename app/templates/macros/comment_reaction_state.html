@@ -18,27 +18,41 @@
     <!-- --------------------- -->
     <div class="post-reaction-container"> 
         {% set user_comment_reaction = comment_reactions_dict.get(comment.id) %}
-        {% if user_comment_reaction %}
-            {% if user_comment_reaction.liked %}
-                <div class="show-likes-num">
-                    <a style="color: red;" href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='like')}}">Like</a>
-                    <p>{{comment.num_of_likes}} </p>
-                </div> 
-                <a href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='dislike')}}">Dislike</a>
+        <div class="comment-reaction-container">
+            {% if user_comment_reaction %}
+                {% if user_comment_reaction.liked %}
+                    <div class="show-likes-num">
+                        <a class="reaction-link" href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='like')}}">
+                            <img src="{{url_for('static', filename='svgs/reaction/thumbs-up-solid.svg')}}" alt="Like">
+                        </a>
+                        <p class="reaction-num-text">{{comment.num_of_likes}} </p>
+                    </div> 
+                    <a class="reaction-link" href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='dislike')}}">
+                        <img src="{{url_for('static', filename='svgs/reaction/thumbs-down-outline.svg')}}" alt="Dislike">
+                    </a>
+                {% else %}
+                    <div class="show-likes-num">
+                        <a class="reaction-link" href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='like')}}">
+                            <img src="{{url_for('static', filename='svgs/reaction/thumbs-up-outline.svg')}}" alt="Like">
+                        </a>
+                        <p class="reaction-num-text">{{comment.num_of_likes}} </p>
+                    </div>
+                    <a class="reaction-link"  href="{{url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='dislike')}}">
+                        <img src="{{url_for('static', filename='svgs/reaction/thumbs-down-solid.svg')}}" alt="Dislike">
+                    </a>        
+                {% endif %}    
             {% else %}
                 <div class="show-likes-num">
-                    <a href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='like')}}">Like</a>
-                    <p>{{comment.num_of_likes}} </p>
-                </div>
-                <a style="color: red;"  href="{{url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='dislike')}}">Dislike</a>        
-            {% endif %}    
-        {% else %}
-            <div class="show-likes-num">
-                <a href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='like')}}">Like</a>
-                <p>{{comment.num_of_likes}}</p>
-            </div>   
-            <a href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='dislike')}}">Dislike</a>      
-        {% endif %}
+                    <a class="reaction-link" href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='like')}}">
+                        <img src="{{url_for('static', filename='svgs/reaction/thumbs-up-outline.svg')}}" alt="Like">
+                    </a>
+                    <p class="reaction-num-text">{{comment.num_of_likes}}</p>
+                </div>   
+                <a class="reaction-link" href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id, reaction='dislike')}}">
+                    <img src="{{url_for('static', filename='svgs/reaction/thumbs-down-outline.svg')}}" alt="Dislike">
+                </a>      
+            {% endif %}
+        </div>
         
         <p>{{ comment.date_created | timeago }}</p> 
     </div>

@@ -99,14 +99,14 @@
     }
 
     .hero-section {
-        height: calc(100vh - var(--nav-height));
+        height: calc(80vh - var(--nav-height));
         padding-left: 3rem;
         display: grid;
         grid-template-columns: 1fr 1fr;
         align-items: center;
         justify-content: center;
         column-gap: 2rem;
-        margin-bottom: 20rem;
+        margin-bottom: 2rem;
     }
 
     .hero-heading {
@@ -181,14 +181,14 @@
     }
 
     .hero-section {
-        height: calc(100vh - var(--nav-height));
+        height: calc(70vh - var(--nav-height));
         padding-left: 1rem;
         display: grid;
         grid-template-columns: 1fr 1fr;
         align-items: center;
         justify-content: center;
         column-gap: 1.5rem;
-        margin-bottom: 20rem;
+        margin-bottom: 2rem;
     }
 
     .hero-heading {
@@ -258,7 +258,7 @@
     }
 }
 
-/* SCREEN SIZE: 3px - 398px */
+/* SCREEN SIZE: 300px - 398px */
 @media (max-width: 25rem ) {
     html {
         font-size:  34.5%;

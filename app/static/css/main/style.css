@@ -346,6 +346,83 @@ ul {
     font-size: 15px;
 }
 
+.pagination-area {
+    display: flex;
+    justify-content: center;
+}
+
+.paginate-btn {
+    padding: 1rem;
+}
+
+.logo-md {
+    width: 120px;
+}
+
+.logo-lg {
+    width: 150px;
+}
+
+/* ------ALERT-------- */
+.alert {
+    width: 100%;
+    padding: 0.5rem 1.0rem;
+    border-radius: 16px;
+    border-left: 2px solid;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+}
+
+.text-icon {
+    width: 3rem;
+    border-radius: 1.5rem;
+    text-align: center;
+    margin-left: 0.5rem;
+}
+
+
+.alert-success {
+    color: rgb(1, 48, 1);
+    background-color: rgb(197, 252, 197);
+}
+
+.text-icon-success {
+    background-color: rgb(168, 250, 168);
+    color: rgb(3, 110, 3);
+}
+
+.alert-danger {
+    color: darkred;
+    background-color: antiquewhite;
+}
+
+.text-icon-danger {
+    background-color: rgb(248, 224, 192);
+    color: rgb(160, 11, 11);
+}
+
+.alert-info {
+    color: rgb(2, 2, 92);
+    background-color: rgb(210, 210, 250);
+}
+
+.text-icon-info {
+    background-color: rgb(190, 190, 255);
+    color: rgb(5, 5, 128);
+}
+
+.alert-warning {
+    color: rgb(199, 179, 0);
+    background-color: rgb(255, 250, 203);
+}
+
+.text-icon-warning {
+    background-color: rgb(253, 245, 169);
+    color: rgb(199, 179, 0);
+}
+
+
 /* -------------------SECTIONS------------------------- */
 
 /* -----------NAVBAR------------ */
@@ -387,7 +464,6 @@ ul {
 .flash-message {
     height: 3rem;
     margin-bottom: 1rem;
-    position: absolute;
 }
 
 /* --------------HERO SECTION----------- */

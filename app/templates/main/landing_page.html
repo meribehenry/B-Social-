@@ -95,7 +95,7 @@
     <footer class="footer">
         <div class="footer-grid-container">
             <div class="footer-grid-col-1">
-                <h3>B-Social</h3>
+                <img class="logo-lg" src="{{url_for('static', filename='images/logo.png')}}" alt="">
                 <div  class="footer-social-image-container">
                     <img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/facebook.svg')}}" alt="facebook-Logo">
                     <img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/tiktok.svg')}}" alt="tikTok-Logo">
@@ -107,18 +107,18 @@
             <div class="footer-link-container">
                 <h4>Go</h4>
                 <a href="#">B-Social</a>
-                <a href="#">Login</a>
-                <a href="#">Sign up</a>
-                <a href="#">About</a>
-                <a href="#">Feedback</a>
+                <a href="{{url_for('auth.login')}}">Login</a>
+                <a href="{{url_for('auth.register')}}">Sign up</a>
+                <a href="{{url_for('main.about')}}">About</a>
+                <a href="{{url_for('feedback.view_feedbacks')}}">Feedback</a>
             </div>
             <div class="footer-link-container">
-                <h4>Follow us:</h4>
-                <a href="#">Facebook</a>
-                <a href="#">X</a>
-                <a href="#">LinkedIn</a>
-                <a href="#">Github</a>
-                <a href="#">TikTok</a>
+                <h4>Follow us</h4>
+                <a href="https://www.facebook.com/share/18E1GYj9Wt" target="_blank">Facebook</a>
+                <a href="https://x.com/MeribeHenry" target="_blank">X</a>
+                <a href="https://www.linkedin.com/in/meribe-henry-24a4913a2?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank">LinkedIn</a>
+                <a href="https://github.com/meribehenry" target="_blank">Github</a>
+                <a href="https://www.tiktok.com" target="_blank">TikTok</a>
             </div>
         </div>
     </footer>

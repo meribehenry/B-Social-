@@ -123,8 +123,7 @@ class Follower(db.Model):
 
 class Feedback(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    writer = db.Column(db.Integer, nullable=False)
+    writer_id = db.Column(db.Integer, nullable=False)
     text = db.Column(db.Text, nullable=False)
     date = db.Column(db.DateTime(timezone=True), default= lambda: datetime.now(timezone.utc), nullable=False)
-    # writer_public_id = db.Column(db.String(50), default="None", nullable=False)
-    # writer_username = db.Column(db.String(20), default="None", nullable=False)
+    writer_username = db.Column(db.String(20), nullable=False)

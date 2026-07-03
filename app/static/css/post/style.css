@@ -64,6 +64,7 @@
     align-items: center;
     width: 100%;
     gap: 3rem;
+    height: 100vh;
 }
 
 /* -----NEW/VIEW POST TEMPLATE------ */
@@ -209,4 +210,18 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.click-svg {
+    width: 25px;
+}
+
+.show-click-num {
+    display: flex;
+    align-items: center;
+}
+
+.click-num-text {
+    margin-top: 6px;
+    font-size: 16px;
 }

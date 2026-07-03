@@ -44,6 +44,11 @@
             <p class="reaction-num-text">{{post.num_of_comments}} </p> 
         </div>
         
+        <div class="show-click-num">
+            <img class="click-svg" src="{{url_for('static', filename='svgs/reaction/click.svg')}}" alt="">
+            <p class="click-num-text">{{ post.num_of_clicks }}</p>
+        </div>
+        
         <p>{{ post.date_created | timeago }}</p> 
     </div>
 {% endmacro %}

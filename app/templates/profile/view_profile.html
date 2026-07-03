@@ -2,6 +2,7 @@
 {% block content %}
     {% import "macros/post_article.html" as render_post %}
 
+<link rel="stylesheet" href="{{url_for('static', filename='css/post/style.css')}}"> 
 <!-- USER PROFILE -->
     {% include "components/profile_card.html"%}
 

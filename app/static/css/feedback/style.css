@@ -61,7 +61,22 @@
 
 .new-post-svg-container {
     display: flex;
-    padding: 1rem 20rem;
+    position: sticky;
+    top: 20px;
     justify-content: end;
-    align-items: center;
+    align-items: start;
 }
+.view-feedbacks-container {
+    display: grid;
+    justify-content: center;
+    padding: 1rem 2rem ;
+    margin-bottom: 5rem;
+}
+.view-feedbacks {
+    height: 100vh;
+}
+
+.writer_username {
+    font-style: oblique;
+}
+

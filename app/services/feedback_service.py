@@ -9,9 +9,12 @@ class FeedbackService:
 
     def submit_feedback(self, feedback_text):
         # Logic to save feedback to the database
-        feedback = Feedback(writer=self.current_user.id, text=feedback_text, date=datetime.now(timezone.utc)) 
-                            # writer_public_id=self.current_user.public_id, 
-                            # writer_username = self.current_user.username)
+        feedback = Feedback(writer_id=self.current_user.id, 
+                            text=feedback_text,  
+                            writer_username = self.current_user.username, 
+                            date=datetime.now(timezone.utc)
+                            ) 
+                        
         try:
             db.session.add(feedback)
             db.session.commit()

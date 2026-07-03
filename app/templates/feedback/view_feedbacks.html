@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+    {% import "macros/feedback.html" as render_feedback %}
+    {% import "macros/pagination.html" as render_pagination %}
+
+
+<link rel="stylesheet" href="{{url_for('static', filename='css/feedback/style.css')}}">
+    <div class="new-post-svg-container">
+        <a href="{{url_for('feedback.submit_feedback')}}"><img class="new_feedback-svg " src="{{url_for('static', filename='svgs/add-outline.svg')}}" alt="Plus"></a>
+    </div>
+    <!--FEEDBACKS-->
+    <section class="view-comment">
+        <div>
+            {% for feedback in feedbacks.items %}
+                {{ render_feedback.render_feedback(feedback) }}   
+            {% endfor %}
+        </div>
+    
+
+        <!-- PAGINATION AREA -->
+        <div>
+            {{ render_pagination.render_pagination(feedbacks, "feedback.view_feedbacks")}}  
+        </div>  
+    </section> 
+
+{% endblock %}

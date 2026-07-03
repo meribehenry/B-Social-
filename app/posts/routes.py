@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, request, url_for, abort
-from app.models import Post, Comment
+from app.models import Follower, Post, Comment
 from .forms import NewPostForm
 from flask_login import login_required, current_user
 from app.utils.count_clicks import count_clicks
@@ -76,12 +76,16 @@ def view_post(post_public_id):
     comments = post.comments.order_by(Comment.date_created.desc()).paginate(page=page, per_page=20)
     comment_reactions_dict =  get_user_comment_reactions_dict(current_user)
     post_reactions_dict = get_user_post_reactions_dict(current_user)
+    follower_object = None
+    
+    follower_object = Follower.query.filter_by(follower_id=current_user.id, followed_user_id=post.author.id).first()
     return render_template("posts/view_post.html", 
                             post=post, 
                             title="View Post", 
                             comments=comments, 
                             comment_reactions_dict=comment_reactions_dict,
-                            post_reactions_dict=post_reactions_dict
+                            post_reactions_dict=post_reactions_dict,
+                            follower=follower_object
                             )
 
 

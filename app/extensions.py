@@ -6,6 +6,8 @@ from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from flask_migrate import Migrate
 from flask_mail import Mail
+from flask_apscheduler import APScheduler
+
 
 convention = {
     "ix": "ix_%(column_0_label)s",
@@ -22,6 +24,7 @@ bcrypt = Bcrypt()
 migrate = Migrate()
 login_manager = LoginManager()
 mail = Mail()
+scheduler = APScheduler()
 
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragms(dbapi_connection, connection_record):
@@ -29,3 +32,4 @@ def set_sqlite_pragms(dbapi_connection, connection_record):
         cursor = dbapi_connection.cursor()
         cursor.execute("PRAGMA foreign_keys=ON")
         cursor.close()
+

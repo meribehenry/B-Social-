@@ -6,6 +6,7 @@ from app.services.profile_service import ProfileService
 from app.profile.forms import EditProfileForm
 from app.utils.reaction_dict import get_user_post_reactions_dict
 from app.utils.decorators import verification_required
+from app.utils.follower_dict import get_follower_dict
 
 
 profile = Blueprint("profile", __name__)
@@ -34,7 +35,8 @@ def view_profile(user_public_id):
     if current_user != user:
         follower_object = Follower.query.filter_by(follower_id=current_user.id, followed_user_id=user.id).first()
     post_reactions_dict = get_user_post_reactions_dict(current_user)
-    return render_template("profile/view_profile.html", posts=posts, user=user, title="Profile", follower=follower_object, post_reactions_dict=post_reactions_dict)
+    follower_dict = get_follower_dict(current_user)
+    return render_template("profile/view_profile.html", posts=posts, user=user, title="Profile", follower=follower_object, post_reactions_dict=post_reactions_dict, follower_dict=follower_dict)
 
 
 @profile.route("/edit/<user_public_id>", methods=["GET", "POST"])

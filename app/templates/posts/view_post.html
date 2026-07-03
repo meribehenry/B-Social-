@@ -3,11 +3,12 @@
     {% import "macros/post_article.html" as render_post %}
     {% import "macros/comment.html" as render_comment %}
     {% import "macros/pagination.html" as render_pagination %}
+    {% import "macros/follower_button.html" as render_follow_button %}
 
     <div class="view-post-container">
     <!-- POST SECTION -->
-        <div>
-            {{ render_post.render_post(post, post_reactions_dict) }}
+        <div class="post_header">
+            {{ render_post.render_post(post, post_reactions_dict, follower, current_user) }}
         </div>
         
         <div class="post-edit-delete-container">

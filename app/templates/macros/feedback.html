@@ -1,0 +1,12 @@
+{% macro render_feedback(feedback) %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/comment/style.css')}}">
+    <article class="comment">
+        <div class="comment-profile">
+            <p>username</p>
+        </div>
+
+        <div>  
+            <p>{{feedback.text}}</p>
+        </div>
+    </article>
+{% endmacro %}

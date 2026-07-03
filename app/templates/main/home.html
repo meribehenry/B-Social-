@@ -8,7 +8,8 @@
 <!-- POST SECTION -->
     <section>
         {% for post in posts.items %}
-            {{ render_post.render_post(post, post_reactions_dict) }}      
+            {% set follower = follower_dict.get(post.author.id)%}
+            {{ render_post.render_post(post, post_reactions_dict, follower, current_user) }}      
         {% endfor %}
     </section>
 

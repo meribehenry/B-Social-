@@ -1,11 +1,21 @@
 {% import "macros/post_profile.html" as render_post_profile %}
 {% import "macros/post_reaction_state.html" as render_post_reaction %}
-{% macro render_post(post, post_reactions_dict) %}
+{% import "macros/follower_button.html" as render_follow_button %}
+{% macro render_post(post, post_reactions_dict, follower, current_user) %}
 <link rel="stylesheet" href="{{url_for('static', filename='css/post/style.css')}}">
 
 <article class="post-article">
-    {{ render_post_profile.render_post_profile(post) }}
-    
+    <div class="post-header">
+        {{ render_post_profile.render_post_profile(post) }}
+        {% if follower.followed_user_id != current_user.id %}
+            {% if follower is not none %}
+                <a class="btn btn-primary-outline" href="{{url_for('profile.view_profile', user_public_id=post.author.public_id, follower='unfollow')}}">Unfollow</a>
+            {% else%}
+                <a class="btn btn-primary" href="{{url_for('profile.view_profile', user_public_id=post.author.public_id, follower='follow')}}">Follow</a>
+            {% endif %} 
+        {% endif %}
+    </div>
+
     <div>
         <a href="{{ url_for('posts.view_post', post_public_id=post.public_id)}}">
             <p>{{post.content}}</p>

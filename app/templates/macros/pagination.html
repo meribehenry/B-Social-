@@ -1,4 +1,4 @@
-{% macro render_pagination(pagination_object, destination, endpoint=False) %}
+{% macro render_pagination(pagination_object, destination) %}
     <div>
         {% for page_num in pagination_object.iter_pages(left_edge=1, left_current=2, right_edge=2, right_current=2) %}
             {% if page_num == pagination_object.page %}

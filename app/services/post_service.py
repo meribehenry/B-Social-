@@ -41,10 +41,9 @@ class PostService():
 
 
     def edit_post(self, form, post):
-        if not form.content.data and not form.photo.data:
-            return None
+        if form.content.data == post.content and not form.photo.data:
+            return True
         
-        # post_type, photo_url, photo_id = "text", "",""
         
         if form.photo.data:
             media_service = MediaService()

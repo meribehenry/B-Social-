@@ -84,7 +84,7 @@ def reset_request():
     if form.validate_on_submit():
         auth_service = AuthService()
         auth_service.reset_request(form)
-        flash("If this account exist an email containing reset link was sent to it", "success") 
+        flash("If this account exist an email containing reset link was sent to it", "info") 
         return redirect(url_for("auth.login"))
     
     return render_template("auth/reset_request.html", form=form, title="Password Reset Request")
@@ -106,7 +106,7 @@ def reset_password(token):
 
     if form.validate_on_submit():
         auth_service = AuthService()
-        result = auth_service.reset_password(form, token, user)
+        result = auth_service.reset_password(form, user)
         if result is True:
             return redirect(url_for("auth.login"))
         else:

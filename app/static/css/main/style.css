@@ -220,6 +220,7 @@ ul {
     background-color: var(--primary-shade);
     color: var(--white-1);
     border: 2px solid var(--primary-shade);
+    transform: scale(1.05);
 }
 
 .btn-primary-outline:link, .btn-primary-outline:visited {
@@ -232,6 +233,7 @@ ul {
     background-color: var(--white-2);
     color: var(--primary-shade);
     border: 2px solid var(--primary-shade);
+    transform: scale(1.05);
 }
 
 .btn-secondary:link, .btn-secondary:visited {
@@ -244,6 +246,7 @@ ul {
     background-color: var(--secondary-shade-2);
     color: var(--white-1);
     border: 2px solid var(--secondary-shade-2);
+    transform: scale(1.05);
 }
 
 .btn-tertiary:link, .btn-tertiary:visited {
@@ -256,12 +259,28 @@ ul {
     background-color: var(--tertiary-shade);
     color: var(--white-1);
     border: 2px solid var(--tertiary-shade);
+    transform: scale(1.05);
+    
 }
 
 .btn-danger:link, .btn-danger:visited {
     background-color: red;
     color: var(--white-1);
     border: 2px solid red;
+}
+
+.navbar-text-link:hover {
+    color: var(--grey-shade);
+    transform: scale(1.05);
+}
+
+.text-link:link, .text-link:visited {
+    color: var(--grey-base);
+}
+
+.text-link:link:hover, .text-link:visited:hover {
+    color: var(--grey-shade);
+    text-decoration: underline;
 }
 
 .highlight {
@@ -352,7 +371,15 @@ ul {
 }
 
 .paginate-btn {
-    padding: 1rem;
+    width: 2.5rme;
+    padding: 0.5rem 1rem;
+    border-radius: 3px;
+    background-color: var(--grey-tint-1);
+    color: var(--white-1);
+}
+
+.paginate-btn-current {
+    background-color: var(--grey-base);
 }
 
 .logo-md {
@@ -364,6 +391,7 @@ ul {
 }
 
 /* ------ALERT-------- */
+
 .alert {
     width: 100%;
     padding: 0.5rem 1.0rem;
@@ -372,13 +400,19 @@ ul {
     font-weight: 500;
     display: flex;
     justify-content: space-between;
+    margin-bottom: 2rem;
 }
 
 .text-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 3rem;
-    border-radius: 1.5rem;
+    border-radius: 50%;
     text-align: center;
     margin-left: 0.5rem;
+    height: 3rem;
+    padding: 1rem;
 }
 
 
@@ -387,9 +421,13 @@ ul {
     background-color: rgb(197, 252, 197);
 }
 
+.text-icon-success::before {
+    content: "✓";
+    color: rgb(3, 110, 3);
+}
+
 .text-icon-success {
     background-color: rgb(168, 250, 168);
-    color: rgb(3, 110, 3);
 }
 
 .alert-danger {
@@ -397,9 +435,14 @@ ul {
     background-color: antiquewhite;
 }
 
-.text-icon-danger {
+.text-icon-danger::before {
+    content: "✖";
     background-color: rgb(248, 224, 192);
     color: rgb(160, 11, 11);
+}
+
+.text-icon-danger {
+    background-color: rgb(248, 224, 192);
 }
 
 .alert-info {
@@ -407,9 +450,13 @@ ul {
     background-color: rgb(210, 210, 250);
 }
 
+.text-icon-info::before {
+    content: "ℹ";
+    color: rgb(5, 5, 128);
+}
+
 .text-icon-info {
     background-color: rgb(190, 190, 255);
-    color: rgb(5, 5, 128);
 }
 
 .alert-warning {
@@ -417,9 +464,26 @@ ul {
     background-color: rgb(255, 250, 203);
 }
 
+.text-icon-warning::before {
+    content: "⚠";
+    color: rgb(199, 179, 0);
+}
+
 .text-icon-warning {
     background-color: rgb(253, 245, 169);
-    color: rgb(199, 179, 0);
+}
+
+.alert-message-text-container {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 1rem;
+}
+
+.edited-text {
+    font-size: var(--text-sm);
+    font-style: italic;
+    color: var(--grey-tint-1);
 }
 
 
@@ -464,6 +528,7 @@ ul {
 .flash-message {
     height: 3rem;
     margin-bottom: 1rem;
+    z-index: 100;
 }
 
 /* --------------HERO SECTION----------- */
@@ -663,5 +728,24 @@ ul {
 
 /* ---------ABOUT-------- */
 .about-page {
-    margin-bottom: 50rem;
+    margin-bottom: 20rem;
+    padding: 1rem 2rem;
+}
+
+.about-heading {
+    margin-bottom: 1rem;
+}
+
+.about-paragraph {
+    margin-bottom: 2rem;
+}
+
+.about-paragraph-ending {
+    margin-top: 3rem;
+    font-style: oblique;
+    margin-bottom: 2rem;
+}
+
+.about-link {
+    font-size: var(--text-paragraph);
 }

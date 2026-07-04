@@ -106,3 +106,8 @@
     gap: 2rem;
 }
 
+
+.comment-text {
+    color: var(--grey-base);
+}
+

@@ -5,8 +5,11 @@
 
 
 <link rel="stylesheet" href="{{url_for('static', filename='css/feedback/style.css')}}">
+    <h4 class="feedback-heading">Feedbacks</h4>
     <div class="new-post-svg-container">
-        <a href="{{url_for('feedback.submit_feedback')}}"><img class="new_feedback-svg " src="{{url_for('static', filename='svgs/add-outline.svg')}}" alt="Plus"></a>
+        <div class="new-post-svg-box">
+            <a href="{{url_for('feedback.submit_feedback')}}"><img class="new_feedback-svg " src="{{url_for('static', filename='svgs/add-outline-white.svg')}}" alt="Plus"></a>
+        </div> 
     </div>
     <section class="view-feedbacks-container">
         

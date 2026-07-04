@@ -40,4 +40,4 @@ def delete_feedback(feedback_id):
 def view_feedbacks():
     page = request.args.get("page", 1)
     feedbacks = Feedback.query.order_by(Feedback.date.desc()).paginate(per_page=20, page=page)
-    return render_template("feedback/view_feedbacks.html", feedbacks=feedbacks)
+    return render_template("feedback/view_feedbacks.html", feedbacks=feedbacks, title="View Feedbacks")

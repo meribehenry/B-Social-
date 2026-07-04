@@ -25,6 +25,9 @@ class CommentService():
         return True
     
     def edit_comment(self, form, comment):
+        if form.content.data == comment.content:
+            return True
+        
         comment.content = form.content.data
         try:
             db.session.add(comment)

@@ -10,7 +10,7 @@
 
         <div>
             <a href="{{ url_for('comments.view_comment', comment_public_id=comment.public_id) }}">    
-                <p>{{comment.content}}</p>
+                <p class="comment-text">{{comment.content}}</p>
             </a>
 
             {{ render_comment_reaction.render_comment_reaction(comment, comment_reactions_dict) }}
@@ -18,7 +18,7 @@
 
             {% if comment.edited %}
                 <br>
-                <small>Edited</small>
+                <p class="edited-text">Edited</p>
             {% endif %}
         </div>
     </article>

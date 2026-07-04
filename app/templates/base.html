@@ -15,26 +15,27 @@
                     <div class="navbar-left">
                         <a href="{{url_for('main.landing_page')}}"><img class="logo-md" src="{{url_for('static', filename='images/logo.png')}}" alt="Logo"></a>
                         <div class="navbar-left-link">
-                            <a href="{{url_for('main.about')}}">About</a>
-                            <a href="{{ url_for('feedback.view_feedbacks')}}">Feedback</a>
+                            <a class="navbar-text-link" href="{{url_for('main.about')}}">About</a>
+                            <a class="navbar-text-link" href="{{ url_for('feedback.view_feedbacks')}}">Feedback</a>
                         </div>
                     </div>
                     <div class="navbar-right">
-                        <a class="btn btn-primary-outline" href="{{url_for('auth.login')}}">Login</a>
-                        <a class="btn btn-primary" href="{{url_for('auth.register')}}">Sign up</a>
+                        <a class="navbar-text-link" class="btn btn-primary-outline" href="{{url_for('auth.login')}}">Login</a>
+                        <a class="navbar-text-link" class="btn btn-primary" href="{{url_for('auth.register')}}">Sign up</a>
                     </div>
 
                 {% else %}
                     <div class="navbar-left">
                         <a href="{{url_for('main.landing_page')}}"><img class="logo-md" src="{{url_for('static', filename='images/logo.png')}}" alt="Logo"></a>
                         <div class="navbar-left-link">
-                            <a href="{{url_for('main.home')}}">Home</a>
-                            <a href="{{ url_for('profile.view_profile', user_public_id=current_user.public_id)}}">Profile</a>
+                            <a class="navbar-text-link" href="{{url_for('main.home')}}">Home</a>
+                            <a class="navbar-text-link" href="{{ url_for('profile.view_profile', user_public_id=current_user.public_id)}}">Profile</a>
+                            <a class="navbar-text-link" href="{{ url_for('feedback.view_feedbacks')}}">Feedback</a>
                         </div>
                     </div>
                     <div class="navbar-right navbar-right-g2">
-                        <a href="{{url_for('posts.new_post')}}">New Post</a>
-                        <a href="{{url_for('auth.logout')}}">Logout</a>
+                        <a class="navbar-text-link" href="{{url_for('posts.new_post')}}">New Post</a>
+                        <a class="navbar-text-link" href="{{url_for('auth.logout')}}">Logout</a>
                     </div>
                     
                 {% endif %}
@@ -46,7 +47,10 @@
                 {% for category, message in get_flashed_messages(with_categories=True) %}
                     {% if message %}
                         <div class="alert alert-{{category}}">
-                            <p class=".text-icon-{{category}}">{{message}}</p>
+                            <div class="alert-message-text-container">
+                                <p >{{message}}</p>
+                                <p class="text-icon text-icon-{{category}}"> </p>
+                            </div>  
                         </div>
                     {% endif %}
                 {% endfor %}

@@ -35,7 +35,6 @@ class AuthService():
         
         email_service = EmailService(form.email.data)
         email_service.send_otp()
-        flash("Successfully created an account", "success")
         return user
     
 
@@ -84,9 +83,9 @@ class AuthService():
             email_service.send_request_token()    
 
     
-    def reset_password(self, form, token, user):
+    def reset_password(self, form, user):
         if bcrypt.check_password_hash(user.password, form.password.data):
-            flash("New password cannot be the same as old password", "danger")
+            flash("New password cannot be the same as old password", "warning")
             return None
         
         user.password = bcrypt.generate_password_hash(form.password.data).decode("utf-8")
@@ -106,4 +105,4 @@ class AuthService():
         user = User.query.filter_by(public_id=user_public_id).first()
         email_service = EmailService(user.email)
         email_service.send_otp()
-        flash("Email has been sent to you", "success")
+        flash("Email has been sent to you", "info")

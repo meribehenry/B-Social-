@@ -1,5 +1,4 @@
-from datetime import datetime, timezone
-import cloudinary
+from datetime import datetime, timezone, timedelta
 import os
 from config import Production, Development
 from flask import Flask
@@ -50,10 +49,10 @@ def create_app(config_name=None):
     @scheduler.task('interval', id='delete_unverified_user', seconds=900, misfire_grace_time=900)
     def delete_unverified_user():
         with app.app_context():
-            current_time = datetime.now(timezone.utc)
-            unverified_user = User.query.filter(User.is_verified == False).delete()
+            cutoff_time = datetime.now(timezone.utc) - timedelta(seconds=900)
+            unverified_user = User.query.filter(User.is_verified == False, User.date_joined < cutoff_time).delete()
             db.session.commit()
-            print(f"Deleted {unverified_user} unverified_users at {current_time}")
+            print(f"Deleted {unverified_user} unverified_users at {datetime.now(timezone.utc)}")
 
     scheduler.init_app(app)
     scheduler.start()

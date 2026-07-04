@@ -22,9 +22,9 @@
         <div>
             {% for page_num in posts.iter_pages(left_edge=1, left_current=2, right_edge=2, right_current=2) %}
                 {% if page_num == posts.page %}
-                    <a href="{{url_for('profile.view_profile', page=page_num, user_public_id=user.public_id)}}"><button type="button" style="color: blue;"><strong>{{ page_num}}</strong></button></a>
+                    <a class="paginate-btn paginate-btn-current" href="{{url_for('profile.view_profile', page=page_num, user_public_id=user.public_id)}}">{{ page_num}}</a>
                 {% else %}
-                    <a href="{{url_for('profile.view_profile', page=page_num, user_public_id=user.public_id)}}"><button type="button">{{ page_num}}</button></a>
+                    <a class="paginate-btn" href="{{url_for('profile.view_profile', page=page_num, user_public_id=user.public_id)}}">>{{ page_num}}</a>
                 {% endif %}
             {% endfor %}
         </div>

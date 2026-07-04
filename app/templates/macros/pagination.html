@@ -2,7 +2,7 @@
     <div>
         {% for page_num in pagination_object.iter_pages(left_edge=1, left_current=2, right_edge=2, right_current=2) %}
             {% if page_num == pagination_object.page %}
-                <a class="paginate-btn" href="{{url_for(destination, page=page_num)}}"><button type="button" style="color: blue;"><strong>{{ page_num}}</strong></button></a>
+                <a class="paginate-btn paginate-btn-current" href="{{url_for(destination, page=page_num)}}">{{ page_num}}</a>
             {% else %}
                 <a class="paginate-btn" href="{{url_for(destination, page=page_num)}}"><button type="button">{{ page_num}}</button></a>
             {% endif %}

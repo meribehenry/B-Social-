@@ -8,6 +8,12 @@ class ProfileService():
         self.current_user = current_user
 
     def edit_profile(self, form, current_user):
+        if (not form.profile_pic.data 
+            and form.bio.data == current_user.profile.bio 
+            and form.firstname.data == current_user.profile.firstname 
+            and form.lastname.data == current_user.profile.lastname 
+            and form.username.data == current_user.username):
+            return True
         
         if form.profile_pic.data:
             media_service = MediaService()

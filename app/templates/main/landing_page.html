@@ -5,8 +5,8 @@
         <div>
             <h1 class="hero-heading">Post what's on your mind anytime any day</h1>
             <div class="hero-section-link">
-                <a class="btn btn-primary" href="#">Start today</a>
-                <a href="#">Learn more</a>
+                <a class="btn btn-primary" href="{{url_for('main.home')}}">Start today</a>
+                <a class="text-link" href="{{url_for('main.about')}}">Learn more</a>
             </div>
         </div>
         <div class="hero-image-grid-container">
@@ -84,7 +84,7 @@
                 <h2 class="cta-card-heading">What's on your mind today</h2>
                 <p class="cta-card-text">Be among the first set of people to try out B-Social and share your thoughts</p>
                 <div class="cta-card-link">
-                    <a class="btn btn-tertiary" href="#">Create a post</a>
+                    <a class="btn btn-tertiary" href="{{url_for('posts.new_post')}}">Create a post</a>
 
                 </div>
             </div>
@@ -95,30 +95,30 @@
     <footer class="footer">
         <div class="footer-grid-container">
             <div class="footer-grid-col-1">
-                <img class="logo-lg" src="{{url_for('static', filename='images/logo.png')}}" alt="">
+                <img class="logo-lg" src="{{url_for('static', filename='images/logo.png')}}" alt="Logo">
                 <div  class="footer-social-image-container">
-                    <img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/facebook.svg')}}" alt="facebook-Logo">
-                    <img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/tiktok.svg')}}" alt="tikTok-Logo">
-                    <img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/x.svg')}}" alt="x-Logo">
-                    <img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/linkedin.svg')}}" alt="LinkedIn Logo">
-                    <img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/github.svg')}}" alt="GitHub">
+                    <a href="https://www.facebook.com/share/18E1GYj9Wt" target="_blank"><img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/facebook.svg')}}" alt="facebook-Logo"></a>
+                    <a href="https://tiktok.com/@marsboy409" target="_blank"><img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/tiktok.svg')}}" alt="tikTok-Logo"></a>
+                    <a href="https://x.com/MeribeHenry" target="_blank"><img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/x.svg')}}" alt="x-Logo"></a>
+                    <a href="https://www.linkedin.com/in/meribe-henry-24a4913a2?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank"><img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/linkedin.svg')}}" alt="LinkedIn Logo"></a>
+                    <a href="https://github.com/meribehenry"><img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/github.svg')}}" alt="GitHub"></a>
                 </div>
             </div>
             <div class="footer-link-container">
                 <h4>Go</h4>
-                <a href="#">B-Social</a>
-                <a href="{{url_for('auth.login')}}">Login</a>
-                <a href="{{url_for('auth.register')}}">Sign up</a>
-                <a href="{{url_for('main.about')}}">About</a>
-                <a href="{{url_for('feedback.view_feedbacks')}}">Feedback</a>
+                <a class="text-link" href="{{url_for('main.home')}}">B-Social</a>
+                <a class="text-link" href="{{url_for('auth.login')}}">Login</a>
+                <a class="text-link" href="{{url_for('auth.register')}}">Sign up</a>
+                <a class="text-link" href="{{url_for('main.about')}}">About</a>
+                <a class="text-link" href="{{url_for('feedback.view_feedbacks')}}">Feedback</a>
             </div>
             <div class="footer-link-container">
                 <h4>Follow us</h4>
-                <a href="https://www.facebook.com/share/18E1GYj9Wt" target="_blank">Facebook</a>
-                <a href="https://x.com/MeribeHenry" target="_blank">X</a>
-                <a href="https://www.linkedin.com/in/meribe-henry-24a4913a2?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank">LinkedIn</a>
-                <a href="https://github.com/meribehenry" target="_blank">Github</a>
-                <a href="https://www.tiktok.com" target="_blank">TikTok</a>
+                <a class="text-link" href="https://www.facebook.com/share/18E1GYj9Wt" target="_blank">Facebook</a>
+                <a class="text-link" href="https://x.com/MeribeHenry" target="_blank">X</a>
+                <a class="text-link" href="https://www.linkedin.com/in/meribe-henry-24a4913a2?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank">LinkedIn</a>
+                <a class="text-link" href="https://github.com/meribehenry" target="_blank">Github</a>
+                <a class="text-link" href="https://tiktok.com/@marsboy409" target="_blank">TikTok</a>
             </div>
         </div>
     </footer>

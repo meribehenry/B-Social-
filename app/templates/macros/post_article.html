@@ -18,7 +18,7 @@
 
     <div>
         <a href="{{ url_for('posts.view_post', post_public_id=post.public_id)}}">
-            <p>{{post.content}}</p>
+            <p class="post-text">{{post.content}}</p>
 
             {% if post.photo_url%}
                 <img class="post-image" src="{{ post.photo_url }}" alt="Photo">
@@ -29,7 +29,7 @@
         
         <div>
             {% if post.edited %}
-                <small>Edited</small>
+                <p class="edited-text">Edited</p>
             {% endif %}
         </div>
         

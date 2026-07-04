@@ -64,7 +64,9 @@
     align-items: center;
     width: 100%;
     gap: 3rem;
-    height: 100vh;
+    min-height: 40rem;
+    /* max-height: 100vh; */
+    margin-bottom: 20rem;
 }
 
 /* -----NEW/VIEW POST TEMPLATE------ */
@@ -224,4 +226,8 @@
 .click-num-text {
     margin-top: 6px;
     font-size: 16px;
+}
+
+.post-text {
+    color: var(--grey-base);
 }

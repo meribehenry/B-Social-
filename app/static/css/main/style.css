@@ -269,7 +269,11 @@ ul {
     border: 2px solid red;
 }
 
-.navbar-text-link:hover {
+.navbar-text-link:link, .navbar-text-link:visited {
+    color: var(--grey-shade);
+}
+
+.navbar-text-link:hover, .navbar-text-link:active {
     color: var(--grey-shade);
     transform: scale(1.05);
 }

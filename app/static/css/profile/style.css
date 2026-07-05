@@ -55,6 +55,10 @@
     --nav-height: 8rem;
 }
 
+.view-profile-container {
+    height: 100vh;
+}
+
 .profile-section {
     margin-bottom: 2rem;
     padding-right: 2rem;
@@ -92,6 +96,7 @@
     display: grid;
     justify-items: center;
     align-items: center;
+    height: 100vh;
 }
 
 .edit-profile {

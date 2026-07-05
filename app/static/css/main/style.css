@@ -387,11 +387,15 @@ ul {
 }
 
 .logo-md {
-    width: 120px;
+    width: 12rem;
 }
 
 .logo-lg {
-    width: 150px;
+    width: 15rem;
+}
+
+.logo-footer {
+    width: 100px;
 }
 
 /* ------ALERT-------- */

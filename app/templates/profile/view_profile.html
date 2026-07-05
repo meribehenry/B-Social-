@@ -4,29 +4,31 @@
 
 <link rel="stylesheet" href="{{url_for('static', filename='css/post/style.css')}}"> 
 <!-- USER PROFILE -->
-    {% include "components/profile_card.html"%}
-
-    <div class="profile-posts-container">
-    <!-- USER'S POSTS -->
-        <section>
-            {% if not posts.items %}
-                <h3>No post found</h3>
-            {% endif %}
-            {% for post in posts.items %}
-                {% set follower = follower_dict.get(post.author.id)%}
-                {{ render_post.render_post(post, post_reactions_dict, follower, current_user) }} 
-            {% endfor %}
-        </section>
-
-    <!-- PAGINATION AREA -->
-        <div>
-            {% for page_num in posts.iter_pages(left_edge=1, left_current=2, right_edge=2, right_current=2) %}
-                {% if page_num == posts.page %}
-                    <a class="paginate-btn paginate-btn-current" href="{{url_for('profile.view_profile', page=page_num, user_public_id=user.public_id)}}">{{ page_num}}</a>
-                {% else %}
-                    <a class="paginate-btn" href="{{url_for('profile.view_profile', page=page_num, user_public_id=user.public_id)}}">>{{ page_num}}</a>
+    <div class="view-profile-container">
+        {% include "components/profile_card.html"%}
+        
+        <div class="profile-posts-container">
+        <!-- USER'S POSTS -->
+            <section>
+                {% if not posts.items %}
+                    <h3>No post found</h3>
                 {% endif %}
-            {% endfor %}
+                {% for post in posts.items %}
+                    {% set follower = follower_dict.get(post.author.id)%}
+                    {{ render_post.render_post(post, post_reactions_dict, follower, current_user) }} 
+                {% endfor %}
+            </section>
+
+        <!-- PAGINATION AREA -->
+            <div>
+                {% for page_num in posts.iter_pages(left_edge=1, left_current=2, right_edge=2, right_current=2) %}
+                    {% if page_num == posts.page %}
+                        <a class="paginate-btn paginate-btn-current" href="{{url_for('profile.view_profile', page=page_num, user_public_id=user.public_id)}}">{{ page_num}}</a>
+                    {% else %}
+                        <a class="paginate-btn" href="{{url_for('profile.view_profile', page=page_num, user_public_id=user.public_id)}}">>{{ page_num}}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
     </div>
 

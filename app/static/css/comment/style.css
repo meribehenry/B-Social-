@@ -96,8 +96,8 @@
 
 
 .view-comment {
-    margin-bottom: 25rem;
     padding: 1rem 2rem;
+    height: 100vh;
 }
 
 .comment-reaction-container {

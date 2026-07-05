@@ -7,13 +7,17 @@
 <article class="post-article">
     <div class="post-header">
         {{ render_post_profile.render_post_profile(post) }}
-        {% if follower.followed_user_id != current_user.id %}
+        <!-- {% if follower.followed_user_id != current_user.id %}
+            <p>{{follower.followed_user_id}} {{current_user.id}}</p>
             {% if follower is not none %}
+                <p>{{follower.followed_user_id}} {{current_user.id}}</p>
                 <a class="btn btn-primary-outline" href="{{url_for('profile.view_profile', user_public_id=post.author.public_id, follower='unfollow')}}">Unfollow</a>
-            {% else%}
+            {% elif follower is none %}
                 <a class="btn btn-primary" href="{{url_for('profile.view_profile', user_public_id=post.author.public_id, follower='follow')}}">Follow</a>
             {% endif %} 
-        {% endif %}
+        {% endif %} -->
+
+        {{ render_follow_button.render_follow_button(post.author, current_user, follower)}}
     </div>
 
     <div>

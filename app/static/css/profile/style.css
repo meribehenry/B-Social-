@@ -114,3 +114,9 @@
     height: 8rem;
     border-radius: 6px;
 }
+
+.show-followers-text {
+    font-size: var(--text-base);
+    color: var(--grey-shade);
+    margin-bottom: 1rem;
+}

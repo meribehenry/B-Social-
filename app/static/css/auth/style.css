@@ -174,7 +174,8 @@ body {
     align-items: center;
     justify-items: center;
     padding: 1rem 1rem;
-    margin-bottom: 30rem;
+    height: 100vh;
+    margin-bottom: 2rem;
 }
 
 

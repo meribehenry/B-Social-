@@ -1,4 +1,3 @@
-from flask import current_app
 from datetime import datetime, timezone
 
 def timeago_filter(dt):

@@ -6,13 +6,13 @@
     <section class="auth-page-container">
 
         <form class="auth-page" action="", method="POST">
-            <h2 class="auth-page-heading">Verify Email</h2>
+            <h4 class="auth-page-heading">Verify Email</h4>
             
             {{ form.hidden_tag() }}
 
             {{ render_auth_field.render_auth_field(form.otp_code) }}
 
-            <div>
+            <div class="verify-email-template-link-container">
                 {{ form.submit(class="submit-button btn btn-primary")}}
                 <a href="{{url_for('auth.resend_otp', user_public_id=current_user.public_id)}}">Resend Otp</a>
             </div>

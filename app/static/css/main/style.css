@@ -321,7 +321,7 @@ ul {
     font-size: var(--text-base);
     border-radius: 20px;
     padding: 0.5rem 1rem;
-
+    border: 1px solid  var(--grey-base);
 }
 
 .form-error {
@@ -492,6 +492,10 @@ ul {
     font-size: var(--text-sm);
     font-style: italic;
     color: var(--grey-tint-1);
+}
+
+.upload-photo .field-input {
+    border: none;
 }
 
 
@@ -736,8 +740,9 @@ ul {
 
 /* ---------ABOUT-------- */
 .about-page {
-    margin-bottom: 20rem;
+    margin-bottom: 2rem;
     padding: 1rem 2rem;
+    height: 100vh;
 }
 
 .about-heading {
@@ -756,4 +761,14 @@ ul {
 
 .about-link {
     font-size: var(--text-paragraph);
+}
+
+/* --------ERROR PAGES------- */
+
+.error-page-container {
+    height: 100vh;
+}
+
+.error-page-heading {
+    margin-bottom: 2rem;
 }

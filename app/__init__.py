@@ -14,10 +14,8 @@ config_classes = {
 def create_app(config_name=None):
     if config_name is None:
         config_name = os.environ.get("FLASK_CONFIG", "default")
-        print(os.environ.get("FLASK_CONFIG"))
 
     app = Flask(__name__)
-    print(config_name)
     app.config.from_object(config_classes.get(config_name))
 
 
@@ -29,7 +27,7 @@ def create_app(config_name=None):
 
     login_manager.login_view = "auth.login"
     login_manager.login_message = "Please login in to access this page"
-    login_manager.login_message_category = "danger"
+    login_manager.login_message_category = "warning"
 
 
     from .models import User
@@ -69,10 +67,12 @@ def create_app(config_name=None):
     app.register_blueprint(profile, url_prefix="/profile")
     from app.feedback.route import feedback
     app.register_blueprint(feedback, url_prefix="/feedback")
+    from app.errors.error_handlers import errors
+    app.register_blueprint(errors)
+
 
     from app.utils.template_filters import timeago_filter
     app.template_filter('timeago')(timeago_filter)
-
-
+    
 
     return app

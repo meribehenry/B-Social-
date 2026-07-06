@@ -4,7 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from flask_login import login_user
 from app.services.email_service import EmailService
 from app.services.otp_service import OTPService
-from flask import flash, redirect, url_for
+from flask import flash
 import uuid
 
 class AuthService():

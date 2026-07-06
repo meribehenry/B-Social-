@@ -91,11 +91,26 @@
     border-radius: 48%;
 }
 
+.profile-posts-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 3rem;
+    margin-bottom: 2rem;
+}
+
+.view-profile-pagination {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
 .edit-profile-container {
+    margin-top: 3rem;
     width: 100%;
     display: grid;
     justify-items: center;
-    align-items: center;
+    align-items: start;
     height: 100vh;
 }
 
@@ -125,3 +140,8 @@
     color: var(--grey-shade);
     margin-bottom: 1rem;
 }
+
+.upload-photo .field-input {
+    padding-left: 0.7rem;
+}
+

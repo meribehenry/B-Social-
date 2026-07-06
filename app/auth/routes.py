@@ -11,6 +11,9 @@ auth = Blueprint("auth", __name__)
 
 @auth.route("/register", methods=["GET", "POST"])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for("main.home"))
+    
     form = RegistrationForm()
 
     if form.validate_on_submit():
@@ -26,6 +29,9 @@ def register():
 
 @auth.route("/login", methods=["GET", "POST"])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for("main.home"))
+    
     form = LoginForm()
 
     if form.validate_on_submit():

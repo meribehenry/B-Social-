@@ -1,5 +1,4 @@
 from flask import flash
-
 from app.models import Post
 from app.extensions import db
 from sqlalchemy.exc import SQLAlchemyError
@@ -49,14 +48,13 @@ class PostService():
             media_service = MediaService()
             post.post_type = "photo"
             post.photo_url , post.photo_id = media_service.save_photo(form.photo.data, folder_name="post_pics")
-            print(f"post.photo_url: {post.photo_url}, post.photo_id: {post.photo_id}, post.post_type: {post.post_type}")
             
             if post.photo_url:
                 media_service.delete_photo(post.photo_id)
             
         post.content = form.content.data
         post.edited = True
-        print(f"post.photo_url: {post.photo_url}, post.photo_id: {post.photo_id}, post.post_type: {post.post_type}")
+
         try:
             db.session.commit()
         except SQLAlchemyError:

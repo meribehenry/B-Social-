@@ -64,8 +64,9 @@ body {
 
 .register-page-container {
     display: grid;
-    margin-bottom: 10rem;
-    align-items: center;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    align-items: start;
     justify-items: center;
     padding: 1rem 1rem;
     height: 100vh;
@@ -116,12 +117,18 @@ body {
     display: flex;
 }
 
+.gender-field .field-input {
+    border: none;
+}
+
+
 /* -----------LOGIN PAGE-------------- */
 
 .login-page-container {
     display: grid;
-    margin-bottom: 10rem;
-    align-items: center;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    align-items: start;
     justify-items: center;
     padding: 1rem 1rem;
     height: 100vh;
@@ -181,4 +188,10 @@ body {
 .auth-page-heading {
     text-align: center;
     margin-bottom: 2rem;
+}
+
+.verify-email-template-link-container {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
 }

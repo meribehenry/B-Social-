@@ -3,6 +3,7 @@
     {% import "macros/post_article.html" as render_post %}
 
 <link rel="stylesheet" href="{{url_for('static', filename='css/post/style.css')}}"> 
+<link rel="stylesheet" href="{{url_for('static', filename='css/profile/style.css')}}"> 
 <!-- USER PROFILE -->
     <div class="view-profile-container">
         {% include "components/profile_card.html"%}
@@ -20,7 +21,7 @@
             </section>
 
         <!-- PAGINATION AREA -->
-            <div>
+            <div class="view-profile-pagination">
                 {% for page_num in posts.iter_pages(left_edge=1, left_current=2, right_edge=2, right_current=2) %}
                     {% if page_num == posts.page %}
                         <a class="paginate-btn paginate-btn-current" href="{{url_for('profile.view_profile', page=page_num, user_public_id=user.public_id)}}">{{ page_num}}</a>

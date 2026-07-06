@@ -4,6 +4,17 @@ from flask import current_app, url_for
 from app.services.otp_service import OTPService
 from app.services.token_service import TokenService
 
+from threading import Thread
+from flask import current_app
+
+def send_async_email(app, message):
+    with app.app_context():
+        try:
+            mail.send(message)
+            print("Email sent successfully...")
+        except Exception as e:
+            print(f"Email failed: {e}")
+
 class EmailService():
 
     def __init__(self, email):
@@ -19,18 +30,21 @@ Your otp code has arrived and it expires in ten minutes, use it in time.
 If you didn't request this you can simply ignore and no changes would be made.
 OTP CODE: {otp}
 """ 
-        try:
-            print("Creating message...")
-            print(f"Server: {current_app.config['MAIL_SERVER']}")
-            print(f"Port: {current_app.config['MAIL_PORT']}")
-            print(f"Username: {current_app.config['MAIL_USERNAME']}")
-            print("Sending email...")
+        # try:
+        #     print("Creating message...")
+        #     print(f"Server: {current_app.config['MAIL_SERVER']}")
+        #     print(f"Port: {current_app.config['MAIL_PORT']}")
+        #     print(f"Username: {current_app.config['MAIL_USERNAME']}")
+        #     print("Sending email...")
             
-            mail.send(message)
-            print("Email sent successfully...")
-        except Exception as e:
-            print(f"SMTP Error: {e}")
-            raise
+        #     mail.send(message)
+        #     print("Email sent successfully...")
+        # except Exception as e:
+        #     print(f"SMTP Error: {e}")
+        #     raise
+
+        Thread(target=send_async_email, args=(current_app._get_current_object(), message), daemon=True).start()
+        print("Otp is been processed in the background")
     
 
     def send_request_token(self):

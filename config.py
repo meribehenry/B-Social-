@@ -14,7 +14,7 @@ class Config:
     MAIL_DEFAULT_SENDER=os.environ.get("MAIL_USERNAME")
     MAIL_USERNAME=os.environ.get("MAIL_USERNAME")
     MAIL_PASSWORD=os.environ.get("MAIL_PASSWORD")
-    MAIL_TIMEOUT=10
+    # MAIL_TIMEOUT=10
 
     cloudinary.config(
     cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME"),

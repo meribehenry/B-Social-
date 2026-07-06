@@ -14,7 +14,7 @@
 
             <div class="verify-email-template-link-container">
                 {{ form.submit(class="submit-button btn btn-primary")}}
-                <a href="{{url_for('auth.resend_otp', user_public_id=current_user.public_id)}}">Resend Otp</a>
+                <a href="{{url_for('auth.resend_otp', user_public_id=user.public_id)}}">Resend Otp</a>
             </div>
 
         </form>

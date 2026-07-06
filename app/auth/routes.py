@@ -5,6 +5,7 @@ from app.extensions import db
 from flask_login import login_required, logout_user, current_user
 from app.services.auth_service import AuthService
 import uuid
+from app.models import User
 
 auth = Blueprint("auth", __name__)
 
@@ -59,7 +60,8 @@ def verify_email(user_public_id):
         else:
             return redirect(url_for("auth.verify_email", user_public_id=user_public_id))
 
-    return render_template("auth/verify_email.html", form=form, title="Verify Email")
+    user=User.query.filter_by(public_id=user_public_id).first()
+    return render_template("auth/verify_email.html", form=form, title="Verify Email", user=user)
 
 
 @auth.route("/resend_otp/<user_public_id>")

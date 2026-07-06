@@ -170,14 +170,13 @@ body {
 
 .auth-page-container {
     display: grid;
-    margin-bottom: 10rem;
-    align-items: center;
+    align-items: start;
     justify-items: center;
+    margin-top: 3rem;
     padding: 1rem 1rem;
     height: 100vh;
     margin-bottom: 2rem;
 }
-
 
 .auth-page {
     padding: 2rem 2rem;

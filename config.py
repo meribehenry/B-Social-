@@ -10,8 +10,11 @@ class Config:
     MAIL_SERVER=os.environ.get("MAIL_SERVER")
     MAIL_PORT=587
     MAIL_USE_TLS=True
+    MAIL_USE_SSL=False
+    MAIL_DEFAULT_SENDER=os.environ.get("MAIL_USERNAME")
     MAIL_USERNAME=os.environ.get("MAIL_USERNAME")
     MAIL_PASSWORD=os.environ.get("MAIL_PASSWORD")
+    MAIL_TIMEOUT=10
 
     cloudinary.config(
     cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME"),

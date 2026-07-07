@@ -24,7 +24,7 @@ class EmailService():
         otp_service = OTPService()
         otp = otp_service.generate_otp(self.email)
 
-        message = Message("OTP Code", recipients=[self.email])
+        message = Message("OTP Code", recipients=[self.email], sender=current_app.config['MAIL_DEFAULT_SENDER'])
         message.body = f"""
 Your otp code has arrived and it expires in ten minutes, use it in time. 
 If you didn't request this you can simply ignore and no changes would be made.
@@ -51,7 +51,7 @@ OTP CODE: {otp}
         token_service = TokenService()
         token = token_service.generate_reset_token(self.email)
 
-        message = Message("Reset Token", recipients=[self.email])
+        message = Message("Reset Token", recipients=[self.email], sender=current_app.config['MAIL_DEFAULT_SENDER'])
         message.body = f"""
 Please click the link below to be able to reset your password.
 Link: {url_for('auth.reset_password', token=token, _external=True)}

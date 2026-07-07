@@ -1,7 +1,7 @@
 from datetime import datetime, timezone, timedelta
 import os
 from config import Production, Development
-from flask import Flask
+from flask import Flask, app
 from app.extensions import db, migrate, bcrypt, login_manager, mail
 from app.extensions import scheduler
 
@@ -28,6 +28,16 @@ def create_app(config_name=None):
     login_manager.login_view = "auth.login"
     login_manager.login_message = "Please login in to access this page"
     login_manager.login_message_category = "warning"
+
+    import requests
+
+    @app.route("/test-internet")
+    def test_internet():
+        try:
+            r = requests.get("https://api.brevo.com", timeout=10)
+            return f"Status: {r.status_code}"
+        except Exception as e:
+            return str(e)
 
 
     from .models import User

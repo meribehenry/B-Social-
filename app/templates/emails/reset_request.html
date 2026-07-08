@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main/style.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/emails/style.css')}}">
+    <title>Reset Password</title>
+</head>
+<body>
+    <h4 class="email-heading">Reset Password</h4>
+    <p class="email-body">Please click the link below to be able to reset your password, the link expires in 30 minutes. If you didn't request this you can simply ignore it and no changes would be made.</p>
+    <p class="break">Link: {{url_for('auth.reset_password', token=token, _external=True)}}.</p>
+    <p class="email-ending">Have a great day <span class="love">❤</span> B-Social</p>
+</body>
+</html>

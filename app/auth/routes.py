@@ -49,6 +49,9 @@ def login():
 
 @auth.route("/verify_email/<user_public_id>", methods=["GET", "POST"])
 def verify_email(user_public_id):
+    if current_user.is_verified:
+        return redirect(url_for("main.home"))
+    
     form = VerifyEmailForm()
 
     if form.validate_on_submit():
@@ -64,8 +67,11 @@ def verify_email(user_public_id):
     return render_template("auth/verify_email.html", form=form, title="Verify Email", user=user)
 
 
-@auth.route("/resend_otp/<user_public_id>")
+@auth.route("/resend_otp/<user_public_id>/email")
 def resend_otp(user_public_id):
+    if current_user.is_verified:
+        return redirect(url_for("main.home"))
+    
     auth_service = AuthService()
     auth_service.resend_otp(user_public_id)
     return redirect(url_for("auth.verify_email", user_public_id=user_public_id))

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main/style.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/emails/style.css')}}">
+    <title>OTP Code</title>
+</head>
+<body>
+    <h4 class="email-heading">OTP Code</h4>
+    <p class="email-body">Your otp code has arrived and it expires in ten minutes, use it in time. If you didn't request this you can simply ignore and no changes would be made.</p> 
+    <p class="break">OTP: <strong>{{ otp_code }}</strong></p>
+    <p class="email-ending">Have a great day <span class="love">❤</span> B-Social</p>
+</body>
+</html>

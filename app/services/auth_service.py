@@ -4,7 +4,9 @@ from sqlalchemy.exc import SQLAlchemyError
 from flask_login import login_user
 from app.services.email_service import EmailService
 from app.services.otp_service import OTPService
+from app.services.token_service import TokenService
 from flask import flash
+from flask_login import current_user
 import uuid
 
 class AuthService():
@@ -33,8 +35,11 @@ class AuthService():
             flash(f"Error please try again", "danger")
             return None
         
-        email_service = EmailService(form.email.data)
-        email_service.send_otp()
+        otp_service = OTPService()
+        email_service = EmailService()
+
+        otp = otp_service.generate_otp(form.email.data)
+        email_service.send_otp(form.email.data, otp)
         return user
     
 
@@ -51,7 +56,7 @@ class AuthService():
     
     
     def verify_email(self, user_public_id, otp_code):
-        """ This function verifies user email and logs them in"""
+        """ This function verifies user email and logs them in if they are unauthenticated"""
 
         user = User.query.filter_by(public_id=user_public_id).first()
         otp_service = OTPService()
@@ -68,7 +73,12 @@ class AuthService():
                 flash(f"Error please try again", "danger")
                 return None
             
-            login_user(user, remember=True)
+            if not current_user.is_authenticated:
+                login_user(user, remember=True)
+                email_service = EmailService()
+                # email_service.send_welcome_message() 
+
+                
             flash("You can now explore B-Social", "success")
             return True
         
@@ -77,10 +87,13 @@ class AuthService():
 
 
     def reset_request(self, form):
+        token_service = TokenService()
+        token = token_service.generate_reset_token(form.email.data)
+
         user = User.query.filter_by(email=form.email.data).first()
         if user:
-            email_service = EmailService(form.email.data)
-            email_service.send_request_token()    
+            email_service = EmailService()
+            email_service.send_request_token(token, email)    
 
     
     def reset_password(self, form, user):
@@ -103,6 +116,7 @@ class AuthService():
 
     def resend_otp(self, user_public_id): 
         user = User.query.filter_by(public_id=user_public_id).first()
-        email_service = EmailService(user.email)
-        email_service.send_otp()
+        email_service = EmailService()
+        otp = OTPService().generate_otp(user.email)
+        email_service.send_otp(user.email, otp)
         flash("Email has been sent to you", "info")

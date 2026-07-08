@@ -3,3 +3,4 @@ venv/
 instance/
 .vscode
 .env
+stack.txt

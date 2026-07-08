@@ -5,7 +5,6 @@ from sqlalchemy import MetaData
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from flask_migrate import Migrate
-from flask_mail import Mail
 from flask_apscheduler import APScheduler
 
 
@@ -23,7 +22,6 @@ db = SQLAlchemy(metadata=metadata)
 bcrypt = Bcrypt()
 migrate = Migrate()
 login_manager = LoginManager()
-mail = Mail()
 scheduler = APScheduler()
 
 @event.listens_for(Engine, "connect")

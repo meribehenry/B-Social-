@@ -49,7 +49,7 @@ def login():
 
 @auth.route("/verify_email/<user_public_id>", methods=["GET", "POST"])
 def verify_email(user_public_id):
-    if current_user.is_verified:
+    if current_user.is_authenticated and current_user.is_verified:
         return redirect(url_for("main.home"))
     
     form = VerifyEmailForm()
@@ -69,7 +69,7 @@ def verify_email(user_public_id):
 
 @auth.route("/resend_otp/<user_public_id>/email")
 def resend_otp(user_public_id):
-    if current_user.is_verified:
+    if current_user.is_authenticated and current_user.is_verified:
         return redirect(url_for("main.home"))
     
     auth_service = AuthService()

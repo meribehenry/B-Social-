@@ -40,6 +40,7 @@ class AuthService():
 
         otp = otp_service.generate_otp(form.email.data)
         email_service.send_otp(form.email.data, otp)
+        email_service.send_welcome_message(user.email) 
         return user
     
 
@@ -75,8 +76,6 @@ class AuthService():
             
             if not current_user.is_authenticated:
                 login_user(user, remember=True)
-                email_service = EmailService()
-                # email_service.send_welcome_message() 
 
                 
             flash("You can now explore B-Social", "success")

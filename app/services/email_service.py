@@ -14,7 +14,7 @@ class EmailService():
     def _get_header(self):
         return {
             "accept": "application/json",
-            "api_key": self.api_key,
+            "api-key": self.api_key,
             "content_type": "application/json"
         }
 
@@ -32,13 +32,13 @@ class EmailService():
                 ],
             
             "subject": subject,
-            "htmlcontent": html
+            "htmlContent": html
         }
     
     def _send_async_email(self, app, header, data):
         with app.app_context():
             try:
-                response = requests.post("https://api.brevo.com/v3/smtp/email", headers=header, json=data)
+                response = requests.post(self.url, headers=header, json=data, timeout=15)
                 print(f"Email sent successfully 💯: {response.status_code}")
                 
                 response.raise_for_status()
@@ -69,9 +69,8 @@ class EmailService():
 
         Thread(target=self._send_async_email, 
                args=(current_app._get_current_object(), 
-                     self._get_header, 
-                     self._build_email(subject, email, html)), 
-                     daemon=True
+                     self._get_header(), 
+                     self._build_email(subject, email, html))
                      ).start()
         
         print("Otp is been processed in the background")
@@ -83,10 +82,9 @@ class EmailService():
 
         Thread(target=self._send_async_email, 
                args=(current_app._get_current_object(), 
-                     self._get_header,  
-                     subject,
-                     self._build_email(subject, email, html)), 
-                     daemon=True).start()
+                     self._get_header(),  
+                     self._build_email(subject, email, html))
+                     ).start()
         
         print("Reset token is being processed in the background")
     
@@ -97,10 +95,9 @@ class EmailService():
 
         Thread(target=self._send_async_email, 
                args=(current_app._get_current_object(), 
-                     self._get_header,  
-                     subject,
-                     self._build_email(subject, email, html)), 
-                     daemon=True).start()
+                     self._get_header(),  
+                     self._build_email(subject, email, html))
+                     ).start()
         
         print("Welcome message is being processed in the background")
 

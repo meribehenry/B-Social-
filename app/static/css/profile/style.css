@@ -56,7 +56,7 @@
 }
 
 .view-profile-container {
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .profile-section {
@@ -111,7 +111,7 @@
     display: grid;
     justify-items: center;
     align-items: start;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .edit-profile {

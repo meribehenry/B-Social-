@@ -64,7 +64,7 @@
     align-items: center;
     width: 100%;
     gap: 3rem;
-    height: 100vh;
+    height: auto;
     margin-bottom: 2rem;
 }
 
@@ -74,15 +74,20 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
-    height: 100vh;
+    height: auto;
+    margin-bottom: 2rem;
 }
 
 .view-post-container {
-    margin-bottom: 25rem;
+    min-height: 100vh;
+}
+
+.view-post-comments-pagination {
+    margin-top: 3rem;
 }
 
 .new-post-container {
-    margin-bottom: 30rem;
+    height: 100vh;
 }
 
 .new-post-page {

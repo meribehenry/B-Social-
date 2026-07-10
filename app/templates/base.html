@@ -10,35 +10,37 @@
 <body>
     <div class="container">
         <header>
-            <nav class="navbar">
-                {% if current_user.is_anonymous %}
-                    <div class="navbar-left">
-                        <a href="{{url_for('main.landing_page')}}"><img class="logo-md" src="{{url_for('static', filename='images/logo.png')}}" alt="Logo"></a>
-                        <div class="navbar-left-link">
-                            <a class="navbar-text-link" href="{{url_for('main.about')}}">About</a>
-                            <a class="navbar-text-link" href="{{ url_for('feedback.view_feedbacks')}}">Feedback</a>
+            <nav class="navbar-container">
+                <div class="navbar">
+                    {% if current_user.is_anonymous %}
+                        <div class="navbar-left">
+                            <a href="{{url_for('main.landing_page')}}"><img class="logo-md" src="{{url_for('static', filename='images/logo.png')}}" alt="Logo"></a>
+                            <div class="navbar-left-link">
+                                <a class="navbar-text-link" href="{{url_for('main.about')}}">About</a>
+                                <a class="navbar-text-link" href="{{ url_for('feedback.view_feedbacks')}}">Feedback</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="navbar-right">
-                        <a  class="btn btn-primary-outline" href="{{url_for('auth.login')}}">Login</a>
-                        <a  class="btn btn-primary" href="{{url_for('auth.register')}}">Sign up</a>
-                    </div>
+                        <div class="navbar-right">
+                            <a  class="btn btn-primary-outline" href="{{url_for('auth.login')}}">Login</a>
+                            <a  class="btn btn-primary" href="{{url_for('auth.register')}}">Sign up</a>
+                        </div>
 
-                {% else %}
-                    <div class="navbar-left">
-                        <a href="{{url_for('main.landing_page')}}"><img class="logo-md" src="{{url_for('static', filename='images/logo.png')}}" alt="Logo"></a>
-                        <div class="navbar-left-link">
-                            <a class="navbar-text-link" href="{{url_for('main.home')}}">Home</a>
-                            <a class="navbar-text-link" href="{{ url_for('profile.view_profile', user_public_id=current_user.public_id)}}">Profile</a>
-                            <a class="navbar-text-link" href="{{ url_for('feedback.view_feedbacks')}}">Feedback</a>
+                    {% else %}
+                        <div class="navbar-left">
+                            <a href="{{url_for('main.landing_page')}}"><img class="logo-md" src="{{url_for('static', filename='images/logo.png')}}" alt="Logo"></a>
+                            <div class="navbar-left-link">
+                                <a class="navbar-text-link" href="{{url_for('main.home')}}">Home</a>
+                                <a class="navbar-text-link" href="{{ url_for('profile.view_profile', user_public_id=current_user.public_id)}}">Profile</a>
+                                <a class="navbar-text-link" href="{{ url_for('feedback.view_feedbacks')}}">Feedback</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="navbar-right navbar-right-g2">
-                        <a class="navbar-text-link" href="{{url_for('posts.new_post')}}">New Post</a>
-                        <a class="navbar-text-link" href="{{url_for('auth.logout')}}">Logout</a>
-                    </div>
-                    
-                {% endif %}
+                        <div class="navbar-right navbar-right-g2">
+                            <a class="navbar-text-link" href="{{url_for('posts.new_post')}}">New Post</a>
+                            <a class="navbar-text-link" href="{{url_for('auth.logout')}}">Logout</a>
+                        </div>
+                        
+                    {% endif %}
+                </div>
             </nav>      
         </header>
 
@@ -57,9 +59,10 @@
 
                 {% block content %}{% endblock %}
             </main>
-        
+
         </div>
         {% include "components/footer.html" %}
+        
     
     
 </body>

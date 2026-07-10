@@ -133,6 +133,8 @@ body{
     max-width: 1300px;
     margin: 0 auto;
     width: 98%;
+    max-height: 1000rem;
+    margin-bottom: 2rem;
 }
 
 h1, h2, h3, h4, h5 {
@@ -502,6 +504,10 @@ ul {
 /* -------------------SECTIONS------------------------- */
 
 /* -----------NAVBAR------------ */
+.navbar-container {
+   width: auto;
+}
+
 .navbar {
     display: flex;
     flex-direction: row;

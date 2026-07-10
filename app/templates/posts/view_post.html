@@ -29,7 +29,7 @@
         </section>
 
     <!-- PAGINATION AREA -->
-        <div>
+        <div class="view-post-comments-pagination">
             {% for page_num in comments.iter_pages(left_edge=1, left_current=2, right_edge=2, right_current=2) %}
                 {% if page_num == comments.page %}
                     <a class="paginate-btn paginate-btn-current" href="{{url_for('posts.view_post', post_public_id=post.public_id, page=page_num)}}">{{ page_num}}</a>

@@ -4,20 +4,20 @@
     {% import "macros/pagination.html" as render_pagination %}
 <link rel="stylesheet" href="{{url_for('static', filename='css/post/style.css')}}">
 
-<div class="home-posts">
-<!-- POST SECTION -->
-    <section>
-        {% for post in posts.items %}
-            {% set follower = follower_dict.get(post.author.id)%}
-            {{ render_post.render_post(post, post_reactions_dict, follower, current_user) }}      
-        {% endfor %}
-    </section>
+    <div class="home-posts">
+    <!-- POST SECTION -->
+        <section>
+            {% for post in posts.items %}
+                {% set follower = follower_dict.get(post.author.id)%}
+                {{ render_post.render_post(post, post_reactions_dict, follower, current_user) }}      
+            {% endfor %}
+        </section>
 
-<!-- PAGINATION SECTION -->
-    <div class="pagination-area">
-        {{ render_pagination.render_pagination(posts, "main.home")}}  
+    <!-- PAGINATION SECTION -->
+        <div class="pagination-area">
+            {{ render_pagination.render_pagination(posts, "main.home")}}  
+        </div>
     </div>
-</div>
 
     
 {% endblock %}

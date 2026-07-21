@@ -1,4 +1,3 @@
-from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
@@ -6,6 +5,7 @@ from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from flask_migrate import Migrate
 from flask_apscheduler import APScheduler
+from flask_marshmallow import Marshmallow
 
 
 convention = {
@@ -21,8 +21,8 @@ metadata = MetaData(naming_convention=convention)
 db = SQLAlchemy(metadata=metadata)
 bcrypt = Bcrypt()
 migrate = Migrate()
-login_manager = LoginManager()
 scheduler = APScheduler()
+ma = Marshmallow()
 
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragms(dbapi_connection, connection_record):

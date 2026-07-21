@@ -4,3 +4,4 @@ instance/
 .vscode
 .env
 stack.txt
+v.txt

@@ -13,6 +13,7 @@ class User(db.Model):
     gender = db.Column(db.String(10), nullable=False)
     date_joined = db.Column(db.DateTime(timezone=True), default= lambda: datetime.now(timezone.utc), nullable=False)
     is_verified = db.Column(db.Boolean, default=False, nullable=False)
+    role = db.Column(db.String(20), default="user", nullable=False)
     posts = db.relationship("Post", backref="author", cascade="all, delete-orphan", passive_deletes=True, lazy="dynamic")
     profile = db.relationship("Profile", backref="user", uselist=False, cascade="all, delete-orphan", passive_deletes=True)
     followers = db.relationship("Follower", backref="followed_user", cascade="all, delete-orphan", passive_deletes=True, lazy="dynamic")

@@ -2,7 +2,7 @@ from datetime import datetime, timezone, timedelta
 import os
 from config import Production, Development
 from flask import Flask
-from app.extensions import db, migrate, bcrypt, login_manager
+from app.extensions import db, migrate, bcrypt
 from app.extensions import scheduler
 
 config_classes = {
@@ -22,19 +22,10 @@ def create_app(config_name=None):
     db.init_app(app)
     migrate.init_app(app, db)
     bcrypt.init_app(app)
-    login_manager.init_app(app)
-
-    login_manager.login_view = "auth.login"
-    login_manager.login_message = "Please login in to access this page"
-    login_manager.login_message_category = "warning"
 
 
-    from .models import User
-    @login_manager.user_loader
-    def load_user(alternative_id):
-        return User.query.filter_by(alternative_id=alternative_id).first()
     
-    from app.models import OTP
+    from app.models.otp import OTP
     @scheduler.task('interval', id='delete_expired_otps', seconds=600, misfire_grace_time=900)
     def delete_expired_otps():
         with app.app_context():
@@ -66,8 +57,8 @@ def create_app(config_name=None):
     app.register_blueprint(profile, url_prefix="/profile")
     from app.feedback.route import feedback
     app.register_blueprint(feedback, url_prefix="/feedback")
-    from app.errors.error_handlers import errors
-    app.register_blueprint(errors)
+    from app.errors.error_handlers import global_errors_bp
+    app.register_blueprint(global_errors_bp)
 
 
     from app.utils.template_filters import timeago_filter

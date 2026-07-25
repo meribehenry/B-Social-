@@ -92,7 +92,7 @@ class AuthService():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             email_service = EmailService()
-            email_service.send_request_token(token, email)    
+            email_service.send_request_token(token, user.email)    
 
     
     def reset_password(self, form, user):

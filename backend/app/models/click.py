@@ -7,4 +7,3 @@ class Click(db.Model):
     viewed= db.Column(db.Boolean, default=False, nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey("post.id", ondelete="CASCADE"), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id",ondelete="CASCADE"), nullable=False)
-    username = db.Column(db.String(20), nullable=False)

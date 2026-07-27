@@ -25,12 +25,12 @@ class RegistrationSchema(ma.Schema):
     gender = fields.String(required=True)
    
    
-    @validates("email")
-    def validate_email_unique(self, value, **kwarg):
-        user = User.query.filter_by(email=value).first()
+    # @validates("email")
+    # def validate_email_unique(self, value, **kwarg):
+    #     user = User.query.filter_by(email=value).first()
        
-        if user:
-            raise ValidationError(f"Email '{value}' already exist")
+    #     if user:
+    #         raise ValidationError(f"Email '{value}' already exist")
     
     @validates("gender")
     def validate_gender_correct(self, value, **kwarg):
@@ -78,6 +78,9 @@ class LoginSchema(ma.Schema):
                 validate=validate.Length(min=8, error="Password length atleast 8 characters long"),
                 load_only=True)
 
+
+class VerifyEmailSchema(ma.Schema):
+    otp_code = fields.Integer(required=True, load_only=True)
 
 class ResetPasswordSchema(ma.Schema):
     password = fields.String(required=True,

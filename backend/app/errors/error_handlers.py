@@ -8,6 +8,10 @@ global_errors_bp = Blueprint("global_errors", __name__)
 def bad_request(error):
     return jsonify({"success": False, "error": "Bad Request", "message": str(error) }), 400
 
+@global_errors_bp.app_errorhandler(401)
+def unauthenticated(error):
+    return jsonify({"success": False, "error": "Unauthenticated", "message": "Please login to access this page" }), 401
+
 @global_errors_bp.app_errorhandler(403)
 def forbidden(error):
     return jsonify({"success": False, "error":"Forbidden", "message": "You are not authorized to access this endpoint"}), 403

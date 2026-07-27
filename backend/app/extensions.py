@@ -6,6 +6,7 @@ from sqlalchemy.engine import Engine
 from flask_migrate import Migrate
 from flask_apscheduler import APScheduler
 from flask_marshmallow import Marshmallow
+from flask_jwt_extended import JWTManager
 
 
 convention = {
@@ -23,6 +24,7 @@ bcrypt = Bcrypt()
 migrate = Migrate()
 scheduler = APScheduler()
 ma = Marshmallow()
+jwt = JWTManager()
 
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragms(dbapi_connection, connection_record):

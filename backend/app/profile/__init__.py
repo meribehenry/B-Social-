@@ -1,0 +1,1 @@
+from app.profile.model import Profile

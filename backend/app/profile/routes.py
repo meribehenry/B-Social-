@@ -1,66 +1,40 @@
-from flask import Blueprint, abort, redirect, render_template, request, url_for
-from app.models import Follower, User, Post
-from flask_login import current_user, login_required
-from app.services.follower_service import FollowerService
-from app.services.profile_service import ProfileService
-from app.profile.forms import EditProfileForm
-from app.utils.reaction_dict import get_user_post_reactions_dict
-from app.utils.decorators import verification_required
-from app.utils.follower_dict import get_follower_dict
+from flask import Blueprint, request
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.profile.service import ProfileService
+from app.shared.response import APIResponse
+from marshmallow import ValidationError
+from app.profile.schema import EditProfileSchema
 
 
-profile = Blueprint("profile", __name__)
+profile_bp = Blueprint("profile", __name__, url_prefix="/api/v1/")
+
+api_response = APIResponse()
 
 
-@profile.route("/view/<user_public_id>")
-@login_required
-@verification_required
+@profile_bp.route("/users/<user_public_id>/profile", methods=["GET"])
+@jwt_required()
 def view_profile(user_public_id):
-    user = User.query.filter_by(public_id=user_public_id).first_or_404()
-    page = request.args.get("page", 1, type=int)
-    posts = user.posts.order_by(Post.date_created.desc()).paginate(page=page, per_page=20)
+    results, error = ProfileService(get_jwt_identity()).view_profile(user_public_id)
 
-    if request.args.get("follower", type=str):
-        follower_service = FollowerService(current_user)
-        follower  =  request.args.get("follower", type=str)
-
-        if follower == "follow":
-            follower_service.follow_user(user)
-        else:
-            follower_service.unfollow_user(user)
-
-        return redirect(url_for("profile.view_profile", user_public_id=user.public_id))
+    if error:
+        return api_response.error(error=error.get("error"), message=error.get("message"), status_code=error.get("status_code"))
     
-    follower_object = None
-    if current_user != user:
-        follower_object = Follower.query.filter_by(follower_id=current_user.id, followed_user_id=user.id).first()
-    post_reactions_dict = get_user_post_reactions_dict(current_user)
-    follower_dict = get_follower_dict(current_user)
-    return render_template("profile/view_profile.html", posts=posts, user=user, title="Profile", follower=follower_object, post_reactions_dict=post_reactions_dict, follower_dict=follower_dict)
+    return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))
 
 
-@profile.route("/edit/<user_public_id>", methods=["GET", "POST"])
-@login_required
-@verification_required
+@profile_bp.route("/users/<user_public_id>/profile", methods=["PATCH"])
+@jwt_required()
 def edit_profile(user_public_id):
-    user = User.query.filter_by(public_id=user_public_id).first_or_404()
-
-    if current_user != user:
-        abort(403, "You are not authorized to do this")
+    try:
+        data: [dict] = EditProfileSchema().load(request.form)
+        print(data)
+        file = request.files.get("file")
+    except ValidationError as e:
+        return api_response.schema_error(errors=e.messages)
     
-    form = EditProfileForm()
-    profile_service = ProfileService(current_user)
+    results, error = ProfileService(get_jwt_identity()).edit_profile(user_public_id, data, file)
 
-    if form.validate_on_submit():
-        result = profile_service.edit_profile(form, current_user)
-
-        if not result:
-            return redirect(url_for("profile.edit_profile", user_public_id=current_user.public_id))
-        
-        return redirect(url_for("profile.view_profile", user_public_id=current_user.public_id))
+    if error:
+        return api_response.error(error=error.get("error"), message=error.get("message"), status_code=error.get("status_code"))
     
-    elif request.method == "GET":
-        profile_service = ProfileService(current_user)
-        form = profile_service.populate_form(form)
-    
-    return render_template("profile/edit_profile.html", form=form, title="Edit Profile")
+    return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))

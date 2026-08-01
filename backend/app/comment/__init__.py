@@ -1,0 +1,1 @@
+from app.comment.model import Comment

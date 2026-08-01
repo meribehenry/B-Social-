@@ -8,6 +8,8 @@ class Config:
     SQLALCHEMY_DATABASE_URI=os.environ.get("SQLALCHEMY_DATABASE_URL", "sqlite:///app.db")
     MAX_CONTENT_LENGTH=int(os.environ.get("MAX_CONTENT_LENGTH", 5242880))
     BREVO_API_KEY=os.environ.get("BREVO_API_KEY")
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=int(os.environ.get("JWT_ACCESS_TOKEN_EXPIRES", 60)))
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=int(os.environ.get("JWT_REFRESH_TOKEN_EXPIRES", 30)))
 
 
     cloudinary.config(

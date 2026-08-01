@@ -1,0 +1,1 @@
+from app.report.model import Report

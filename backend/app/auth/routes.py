@@ -1,128 +1,123 @@
-from flask import Blueprint, redirect, render_template, flash, session, url_for
-from app.services.token_service import TokenService
-from .forms import RegistrationForm, LoginForm, ResetPasswordForm, ResetRequestForm, VerifyEmailForm
-from app.extensions import db
-from flask_login import login_required, logout_user, current_user
-from app.services.auth_service import AuthService
-import uuid
-from app.models import User
-
-auth = Blueprint("auth", __name__)
+from flask import Blueprint, request
+from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
+from app.auth.services.auth_service import AuthService
+from marshmallow import ValidationError
+from app.auth.schema import LoginSchema, RegistrationSchema, VerifyEmailSchema, ResetPasswordSchema, ResetPasswordRequestSchema
+from app.shared.response import APIResponse
 
 
-@auth.route("/register", methods=["GET", "POST"])
+auth_bp = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
+
+auth_service = AuthService()
+api_response = APIResponse()
+
+
+@auth_bp.route("/register", methods=["POST"])
 def register():
-    if current_user.is_authenticated:
-        return redirect(url_for("main.home"))
+    try:
+        data = RegistrationSchema().load(request.get_json())
+    except ValidationError as e:
+        return api_response.schema_error(errors=e.messages)
     
-    form = RegistrationForm()
+    results, error = auth_service.register_user(data)
 
-    if form.validate_on_submit():
-        auth_service = AuthService()
-        user = auth_service.register_user(form)
-        
-        if user is not None:
-            return redirect(url_for("auth.verify_email", user_public_id=user.public_id))  
-        return redirect(url_for("auth.register"))
+    if error:
+        return api_response.error(error=error.get("error"), message=error.get("message"), status_code=error.get("status_code"))
+    
+    return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))
+    
 
-    return render_template("auth/register.html", form=form, title="Sign Up")
-
-
-@auth.route("/login", methods=["GET", "POST"])
+@auth_bp.route("/login", methods=["POST"])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for("main.home"))
+    try:
+        data = LoginSchema().load(request.get_json())
+    except ValidationError as e:
+        return api_response.schema_error(errors=e.messages)
     
-    form = LoginForm()
+    results, error = auth_service.login_user(data)
 
-    if form.validate_on_submit():
-        auth_service = AuthService()
-        result = auth_service.sign_in(form)
+    if error:
+        return api_response.error(error=error.get("error"), message=error.get("message"), status_code=error.get("status_code"))
+    
+    return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))
+    
 
-        if result is True:
-            return redirect(url_for("main.home"))
-        else: 
-            return redirect(url_for("auth.login"))
-
-    return render_template("auth/login.html", form=form, title="Login")
-
-
-@auth.route("/verify_email/<user_public_id>", methods=["GET", "POST"])
+@auth_bp.route("/verify_email/<user_public_id>", methods=["PATCH"])
 def verify_email(user_public_id):
-    if current_user.is_authenticated and current_user.is_verified:
-        return redirect(url_for("main.home"))
+    try:
+        data = VerifyEmailSchema().load(request.get_json())
+    except ValidationError as e:
+        return api_response.schema_error(errors=e.messages)
     
-    form = VerifyEmailForm()
+    results, error = auth_service.verify_email(user_public_id, data)
 
-    if form.validate_on_submit():
-        auth_service = AuthService()
-        result = auth_service.verify_email(user_public_id, form.otp_code.data)
-
-        if result is True:
-            return redirect(url_for("main.home"))
-        else:
-            return redirect(url_for("auth.verify_email", user_public_id=user_public_id))
-
-    user=User.query.filter_by(public_id=user_public_id).first()
-    return render_template("auth/verify_email.html", form=form, title="Verify Email", user=user)
+    if error:
+        return api_response.error(error=error.get("error"), message=error.get("message"), status_code=error.get("status_code"))
+    
+    return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))
 
 
-@auth.route("/resend_otp/<user_public_id>/email")
+@auth_bp.route("/resend_otp/<user_public_id>", methods=["POST"])
 def resend_otp(user_public_id):
-    if current_user.is_authenticated and current_user.is_verified:
-        return redirect(url_for("main.home"))
+    results, error = auth_service.resend_otp(user_public_id)
+
+    if error:
+        return api_response.error(error=error.get("error"), message=error.get("message"), status_code=error.get("status_code"))
     
-    auth_service = AuthService()
-    auth_service.resend_otp(user_public_id)
-    return redirect(url_for("auth.verify_email", user_public_id=user_public_id))
+    return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))
 
 
-@auth.route("/logout")
-@login_required
-def logout():
-    current_user.alternative_id = str(uuid.uuid4())
-    db.session.commit()
-    logout_user()
-    session.clear()
-    flash("Logged out successfully", "success")
-    return redirect(url_for("main.landing_page"))
-
-
-@auth.route("/reset_request", methods=["GET", "POST"])
+@auth_bp.route("/reset_request", methods=["POST"])
 def reset_request():
-    if current_user.is_authenticated:
-        return redirect(url_for("main.home"))
+    try:
+        data = ResetPasswordRequestSchema().load(request.get_json())
+    except ValidationError as e:
+        return api_response.schema_error(errors=e.messages)
     
-    form = ResetRequestForm()
+    results, error = auth_service.reset_password_request(data)
 
-    if form.validate_on_submit():
-        auth_service = AuthService()
-        auth_service.reset_request(form)
-        flash("If this account exist an email containing reset link was sent to it", "info") 
-        return redirect(url_for("auth.login"))
+    if error:
+        return api_response.error(error=error.get("error"), message=error.get("message"), status_code=error.get("status_code"))
     
-    return render_template("auth/reset_request.html", form=form, title="Password Reset Request")
+    return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))
     
 
-@auth.route("/reset_password/<token>", methods=["GET", "POST"])
+@auth_bp.route("/reset_password/<token>", methods=["PATCH"])
 def reset_password(token):
-    if current_user.is_authenticated:
-        return redirect(url_for("main.home"))
+    try:
+        data = ResetPasswordSchema().load(request.get_json())
+    except ValidationError as e:
+        return api_response.schema_error(errors=e.messages)
     
-    token_service = TokenService()
-    user = token_service.verify_reset_token(token)
+    results, error = auth_service.reset_password(data, token)
 
-    if not user:
-        flash("Invalid or Expired token. Please try again", "danger")
-        return redirect(url_for("auth.reset_request", token=token))
+    if error:
+        return api_response.error(error=error.get("error"), message=error.get("message"), status_code=error.get("status_code"))
+    
+    return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))
 
-    form = ResetPasswordForm()  
 
-    if form.validate_on_submit():
-        auth_service = AuthService()
-        result = auth_service.reset_password(form, user)
-        if result is True:
-            return redirect(url_for("auth.login"))
-        else:
-            return redirect(url_for("auth.reset_password", token=token))
-    return render_template("auth/reset_password.html", form=form, title="Password Reset Request")
+@auth_bp.route("/logout", methods=["POST"])
+@jwt_required()
+def logout():
+    access_token_jti = get_jwt().get("jti")
+    refresh_token = request.get_json(silent=True)
+
+    results, error = auth_service.logout_user(access_token_jti, refresh_token)
+
+    if error:
+        return api_response.error(error=error.get("error"), message=error.get("message"), status_code=error.get("status_code"))
+    
+    return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))
+
+
+@auth_bp.route("/refresh", methods=["POST"])
+@jwt_required(refresh=True)
+def get_new_jwt_tokens():
+    refresh_token_jti = get_jwt().get("jti")
+    results, error = auth_service.new_jwt_tokens(get_jwt_identity(), refresh_token_jti)
+
+    if error:
+        return api_response.error(error=error.get("error"), message=error.get("message"), status_code=error.get("status_code"))
+    
+    return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))

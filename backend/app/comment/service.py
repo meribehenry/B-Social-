@@ -1,16 +1,19 @@
-from datetime import datetime, timezone
-
+from concurrent.futures import ThreadPoolExecutor
+from flask import current_app
+from datetime import datetime, timezone, timedelta
 from app.comment.model import Comment
 from app.user.service import UserService
 from app.post.service import PostService
 from sqlalchemy import update
-from app.extensions import db
+from app.extensions import db, logger
 from sqlalchemy.exc import SQLAlchemyError
 from app.shared.pagination import create_pagination_dict
 from app.shared.response import  ServiceResponseBuilder
 from app.comment.schema import CommentResponseSchema
 from app.notification.service import NotificationService
 
+
+count_executor = ThreadPoolExecutor(max_workers=5)
 comments_response_schema = CommentResponseSchema(many=True)
 comment_response_schema = CommentResponseSchema()
 service_response_builder = ServiceResponseBuilder()
@@ -41,18 +44,18 @@ class CommentService():
         try:
             db.session.add(comment)
             db.session.commit()
-            PostService(self.current_user.public_id).update_count(comment.post, type_of_count="comment")
-            print(f"Comment created successfully and updated comment count for post")
+            app = current_app._get_current_object()
+            count_executor.submit(PostService(self.current_user.public_id).update_count, app, comment.post.public_id, type_of_count="comment")
 
         except SQLAlchemyError as e:
             db.session.rollback()
-            print(f"Sqlalchemy error at comment_service, create_comment\n{e}")
+            logger.error(f"Failed to create comment")
             self.error = service_response_builder.internal_server_error(message="Could not create comment")
             return self.result, self.error
         
         except Exception as e:
             db.session.rollback()
-            print(f"An error at comment_service, create_comment\n{e}")
+            logger.error(f"Could not create comment")
             self.error = service_response_builder.internal_server_error(message="Could not create comment")
             return self.result, self.error
         
@@ -70,7 +73,8 @@ class CommentService():
         return self.result, self.error
     
     def edit_comment(self, comment_public_id, data:dict):
-        comment = Comment.query.filter_by(public_id=comment_public_id).first_or_404()
+        comment = Comment.query.filter_by(public_id=comment_public_id).first()
+
         if not comment:
             self.error = service_response_builder.not_found_error(message="Comment not found")
             return self.result, self.error 
@@ -81,6 +85,10 @@ class CommentService():
         
         new_content = data.get("content")
 
+        if (comment.date_created.replace(tzinfo=timezone.utc) + timedelta(hours=48)) <= (datetime.now(timezone.utc)):
+            self.error = service_response_builder.conflict_error(message="Cannot edit comment after 48 hours")
+            return self.result, self.error
+
         if not new_content or new_content == comment.content:
             self.error = service_response_builder.bad_request_error(message="Comment field cannot be empty or left the same")
             return self.result, self.error 
@@ -90,15 +98,15 @@ class CommentService():
 
         try:
             db.session.commit()
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             db.session.rollback()
-            print(f"SQLAlchemy error at comment_service, edit_comment\n{e}")
+            logger.error("Failed to update comment")
             self.error = service_response_builder.internal_server_error(message="Could not update comment")
             return self.result, self.error
         
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            print(f"An error at comment_service, edit_comment\n{e}")
+            logger.error("Failed to update comment")
             self.error = service_response_builder.internal_server_error(message="Could not update comment")
             return self.result, self.error
         
@@ -115,7 +123,7 @@ class CommentService():
             self.error = service_response_builder.not_found_error(message="Comment not found")
             return self.result, self.error 
 
-        if self.current_user != comment.author:
+        if self.current_user != comment.author and self.current_user.role != "admin" and self.current_user.role != "moderator":
             self.error = service_response_builder.forbidden_error(message="You are not authorized to delete this comment")
             return self.result, self.error
         
@@ -123,19 +131,19 @@ class CommentService():
 
         try:
             db.session.delete(comment)
-            # db.session.expire_all()
             db.session.commit()
-            PostService(self.current_user.public_id).update_count(post, type_of_count="comment", increment=False)
+            app = current_app._get_current_object()
+            count_executor.submit(PostService(self.current_user.public_id).update_count, app, post.public_id, type_of_count="comment", increment=False)
 
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             db.session.rollback()
-            print(f"SQLAlchemy error at comment_service, delete_comment\n{e}")
+            logger.error("Failed to delete comment")
             self.error = service_response_builder.internal_server_error(message="Could not delete comment")
             return self.result, self.error
         
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            print(f"SQLAlchemy error at comment_service, delete_comment\n{e}")
+            logger.error("Failed to delete comment")
             self.error = service_response_builder.internal_server_error(message="Could not delete comment")
             return self.result, self.error
         
@@ -176,32 +184,36 @@ class CommentService():
         if not return_bool:
             return comment
         
-        return comment is not None
-    
+        return comment is not None   
 
-    def update_count(self, comment, type_of_count="like", increment=True):
-        
-        try:
-            if type_of_count == "like":
-                db.session.execute(
-                    update(Comment)
-                    .where(Comment.id==comment.id)
-                    .values(num_of_likes=(Comment.num_of_likes + 1) if increment else (Comment.num_of_likes - 1))
-                    )
+    def update_count(self, app, comment_public_id, type_of_count="like", increment=True):
+        with app.app_context():
+            comment = Comment.query.filter_by(public_id=comment_public_id).first() 
+            if not comment: 
+                return None
             
-            elif type_of_count == "dislike":
-                db.session.execute(
-                    update(Comment)
-                    .where(Comment.id==comment.id)
-                    .values(num_of_dislikes=(Comment.num_of_dislikes + 1) if increment else (Comment.num_of_dislikes - 1))
-                    )
-            else:
-                raise Exception ("Invalid type_of_count")
+            try:
+                if type_of_count == "like":
+                    db.session.execute(
+                        update(Comment)
+                        .where(Comment.id==comment.id)
+                        .values(num_of_likes=(Comment.num_of_likes + 1) if increment else (Comment.num_of_likes - 1))
+                        )
+                
+                elif type_of_count == "dislike":
+                    db.session.execute(
+                        update(Comment)
+                        .where(Comment.id==comment.id)
+                        .values(num_of_dislikes=(Comment.num_of_dislikes + 1) if increment else (Comment.num_of_dislikes - 1))
+                        )
+                else:
+                    raise Exception ("Invalid type_of_count")
+                
+                db.session.commit()
+                logger.info(f"Successfully updated comment {type_of_count} count")
+                return True
             
-            db.session.commit()
-            return True
-        
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            print(f"Sqlalchemy error at comment_service update_count\n{e}")
-            return False
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                logger.error(f"Failed to update comment {type_of_count} count")
+                return False

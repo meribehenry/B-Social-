@@ -2,11 +2,23 @@ from app.extensions import ma
 from marshmallow import fields, validate, validates_schema, ValidationError, post_load
 import bleach
 
+
+class UserSchema(ma.Schema):
+    public_id = fields.String()
+    username = fields.String()
+    is_verified = fields.Boolean()
+    status = fields.String()
+    role = fields.String()
+    date_joined = fields.DateTime(format="iso")
+    num_of_posts = fields.Integer()
+    num_of_followers = fields.Integer()
+    num_of_following = fields.Integer()
+
 class ProfileResponseSchema(ma.Schema):
     firstname = fields.String()
     lastname = fields.String()
     bio = fields.String()
-    user = fields.Nested("app.user.schema.UserResponseSchema", only=("public_id", "username", "date_joined"))
+    user = fields.Nested("UserSchema")
     profile_pic_url = fields.String()
     num_of_posts = fields.Integer()
     num_of_followers = fields.Integer()

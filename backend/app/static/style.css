@@ -1,0 +1,78 @@
+:root {
+    /* FONT SIZE */
+    --text-sm: 1.2rem;
+    --text-base: 1.6rem;
+    --text-paragraph: 2.0rem;
+    --text-h5: 2.4rem;
+    --text-h4: 3.2rem;
+    --text-h3: 4.0rem;
+    --text-h2: 4.8rem;
+    --text-h1: 6.2rem;
+
+    /* FONT WEIGHT */
+    --font-weight-normal: 400;
+    --font-weight-bold: 700;
+
+    /* LINE HEIGHT */
+    --line-height-tight: 1.2;
+    --line-height-normal: 1.5;
+
+    /* LETTER SPACING */
+    --letter-spacining-tight: -2.0px;
+
+    /* FONT FAMILY */
+    --font-family: 'Roberto', sans-serif;
+
+    /* COlORS */
+    --primary-base: #4c6ef5;
+    --primary-tint-1: #5c7cfa;
+    --primary-tint-2: #748ffc;
+    --primary-tint-3: #dbe4ff;
+    --primary-shade: #3b5bdb;
+
+
+    --secondary-base: #ffd43b;
+    --secondary-tint: #ffe066;
+    --secondary-shade-1: #fcc419;
+    --secondary-shade-2: #fab005;
+
+    --tertiary-base: #fa5252;
+    --tertiary-tint: #ff6b6b;
+    --tertiary-shade: #f03e3e;
+
+
+    --grey-base: #495057;
+    --grey-tint-1: #868e96;
+    --grey-tint-2: #e9ecef;
+    --grey-tint-3: #f8f9fa;
+    --grey-shade: #212529;
+
+    --white-1: #ffffff;
+    --white-2: #fff3f3;
+    --black: #000000;
+
+    /* MISCELLANEOUS */
+    --nav-height: 8rem;
+}
+
+.email-heading {
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+}
+
+.email-body {
+    margin-bottom: 1rem;
+}
+
+.email-ending {
+    font-style: oblique;
+}
+
+.break {
+    margin-top: 1rem;
+    margin-bottom: 4rem;
+}
+
+.love {
+    color: red
+}

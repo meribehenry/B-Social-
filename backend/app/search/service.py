@@ -1,15 +1,18 @@
-from app.post.models.post import Post
-from app.user.model import User
+from app.post.service import PostService
+from app.user.service import UserService
 from app.profile.model import Profile
 from app.shared.pagination import create_pagination_dict
 from sqlalchemy import or_, and_
 from app.shared.response import ServiceResponseBuilder
-from app.search.schema import SearchResponseSchema
+from app.search.schema import SearchUserResponseSchema
 
 
 
 service_response_builder = ServiceResponseBuilder()
-search_response_schema = SearchResponseSchema(many=True)
+search_user_response_schema = SearchUserResponseSchema(many=True)
+
+User = UserService.get_db_model()
+Post = PostService.get_db_model()
 
 
 class SearchService():
@@ -25,45 +28,46 @@ class SearchService():
             return self.result, self.error
         
 
-        # 1. Clean up and split the search term into individual words
-        # Example: "  John   Doe  " becomes ["John", "Doe"]
-        words = [word.strip() for word in search_term.split() if word.strip()]
+        # 1. Clean up and split search terms safely
+        search_words = [word.strip() for word in search_term.split() if word.strip()]
 
-        # 2. Build the base query with your required database table joins
+        # 2. Start from User so users with 0 posts are NOT filtered out
+        # Using outerjoin for both tables ensures everything stays visible
         query = (
-        Post.query
-        .join(User, Post.user_id == User.id)
-        .join(Profile, User.id == Profile.user_id)
+            User.query
+            .outerjoin(Profile, User.id == Profile.user_id)
+            .outerjoin(Post, User.id == Post.user_id)
         )
 
-        # 3. Apply the conditions conditionally based on what the user typed
-        if words:
+        # 3. Apply cross-column multi-word filtering safely
+        if search_words:
             word_filters = []
-
-            for word in words:
-                # Every individual word must match AT LEAST one of these columns
+            
+            for clean_word in search_words:
                 word_filters.append(
                     or_(
-                        Post.content.ilike(f"%{word}%"),
-                        User.username.ilike(f"%{word}%"),
-                        Profile.firstname.ilike(f"%{word}%"),
-                        Profile.lastname.ilike(f"%{word}%")
+                        User.username.ilike(f"%{clean_word}%"),
+                        Profile.firstname.ilike(f"%{clean_word}%"),
+                        Profile.lastname.ilike(f"%{clean_word}%"),
+                        Post.content.ilike(f"%{clean_word}%")  # Handles NULL automatically if no posts exist
                     )
                 )
-
-            # Use and_() to chain them: Word 1 must match something AND Word 2 must match something
+    
+            # Chain conditions: Word 1 matches something AND Word 2 matches something
             query = query.filter(and_(*word_filters))
 
-        # 4. Finalize with sorting and pagination
+        # 4. Finalize with uniqueness, sorting by user creation or ID, and pagination
+        # Note: Sorting by Post.date_created can push users with 0 posts to the bottom 
+        # because their post date is NULL. Sorting by User.id keeps it consistent.
         result_pagination = (
-        query
-        .order_by(Post.date_created.desc())
-        .paginate(per_page=per_page, page=page, error_out=False)
-                )
+            query.distinct()
+            .order_by(User.id.desc()) 
+            .paginate(per_page=per_page, page=page, error_out=False)
+        )
 
-
+        # 5. Serialize using your user schema instead of post schema
         data = {
-            "posts": search_response_schema.dump(result_pagination.items),
+            "users": search_user_response_schema.dump(result_pagination.items),
             "pagination": create_pagination_dict(result_pagination)
         }
 

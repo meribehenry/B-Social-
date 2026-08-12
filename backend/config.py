@@ -6,9 +6,9 @@ class Config:
     FLASK_APP=os.environ.get("FLASK_APP")
     SECRET_KEY=os.environ.get("SECRET_KEY")
     SQLALCHEMY_DATABASE_URI=os.environ.get("SQLALCHEMY_DATABASE_URL", "sqlite:///app.db")
-    MAX_CONTENT_LENGTH=int(os.environ.get("MAX_CONTENT_LENGTH", 5242880))
+    MAX_CONTENT_LENGTH=int(os.environ.get("MAX_CONTENT_LENGTH", 16777216))
     BREVO_API_KEY=os.environ.get("BREVO_API_KEY")
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=int(os.environ.get("JWT_ACCESS_TOKEN_EXPIRES", 60)))
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=int(os.environ.get("JWT_ACCESS_TOKEN_EXPIRES", 120)))
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=int(os.environ.get("JWT_REFRESH_TOKEN_EXPIRES", 30)))
 
 
@@ -24,6 +24,7 @@ class Development(Config):
 	
 
 class Production(Config):
+	JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=int(os.environ.get("JWT_ACCESS_TOKEN_EXPIRES", 15)))
 	SESSION_COOKIE_HTTPONLY=True
 	SESSION_COOKIE_SECURE=True
 	SESSION_COOKIE_SAMESITE='lax'

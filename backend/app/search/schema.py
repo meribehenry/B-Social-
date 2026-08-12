@@ -1,13 +1,18 @@
 from app.extensions import ma
-from marshmallow import fields, post_load
+from marshmallow import fields, post_load, post_dump
 import bleach
 
 
-class SearchResponseSchema(ma.Schema):
+class ProfileSearchSchema(ma.Schema):
+    firstname = fields.Str()
+    lastname = fields.Str()
+    profile_pic_url = fields.Str()
+
+
+class PostSearchSchema(ma.Schema):
     public_id = fields.String()
     content = fields.String()
-    post_type = fields.String()
-    media_url = fields.String()
+    medias = fields.Nested("MediaResponseSchema")
     date_created = fields.DateTime(format="iso")
     date_updated = fields.DateTime(format="iso", dump_default=None)
     edited = fields.Boolean()
@@ -15,7 +20,22 @@ class SearchResponseSchema(ma.Schema):
     num_of_dislikes = fields.Integer()
     num_of_clicks = fields.Integer()
     num_of_comments = fields.Integer()
-    author = fields.Nested("UserResponseSchema", only=("public_id", "username", "profile"))
+
+    
+
+class SearchUserResponseSchema(ma.Schema):
+    public_id = fields.String()  
+    username = fields.String()
+    status = fields.String()
+    profile = fields.Nested(ProfileSearchSchema)
+    posts = fields.Nested(PostSearchSchema, many=True, dump_default=[]) 
+
+    @post_dump
+    def limit_num_of_posts(self, data, **kwargs):
+        print(data)
+        data["posts"] = data["posts"][:5]  # Limit to the first 5 posts
+        print("Here")
+        return data
 
 
 class SearchFieldSchema(ma.Schema):

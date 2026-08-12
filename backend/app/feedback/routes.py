@@ -4,6 +4,7 @@ from marshmallow import ValidationError
 from app.feedback.service import FeedbackService
 from app.feedback.schema import NewFeedbackSchema
 from app.shared.response import APIResponse
+from app.shared.decorators import active_status_required, admin_required
 
 
 feedbacks_bp = Blueprint("feedbacks", __name__, url_prefix="/api/v1/feedbacks")
@@ -13,6 +14,7 @@ api_response = APIResponse()
 
 @feedbacks_bp.route("/", methods=["POST"])
 @jwt_required()
+@active_status_required
 def submit_feedback():
     try:
         data: [dict] = NewFeedbackSchema().load(request.get_json())
@@ -29,6 +31,8 @@ def submit_feedback():
 
 @feedbacks_bp.route("/<feedback_public_id>", methods=["DELETE"])
 @jwt_required()
+@active_status_required
+@admin_required
 def delete_feedback(feedback_public_id):
     results, error = FeedbackService(get_jwt_identity()).delete_feedback(feedback_public_id)
 
@@ -40,6 +44,8 @@ def delete_feedback(feedback_public_id):
 
 @feedbacks_bp.route("/", methods=["GET"])
 @jwt_required()
+@active_status_required
+@admin_required
 def view_feedbacks():
     feedback_next_page = request.args.get("page", 1, type=int)
     results, error = FeedbackService(get_jwt_identity()).view_feedbacks(page=feedback_next_page)

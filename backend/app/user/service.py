@@ -1,6 +1,6 @@
 from app.user.model import User
 from app.profile.model import Profile
-from app.extensions import db
+from app.extensions import db, logger
 from app.shared.response import ServiceResponseBuilder
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import  update
@@ -51,12 +51,12 @@ class UserService():
 
         except SQLAlchemyError as e:
             db.session.rollback()
-            print(f"Sqlalchemy error at user_service create_new_user\n{e}")
+            logger.error("Failed to create new user")
             return False
         
         except Exception as e:
             db.session.rollback()
-            print(f"An error at user_service create_new_user\n{e}")
+            logger.error("Failed to create new user")
             return False
     
     def delete_user(self, identifier, retrival_method="public_id"):
@@ -64,18 +64,16 @@ class UserService():
         This funtion delete a user from the database. Retrival methods includes: email, username and public_id. 
         Identifer refers to what you are using to retrive user. It returns a boolean.
         """
-
         user = self._retrieve_user(identifier, retrival_method)
         
         try:
             db.session.delete(user)
             db.session.commit() 
 
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             db.session.rollback()
-            print(f"Sqlalchemy error at user_service delete_user\n{e}")
+            logger.error("Failed to delete new user")
 
-        return True if user else False
     
     def mark_user_email_has_verified(self, identifier, retrival_method="public_id"):
         user = self._retrieve_user(identifier, retrival_method)
@@ -84,85 +82,97 @@ class UserService():
             user.is_verified = True
             db.session.commit() 
 
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             db.session.rollback()
-            print(f"Sqlalchemy error at user_service mark_user_email_has_verified\n{e}")
+            logger.error("Failed to mark user email has verified")
     
     def change_user_password(self, new_hashed_password, identifier, retrival_method="public_id"):
-        user = self._retrieve_user(identifier, retrival_method)
+        user = self._retrieve_user(identifier, retrival_method=retrival_method)
         user.password = new_hashed_password
 
         try:
             db.session.commit()
+            logger.info(f"User ({user.username}) changed their password")
             return True
 
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             db.session.rollback()
-            print(f"Sqlalchemy error at user_service change_user_password\n{e}")
+            logger.error("Failed to change user password")
             return False
         
         except Exception as e:
             db.session.rollback()
-            print(f"An error at user_service change_user_password\n{e}")
+            logger.error("Failed to change user password")
             return False
-    
 
-    def update_count(self, user, type_of_count="post", increment=True):
-        
-        try:
-            if type_of_count == "post":
-                db.session.execute(
-                    update(User)
-                    .where(User.id==user.id)
-                    .values(num_of_posts=(User.num_of_posts + 1) if increment else (User.num_of_posts - 1))
-                    )
+    def update_count(self, app, user_public_id, type_of_count="post", increment=True):
+        with app.app_context():
+            user = self.get_user_object(user_public_id)
+            if not user:
+                return False
             
-            elif type_of_count == "follower":
-                db.session.execute(
-                    update(User)
-                    .where(User.id==user.id)
-                    .values(num_of_followers=(User.num_of_followers + 1) if increment else (User.num_of_followers - 1))
-                    )
+            try:
+                if type_of_count == "post":
+                    db.session.execute(
+                        update(User)
+                        .where(User.id==user.id)
+                        .values(num_of_posts=(User.num_of_posts + 1) if increment else (User.num_of_posts - 1))
+                        )
+                
+                elif type_of_count == "follower":
+                    print("POp")
+                    db.session.execute(
+                        update(User)
+                        .where(User.id==user.id)
+                        .values(num_of_followers=(User.num_of_followers + 1) if increment else (User.num_of_followers - 1))
+                        )
 
-            elif type_of_count == "following":
-                db.session.execute(
-                    update(User)
-                    .where(User.id==user.id)
-                    .values(num_of_following=(User.num_of_following + 1) if increment else (User.num_of_following - 1))
-                    )
-            else:
-                raise Exception ("Invalid type_of_count")
+                elif type_of_count == "following":
+                    db.session.execute(
+                        update(User)
+                        .where(User.id==user.id)
+                        .values(num_of_following=(User.num_of_following + 1) if increment else (User.num_of_following - 1))
+                        )
+                else:
+                    raise Exception ("Invalid type_of_count")
+                
+                db.session.commit()
+                logger.info(f"User ({user.username}) {type_of_count} count updated")
+                return True
             
-            db.session.commit()
-            return True
-        
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            print(f"Sqlalchemy error at user_service update_count\n{e}")
+            except SQLAlchemyError:
+                db.session.rollback()
+                logger.error(f"Failed to update user {type_of_count} count")
             return False
-    
+
+
     def update_user_status(self, user, status):
 
         try:
             user.status = status
             db.session.commit()
+            logger.info(f"User ({user.username}) status changed")
             return True
 
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             db.session.rollback()
-            print(f"Sqlalchemy error at user_service update_user_status\n{e}")
+            logger.error(f"Failed to change user ({user.username}) status ")
         
         return True
     
-    def update_user_role(self, user, role):
+    def update_user_role(self, user_public_id, role):
+        user = self.get_user_object(user_public_id)
+        if not user: return None
+        
         try:
             user.role = role
             db.session.commit()
+            logger.info(f"User ({user.username}) role changed")
             return True
 
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             db.session.rollback()
-            print(f"Sqlalchemy error at user_service update_user_role\n{e}")
+            logger.error(f"Failed to change user ({user.username}) role ")
         
         return True
     
@@ -172,10 +182,12 @@ class UserService():
 
         try:
             db.session.commit()
+            return unverified_user_num
 
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             db.session.rollback()
-            print(f"Sqlalchemy error at user_service delete_unverified_users\n{e}")
-        
-        return unverified_user_num
-    
+            logger.error(f"Failed to delete unverified users")
+
+    @staticmethod
+    def get_db_model():
+        return User

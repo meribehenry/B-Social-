@@ -6,6 +6,7 @@ import bleach
 class AdminChangeRoleSchema(ma.Schema):
     role = fields.String(required=True)
     password = fields.String(required=True)
+    username = fields.String(required=True)
 
     @post_load
     def sanitize(self, data, **kwarg):

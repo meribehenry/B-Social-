@@ -12,3 +12,4 @@ class UserResponseSchema(ma.Schema):
     date_joined = fields.DateTime(format="iso")
 
 
+

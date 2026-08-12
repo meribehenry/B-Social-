@@ -1,5 +1,5 @@
 from sqlalchemy.exc import SQLAlchemyError
-from app.extensions import db
+from app.extensions import db, logger
 from app.user.service import UserService
 from app.shared.services.file_service import FileService
 from app.shared.response import ServiceResponseBuilder
@@ -18,8 +18,9 @@ class ProfileService():
         self.result = {}
 
 
-    def edit_profile(self, user_public_id, data:dict, file):
-        print(self.current_user)
+    def edit_profile(self, user_public_id, data:dict, files):
+        file = files.get("profile_pic")
+        
         if user_public_id != self.current_user.public_id:
             self.error = service_response_builder.forbidden_error(message="You are not authorized to edit this profile")
             return self.result, self.error
@@ -28,12 +29,21 @@ class ProfileService():
         lastname = data.get("lastname")
         username = data.get("username")
         bio = data.get("bio")
-        print(data.values())
 
         if (not firstname and not lastname and not username and not bio) and not file:     
             self.error = service_response_builder.bad_request_error(message="Invalid request. Please enter atleast one field")
             return self.result, self.error 
-        
+
+        if (firstname == self.current_user.profile.firstname
+            and lastname == self.current_user.profile.lastname and bio == self.current_user.profile.bio
+            and username == self.current_user.username) and not file:
+            return None    
+
+        user_exist = user_service.get_user_object(username, retrival_method="username")
+        if user_exist and not self.current_user.username == username:
+            self.error = service_response_builder.conflict_error(message="Username already exists")
+            return self.result, self.error
+
         old_profile_pic_id = ""
         file_service = FileService()
         
@@ -56,13 +66,13 @@ class ProfileService():
 
         except SQLAlchemyError as e:
             db.session.rollback()
-            print(f"Sqlalchemy error at profile_service, edit_profile\n{e}")
+            logger.error("Failed to update profile")
             self.error = service_response_builder.internal_server_error(message="Could not update profile")
             return self.result, self.error
         
         except Exception as e:
             db.session.rollback()
-            print(f"An error at profile_service, edit_profile\n{e}")
+            logger.error("Failed to update profile")
             self.error = service_response_builder.internal_server_error(message="Could not update profile")
             return self.result, self.error 
         

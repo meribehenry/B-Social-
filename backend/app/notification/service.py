@@ -1,18 +1,16 @@
 from datetime import datetime, timezone
-import time
 from app.notification.model import Notification
 from app.shared.pagination import create_pagination_dict
 from app.shared.response import ServiceResponseBuilder
 from app.user.service import UserService
 from sqlalchemy.exc import SQLAlchemyError
-from app.extensions import db
+from app.extensions import db, logger
 from app.notification.schema import NotificationResponseSchema, NotificationStreamResponseSchema
-
+import time
 
 service_response_builder = ServiceResponseBuilder()
 notification_response_schema = NotificationResponseSchema(many=True)
 notification_stream_response_schema = NotificationStreamResponseSchema()
-
 user_service = UserService()
 
 
@@ -27,16 +25,17 @@ class NotificationService():
         try:
             db.session.add(notification)
             db.session.commit()
+            logger.info(f"Notification created for {recipient.username} by {self.current_user.username}")
             return True
 
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             db.session.rollback()
-            print(f"Sqlalchemy error at notification_service create_notification\n{e}")
+            logger.error("Failed to create a notification")
             return None
         
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            print(f"Sqlalchemy error at notification_service create_notification\n{e}")
+            logger.error("Failed to create a notification")
             return None
         
         
@@ -50,15 +49,15 @@ class NotificationService():
             db.session.delete(notification)
             db.session.commit()
 
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             db.session.rollback()
-            print(f"Sqlalchemy error at notification_service delete_notification\n{e}")
+            logger.error("Failed to delete a notification")
             self.error = service_response_builder.internal_server_error(message="Could not delete notification")
             return self.result, self.error
         
         except Exception as e:
             db.session.rollback()
-            print(f"Sqlalchemy error at notification_service delete_notification\n{e}")
+            logger.error("Failed to delete a notification")
             self.error = service_response_builder.internal_server_error(message="Could not delete notification")
             return self.result, self.error
         
@@ -76,15 +75,15 @@ class NotificationService():
         try:
             db.session.commit()
 
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             db.session.rollback()
-            print(f"Sqlalchemy error at notification_service delete_all_notification\n{e}")
+            logger.error("Failed to delete all notifications")
             self.error = service_response_builder.internal_server_error(message="Could not delete notifications")
             return self.result, self.error
         
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            print(f"Sqlalchemy error at notification_service delete_all_notification\n{e}")
+            logger.error("Failed to delete all notifications")
             self.error = service_response_builder.internal_server_error(message="Could not delete notifications")
             return self.result, self.error
         
@@ -100,15 +99,15 @@ class NotificationService():
             
             try:
                 db.session.commit()
-            except SQLAlchemyError as e:
+            except SQLAlchemyError:
                 db.session.rollback()
-                print(f"Sqlalchemy error at notification_service _mark_notifications_has_read\n{e}")
+                logger.error("Failed to mark notifiaction as read")
                 self.error = service_response_builder.internal_server_error(message="Could mark notifications has read")
                 return self.result, self.error
             
-            except Exception as e:
+            except Exception:
                 db.session.rollback()
-                print(f"Sqlalchemy error at notification_service _mark_notifications_has_read\n{e}")
+                logger.error("Failed to mark notifiaction as read")
                 self.error = service_response_builder.internal_server_error(message="Could mark notifications has read")
                 return self.result, self.error
 

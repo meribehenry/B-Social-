@@ -4,6 +4,7 @@ from marshmallow import ValidationError
 from app.search.schema import SearchFieldSchema
 from app.search.service import SearchService
 from app.shared.response import APIResponse
+from app.shared.decorators import active_status_required
 
 
 search_bp = Blueprint("search", __name__, url_prefix="/api/v1/search")
@@ -13,11 +14,11 @@ api_response = APIResponse()
 
 @search_bp.route("/", methods=["GET"])
 @jwt_required()
+@active_status_required
 def global_search():
     next_page = request.args.get("page", 1, type=int)
     try:
         data: [dict] = SearchFieldSchema().load({"search_term": request.args.get("search", "", type=str)})
-        print(data)
     except ValidationError as e:
         return api_response.schema_error(errors=e.messages)
 

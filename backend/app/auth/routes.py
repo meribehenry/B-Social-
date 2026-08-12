@@ -4,6 +4,7 @@ from app.auth.services.auth_service import AuthService
 from marshmallow import ValidationError
 from app.auth.schema import LoginSchema, RegistrationSchema, VerifyEmailSchema, ResetPasswordSchema, ResetPasswordRequestSchema
 from app.shared.response import APIResponse
+from app.extensions import limiter
 
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
@@ -13,6 +14,7 @@ api_response = APIResponse()
 
 
 @auth_bp.route("/register", methods=["POST"])
+@limiter.limit("10 per minute")
 def register():
     try:
         data = RegistrationSchema().load(request.get_json())
@@ -28,6 +30,7 @@ def register():
     
 
 @auth_bp.route("/login", methods=["POST"])
+@limiter.limit("5 per minute")
 def login():
     try:
         data = LoginSchema().load(request.get_json())
@@ -42,7 +45,7 @@ def login():
     return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))
     
 
-@auth_bp.route("/verify_email/<user_public_id>", methods=["PATCH"])
+@auth_bp.route("/users/<user_public_id>/email", methods=["PATCH"])
 def verify_email(user_public_id):
     try:
         data = VerifyEmailSchema().load(request.get_json())
@@ -57,7 +60,8 @@ def verify_email(user_public_id):
     return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))
 
 
-@auth_bp.route("/resend_otp/<user_public_id>", methods=["POST"])
+@auth_bp.route("/otp/users/<user_public_id>", methods=["POST"])
+@limiter.limit("4 per minute")
 def resend_otp(user_public_id):
     results, error = auth_service.resend_otp(user_public_id)
 
@@ -67,7 +71,8 @@ def resend_otp(user_public_id):
     return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))
 
 
-@auth_bp.route("/reset_request", methods=["POST"])
+@auth_bp.route("/reset/request", methods=["POST"])
+@limiter.limit("10 per minute")
 def reset_request():
     try:
         data = ResetPasswordRequestSchema().load(request.get_json())
@@ -82,7 +87,7 @@ def reset_request():
     return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))
     
 
-@auth_bp.route("/reset_password/<token>", methods=["PATCH"])
+@auth_bp.route("/reset/password/<token>", methods=["PATCH"])
 def reset_password(token):
     try:
         data = ResetPasswordSchema().load(request.get_json())

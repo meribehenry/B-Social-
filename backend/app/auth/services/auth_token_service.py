@@ -1,5 +1,5 @@
 from flask import current_app
-from app.extensions import db
+from app.extensions import db, logger
 from sqlalchemy.exc import SQLAlchemyError
 from app.user.service import UserService
 from app.auth.models.token_blocklist import TokenBlocklist
@@ -24,7 +24,7 @@ class TokenService():
         except (BadSignature, BadTimeSignature, SignatureExpired):
             return None
         
-        user = user_service.get_user_object(data["email"], retrival_method="email").password
+        user = user_service.get_user_object(data["email"], retrival_method="email")
         if user.password != data["hash_password"]:
             return None
         
@@ -52,16 +52,31 @@ class TokenService():
 
         except SQLAlchemyError as e:
             db.session.rollback()
-            print(f"Sqlalchemy error at auth_token_service block\n{e}")
+            logger.error("Failed to block jwt token")
             return False
         
         except Exception as e:
             db.session.rollback()
-            print(f"An error at auth_service logout\n{e}")
+            logger.error("Failed to block jwt token")
             return False
     
     def check_if_jwt_expired(self, jti):
         token = TokenBlocklist.query.filter_by(jti=jti).first()
         return token is not None
+
+    def delete_expired_jwt_tokens(self, type="access"):
+        if type not in {"access", "refresh"}:
+            raise ValueError("Invalid type only (access or refresh) can be used")
+
+        result = TokenBlocklist.query.filter_by(type=type).delete()
+        try:
+            db.session.commit()
+            return result
+
+        except SQLAlchemyError:
+            db.session.rollback()
+            logger.error(f"Failed to delete expired {type} tokens")
+
+
 
 

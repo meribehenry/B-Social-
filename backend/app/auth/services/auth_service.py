@@ -1,4 +1,4 @@
-from app.extensions import bcrypt, db
+from app.extensions import bcrypt, logger
 from app.shared.services.email_service import EmailService
 from app.auth.services.otp_service import OTPService
 from app.auth.services.auth_token_service import TokenService
@@ -52,6 +52,7 @@ class AuthService():
 
         # Check user was created
         if not user: 
+            logger.error("Could not create account")
             self.error = service_response_builder.internal_server_error(message="Could not create account")
             return self.result, self.error
 
@@ -61,12 +62,11 @@ class AuthService():
         if not otp:
             self.error = service_response_builder.internal_server_error(message="Could not generate otp")
             return self.result, self.error
-        
-        print("OTP generated successfully")
+
+        logger.info("OTP generated successfully")
         # Send emails
         email_service.send_welcome_message(email) 
         email_service.send_otp(email, otp)
-        print(f"OTP generated for {email} is {otp}")
 
         self.result = service_response_builder.result(message="Account created. Verify email to continue", 
                                                       data=user_response_schema.dump(user))
@@ -84,7 +84,12 @@ class AuthService():
 
         # Check if user exists or if password is correct 
         if not user or not user.check_password(submitted_password): 
+            logger.warning(f"{user.username} failed to login due to invalid credentials")
             self.error = service_response_builder.unauthenticated_error(message="Invalid credential. Please enter the correct email or password")
+            return self.result, self.error
+
+        if user.is_verified == False:
+            self.result = service_response_builder.result(message="Verify your email to continue", data=user_response_schema.dump(user), status_code=302)
             return self.result, self.error
         
         # Create access and refresh token
@@ -93,6 +98,7 @@ class AuthService():
         
         data = {"user": user_response_schema.dump(user), "access_token": access_token, "refresh_token": refresh_token}
         self.result = service_response_builder.result(message="Successfully logged in", data=data, status_code=201)
+        logger.info(f"User ({user.username}) logged in")
 
         return self.result, self.error
     
@@ -118,10 +124,11 @@ class AuthService():
             
             data = {"user": user_response_schema.dump(user), "access_token": access_token, "refresh_token": refresh_token}
             self.result = service_response_builder.result(message="You can now explore B-Social", data=data)
+            logger.info(f"User ({user.username}) verified their email")
             return self.result, self.error
         
         # If otp is invalid
-        service_response_builder.validation_error(message="Invalid or expired otp")
+        self.error = service_response_builder.validation_error(message="Invalid or expired otp")
         return self.result, self.error
 
 
@@ -151,7 +158,7 @@ class AuthService():
         new_password = data.get("password")
 
         # Check if old password is same as new one
-        if user.check_password(user.password, new_password):
+        if user.check_password(new_password):
             self.error = service_response_builder.conflict_error(message="New password cannot be the same as old password")
             return self.result, self.error
         
@@ -186,8 +193,8 @@ class AuthService():
         return self.result, self.error
     
 
-    def logout_user(self, access_token_jti, refresh_token):
-        
+    def logout_user(self, access_token_jti, data):
+        refresh_token = data.get("refresh_token").encode("utf-8")
         try:
             # Decode refresh token to get the payload
             refresh_token_jti = decode_token(refresh_token).get("jti")
@@ -195,10 +202,11 @@ class AuthService():
             print(f"An error at auth_service logout\n{e}")
             self.error = service_response_builder.validation_error(message="Could not validate refresh token")
             return self.result, self.error
-        
+
         # Block both the refresh and access token
         if auth_token_service.block_jwt_token(access_token_jti, refresh_token_jti):
             self.result = service_response_builder.result(message="Successfully logged out")
+            logger.info(f"A user logged out")
             return self.result, self.error
         
         else:
@@ -219,6 +227,7 @@ class AuthService():
             data = {"access_token": access_token, "refresh_token": refresh_token}
 
             self.result = service_response_builder.result(message="New jwt tokens created", data=data, status_code=201)
+            logger.info(f"New jwt tokens were created")
             return self.result, self.error
         
         else:

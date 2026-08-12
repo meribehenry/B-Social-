@@ -1,10 +1,11 @@
-from flask import current_app, render_template
-from threading import Thread
-from flask import current_app
+from flask import  render_template, url_for
+from app.extensions import logger
+from concurrent.futures import ThreadPoolExecutor
 import os
 import requests
 
 
+executor = ThreadPoolExecutor(max_workers=20)
 
 
 class EmailService():
@@ -36,66 +37,61 @@ class EmailService():
             "htmlContent": html
         }
     
-    def _send_async_email(self, app, header, data):
-        with app.app_context():
-            try:
-                response = requests.post(self.url, headers=header, json=data, timeout=15)
-                print(f"Email sent successfully 💯: {response.status_code}")
+    def _send_async_email(self, header, data):
+        try:
+            response = requests.post(self.url, headers=header, json=data, timeout=10)
+            logger.info(f"Email sent successfully 💯: {response.status_code}")
+            
+            response.raise_for_status()
+
+        except requests.exceptions.Timeout:
+            logger.error("Brevo timed out")
+
+        except requests.exceptions.ConnectionError:
+            logger.error("Cannot connect to Brevo")
+
+        except requests.exceptions.HTTPError:
+            logger.error("Brevo HTTP Error")
+            # if e.response is not None:
+            #     logger.error(f"Response content: {e.response.content}")
+            #     logger.error(f"Response status code: {e.response.status_code}")
+
+        except requests.exceptions.RequestException:
+            logger.error("Unexpected Brevo error")
                 
-                response.raise_for_status()
-
-            except requests.exceptions.Timeout:
-                print("Brevo timed out.")
-                raise
-
-            except requests.exceptions.ConnectionError:
-                print("Cannot connect to Brevo.")
-                raise
-
-            except requests.exceptions.HTTPError as e:
-                print(f"HTTP Error: {e}")
-                if e.response is not None:
-                    print(e.response.text)
-                raise
-
-            except requests.exceptions.RequestException as e:
-                print(f"Unexpected error: {e}")
-                raise
     
     def send_otp(self, email, otp_code):
-        html = "<h1>Coming...<h1>" #render_template("emails/otp_code.html", otp_code=otp_code)
+        html = render_template("otp_code.html", otp_code=otp_code)
         subject = "OTP Code"
 
-        Thread(target=self._send_async_email, 
-               args=(current_app._get_current_object(), 
-                     self._get_header(), 
-                     self._build_email(subject, email, html))
-                     ).start()
+        executor.submit(self._send_async_email,
+                        self._get_header(), 
+                        self._build_email(subject, email, html)
+                    )
         
-        print("Otp is been processed in the background")
+        logger.info("Otp email is been processed in the background")
     
 
     def send_request_token(self, token, email):
-        html =  "<h1>Coming...<h1>" #render_template("emails/reset_request.html", token=token)
+        html =  render_template("reset_request.html", token=token)
+        print(f"{url_for("auth.reset_password", token=token)}")
         subject = "Reset Password"
 
-        Thread(target=self._send_async_email, 
-               args=(current_app._get_current_object(), 
-                     self._get_header(),  
-                     self._build_email(subject, email, html))
-                     ).start()
+        executor.submit(self._send_async_email,
+                                self._get_header(), 
+                                self._build_email(subject, email, html)
+                            )
         
-        print("Reset token is being processed in the background")
+        logger.info("Reset token email is being processed in the background")
     
     
     def send_welcome_message(self, email):
-        html = "<h1>Coming...<h1>" #render_template("emails/welcome_email.html")
+        html = render_template("welcome_email.html")
         subject = "Welcome to B-Social"
 
-        Thread(target=self._send_async_email, 
-               args=(current_app._get_current_object(), 
-                     self._get_header(),  
-                     self._build_email(subject, email, html))
-                     ).start()
+        executor.submit(self._send_async_email,  
+                                self._get_header(), 
+                                self._build_email(subject, email, html)
+                            )
         
-        print("Welcome message is being processed in the background")
+        logger.info("Welcome message email is being processed in the background")

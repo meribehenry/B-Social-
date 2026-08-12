@@ -1,7 +1,7 @@
 from flask import Blueprint, request, Response, stream_with_context
 from flask_jwt_extended import get_jwt_identity, jwt_required 
 from app.notification.service import NotificationService
-from marshmallow import ValidationError
+from app.shared.decorators import active_status_required
 from app.shared.response import APIResponse
 
 
@@ -12,6 +12,7 @@ api_response = APIResponse()
 
 @notifications_bp.route("/", methods=["GET"])
 @jwt_required()
+@active_status_required
 def view_notifications():
 
     next_page = request.args.get("page", 1, type=int)
@@ -25,6 +26,7 @@ def view_notifications():
 
 @notifications_bp.route("/<notification_public_id>", methods=["DELETE"])
 @jwt_required()
+@active_status_required
 def delete_notification(notification_public_id):
 
     results, error = NotificationService(get_jwt_identity()).delete_notification(notification_public_id)
@@ -37,6 +39,7 @@ def delete_notification(notification_public_id):
 
 @notifications_bp.route("/", methods=["DELETE"])
 @jwt_required()
+@active_status_required
 def delete_all_notifications():
 
     results, error = NotificationService(get_jwt_identity()).delete_all_notifications()
@@ -49,6 +52,7 @@ def delete_all_notifications():
 
 @notifications_bp.route("/count", methods=["GET"])
 @jwt_required()
+@active_status_required
 def get_notification_count():
 
     results, error = NotificationService(get_jwt_identity()).get_notification_count()
@@ -61,6 +65,7 @@ def get_notification_count():
 
 @notifications_bp.route("/stream", methods=["GET"])
 @jwt_required()
+@active_status_required
 def notification_stream():
     result = NotificationService(get_jwt_identity()).notification_event_stream()
 

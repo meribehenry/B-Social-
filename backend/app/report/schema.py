@@ -12,12 +12,15 @@ class ReportResponseSchema(ma.Schema):
 
 
 class NewReportSchema(ma.Schema):
-    case = fields.String(required=True)
+    reported_case_id = fields.String(required=True)
+    reported_case = fields.String(required=True)
+    case_type = fields.String(required=True)
 
     @post_load
-    def sanitize(self, data, **kwarg):
+    def sanitise(self, data, **kwarg):
+        fields_to_sanitise = ["reported_case_id", "reported_case", "case_type"]
 
-        if "case" in data:
-            data["case"] = bleach.clean(data["case"], tags=[], strip=True).strip()
-
+        for field in fields_to_sanitise:
+            if field in data and data[field] is not None:
+                data[field] = bleach.clean(data[field], tags=[], strip=True).strip()
         return data

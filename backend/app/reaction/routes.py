@@ -4,6 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from marshmallow import ValidationError
 from app.reaction.service import PostReactionService, CommentReactionService
 from app.shared.response import APIResponse
+from app.shared.decorators import active_status_required
 
 
 reactions_bp = Blueprint("reactions", __name__, url_prefix="/api/v1/")
@@ -14,6 +15,7 @@ reaction_schema = ReactionSchema()
 
 @reactions_bp.route("/posts/<post_public_id>/reactions", methods=["POST"])
 @jwt_required()
+@active_status_required
 def react_to_post(post_public_id):
     try:
         data: [dict] = reaction_schema.load(request.get_json(silent=True))
@@ -31,6 +33,7 @@ def react_to_post(post_public_id):
 
 @reactions_bp.route("/posts/<post_public_id>/reactions", methods=["DELETE"])
 @jwt_required()
+@active_status_required
 def remove_post_reaction(post_public_id):
     results, error = PostReactionService(get_jwt_identity()).remove_reaction(post_public_id)
 
@@ -42,6 +45,7 @@ def remove_post_reaction(post_public_id):
 
 @reactions_bp.route("/comments/<comment_public_id>/reactions", methods=["POST"])
 @jwt_required()
+@active_status_required
 def react_to_comment(comment_public_id):
     try:
         data: [dict] = reaction_schema.load(request.get_json(silent=True))
@@ -59,9 +63,34 @@ def react_to_comment(comment_public_id):
 
 @reactions_bp.route("/comments/<comment_public_id>/reactions", methods=["DELETE"])
 @jwt_required()
+@active_status_required
 def remove_comment_reaction(comment_public_id):
     results, error = CommentReactionService(get_jwt_identity()).remove_reaction(comment_public_id)
 
+    if error:
+        return api_response.error(error=error.get("error"), message=error.get("message"), status_code=error.get("status_code"))
+    
+    return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))
+
+
+@reactions_bp.route("users/<user_public_id>/posts/reactions/list", methods=["GET"])
+@jwt_required()
+@active_status_required
+def get_reacted_posts_public_id_list():
+    results, error = PostReactionService(get_jwt_identity()).get_reacted_posts_public_id_list()
+    
+    if error:
+        return api_response.error(error=error.get("error"), message=error.get("message"), status_code=error.get("status_code"))
+    
+    return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))
+
+
+@reactions_bp.route("users/<user_public_id>/comments/reactions/list", methods=["GET"])
+@jwt_required()
+@active_status_required
+def get_reacted_comments_public_id_list():
+    results, error = CommentReactionService(get_jwt_identity()).get_reacted_comments_public_id_list()
+    
     if error:
         return api_response.error(error=error.get("error"), message=error.get("message"), status_code=error.get("status_code"))
     

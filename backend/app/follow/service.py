@@ -1,15 +1,18 @@
 from app.shared.pagination import create_pagination_dict
 from app.follow.model import Follower
 from app.user.service import UserService
-from app.extensions import db
+from app.extensions import db, logger
 from sqlalchemy.exc import SQLAlchemyError
 from app.shared.response import ServiceResponseBuilder
 from app.notification.service import NotificationService
 from app.follow.schema import FollowersResponseSchema2
+from flask import current_app
+from concurrent.futures import ThreadPoolExecutor
 
 
 service_response_builder = ServiceResponseBuilder()
 user_service = UserService()
+count_executor = ThreadPoolExecutor(max_workers=5)
 
 
 class FollowerService():
@@ -35,22 +38,25 @@ class FollowerService():
             self.error = service_response_builder.conflict_error("Already following user")
             return self.result, self.error 
 
+        new_follower = Follower(follower_id=self.current_user.id, followed_user_id=followed_user.id)
+
         try:
-            # self.current_user.following.append(followed_user)
-            new_follower = Follower(follower_id=self.current_user.id, followed_user_id=followed_user.id)
             db.session.add(new_follower)
             db.session.commit()
-            user_service.update_count(followed_user, type_of_count="follower")
+            app = current_app._get_current_object()
+            logger.info(f"User {self.current_user.username} followed user {followed_user.username}")
+            count_executor.submit(user_service.update_count, app, followed_user.public_id, type_of_count="follower")
+            count_executor.submit(user_service.update_count, app, self.current_user.public_id, type_of_count="following")
 
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             db.session.rollback()
-            print(f"SQLAlchemy error at follower_service, follow_user\n{e}")
+            logger.error("Could not follow user")
             self.error = service_response_builder.internal_server_error("Could not follow user")
             return self.result, self.error 
         
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            print(f"An error at follower_service, follow_user\n{e}")
+            logger.error("Could not follow user")
             self.error = service_response_builder.internal_server_error("Could not follow user")
             return self.result, self.error 
         
@@ -60,7 +66,7 @@ class FollowerService():
                     notification_type="follow"
                 )
 
-        self.result = service_response_builder.result(status_code=201)
+        self.result = service_response_builder.result(status_code=201, message="Successfully followed user")
         return self.result, self.error 
     
     
@@ -82,26 +88,26 @@ class FollowerService():
             return self.result, self.error
 
         try:
-            print("about to remove")
-            # self.current_user.following.remove(followed_user)
             db.session.delete(Follower.query.filter_by(followed_user_id=followed_user.id, follower_id=self.current_user.id).first())
-            print("removed")
             db.session.commit()
-            user_service.update_count(followed_user, type_of_count="follower", increment=False)
+            app = current_app._get_current_object()
+            logger.info(f"User {self.current_user.username} unfollowed user {followed_user.username}")
+            count_executor.submit(user_service.update_count, app, followed_user.public_id, type_of_count="follower", increment=False)
+            count_executor.submit(user_service.update_count, app, self.current_user.public_id, type_of_count="following", increment=False)
 
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             db.session.rollback()
-            print(f"SQLAlchemy error at follower_service, follow_user\n{e}")
+            logger.error("Could not unfollow user")
             self.error = service_response_builder.internal_server_error("Could not unfollow user")
             return self.result, self.error 
         
-        except Exception as e:
+        except Exception :
             db.session.rollback()
-            print(f"An error at follower_service, follow_user\n{e}")
+            logger.error("Could not unfollow user")
             self.error = service_response_builder.internal_server_error("Could not unfollow user")
             return self.result, self.error 
         
-        self.result = service_response_builder.result(status_code=201)
+        self.result = service_response_builder.result(status_code=201, message="Successfully unfollowed user")
         return self.result, self.error 
     
 
@@ -111,10 +117,9 @@ class FollowerService():
         if not followed_user:
             self.error = service_response_builder.not_found_error(message="User not found")
             return self.result, self.error
-        
+
         pagination = None
         if get_type == "follower":
-            
             pagination = followed_user.followers.paginate(per_page=per_page, page=page)
         elif get_type == "following":
             pagination = followed_user.following.paginate(per_page=per_page, page=page)
@@ -127,4 +132,13 @@ class FollowerService():
         }
 
         self.result = service_response_builder.result(data=data, status_code=200)
+        return self.result, self.error 
+    
+
+    def get_following_users_public_id_list(self):
+        following_user_public_id_list = [ follower.followed_user.public_id for follower in self.current_user.following]
+
+        print(f"Following users public id list: {following_user_public_id_list}")
+        
+        self.result = service_response_builder.result(data=following_user_public_id_list, status_code=200)
         return self.result, self.error 

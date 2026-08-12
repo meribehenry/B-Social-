@@ -1,7 +1,7 @@
 from app.post.models.click import Click
 
 
-def count_clicks(post, current_user):
+def record_clicks(post, current_user):
     click = Click.query.filter_by(post_id=post.id, user_id=current_user.id).first()
 
     if not click:

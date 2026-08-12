@@ -1,4 +1,4 @@
-from app.extensions import db
+from app.extensions import db, logger
 from app.feedback.model import Feedback
 from app.user.service import UserService
 from sqlalchemy.exc import SQLAlchemyError
@@ -29,16 +29,17 @@ class FeedbackService:
         try:
             db.session.add(feedback)
             db.session.commit()
+            logger.info("Feedback was submitted")
 
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             db.session.rollback()
-            print(f"SQLAlchemy error at feedback_service, submit_feedback\n{e}")
+            logger.error(f"Could not submit feedback")
             self.error = service_response_builder.internal_server_error(message="Could not submit feedback")
             return self.result, self.error
         
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            print(f"An error at feedback_service, submit_feedback\n{e}")
+            logger.error(f"Could not submit feedback")
             self.error = service_response_builder.internal_server_error(message="Could not submit feedback")
             return self.result, self.error
 
@@ -59,13 +60,13 @@ class FeedbackService:
 
         except SQLAlchemyError as e:
             db.session.rollback()
-            print(f"SQLAlchemy error at feedback_service, delete_feedback\n{e}")
+            logger.error("Could not delete feedback")
             self.error = service_response_builder.internal_server_error(message="Could not delete feedback")
             return self.result, self.error
         
         except Exception as e:
             db.session.rollback()
-            print(f"An error at feedback_service, delete_feedback\n{e}")
+            logger.error("Could not delete feedback")
             self.error = service_response_builder.internal_server_error(message="Could not delete feedback")
             return self.result, self.error
 

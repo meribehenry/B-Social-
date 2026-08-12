@@ -4,6 +4,7 @@ from app.comment.service import CommentService
 from marshmallow import ValidationError
 from app.shared.response import APIResponse
 from app.comment.schema import NewCommentSchema
+from app.shared.decorators import active_status_required
 
 
 comments_bp = Blueprint("comments", __name__, url_prefix="/api/v1/")
@@ -13,6 +14,7 @@ api_response = APIResponse()
 
 @comments_bp.route("/posts/<post_public_id>/comments", methods=["POST"])
 @jwt_required()
+@active_status_required
 def new_comment(post_public_id):
     try:
         data = NewCommentSchema().load(request.get_json())
@@ -29,6 +31,7 @@ def new_comment(post_public_id):
 
 @comments_bp.route("/comments/<comment_public_id>", methods=["PATCH"])
 @jwt_required()
+@active_status_required
 def edit_comment(comment_public_id):
     try:
         data = NewCommentSchema().load(request.get_json())
@@ -45,6 +48,7 @@ def edit_comment(comment_public_id):
 
 @comments_bp.route("/comments/<comment_public_id>", methods=["GET"])
 @jwt_required()
+@active_status_required
 def view_comment(comment_public_id):
     results, error = CommentService(get_jwt_identity()).view_comment(comment_public_id)
 
@@ -56,6 +60,7 @@ def view_comment(comment_public_id):
 
 @comments_bp.route("/posts/<post_public_id>/comments", methods=["GET"])
 @jwt_required()
+@active_status_required
 def view_comments(post_public_id):
     comment_next_page = request.args.get("page", 1, type=int)
     results, error = CommentService(get_jwt_identity()).view_comments(post_public_id, page=comment_next_page)
@@ -68,6 +73,7 @@ def view_comments(post_public_id):
 
 @comments_bp.route("/comments/<comment_public_id>", methods=["DELETE"])
 @jwt_required()
+@active_status_required
 def delete_comment(comment_public_id):
     results, error = CommentService(get_jwt_identity()).delete_comment(comment_public_id)
 

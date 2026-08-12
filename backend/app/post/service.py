@@ -1,16 +1,20 @@
-from datetime import datetime, timezone
-from app.post.models.post import Post
+from datetime import datetime, timedelta, timezone
+from flask import current_app
+from app.post.models.post import Post, Media
 from app.user.service import UserService
-from app.extensions import db
+from app.extensions import db, logger
 from sqlalchemy.exc import SQLAlchemyError
 from app.shared.services.file_service import FileService
 from app.shared.pagination import create_pagination_dict
-from app.post.utils.count_clicks import count_clicks
+from app.post.utils.record_clicks import record_clicks
 from app.shared.response import ServiceResponseBuilder
 from app.post.schema import PostResponseSchema
 from sqlalchemy import update
+from concurrent.futures import ThreadPoolExecutor
 
 
+file_executor = ThreadPoolExecutor(max_workers=5)
+count_executor = ThreadPoolExecutor(max_workers=5)
 service_response_builder = ServiceResponseBuilder()
 post_response_schema = PostResponseSchema()
 posts_response_schema = PostResponseSchema(many=True)
@@ -18,49 +22,84 @@ user_service = UserService()
 
 
 class PostService():
+
     def __init__(self, user_public_id):
         self.current_user = user_service.get_user_object(user_public_id)
         self.error = {}
         self.result = {}
-  
 
-    def create_post(self, data:dict, file):
+    def _delete_old_medias_file_from_db(self, old_post_medias:list):
+        try:
+            for media in old_post_medias:
+                db.session.delete(media)
+                db.session.commit()
+            return True
+        except SQLAlchemyError:
+            db.session.rollback()
+            logger.error("Failed to delete old medias")
+            return False
+  
+    def __delete_old_medias_file_from_storage(self, old_post_medias:list):
+        file_service = FileService()   
+        if old_post_medias:
+            logger.info(f"Deleting old media files from storage in a separate thread(background task)")
+            for media in old_post_medias:
+                file_service.delete_file(media.file_id)               
+
+    def create_post(self, data:dict, files):
         content = data.get("content")
 
-        if not content and not file:
+        if len(files) > 4:
+            self.error = service_response_builder.bad_request_error(message="Only four files are supported")
+            return self.result, self.error
+
+        if not content and not files:
             self.error = service_response_builder.bad_request_error(message="Please enter atleast one field (text or media)")
             return self.result, self.error
-        
-        post_type,  media_url, media_id = "text", "",""
 
-        if file:
-            file_service = FileService()
-            file_result = file_service.handle_file(file, allowed_extensions={".jpg", ".img", ".jpeg", ".png", ".mp4"})
+        post = Post(content=content, author=self.current_user)
+        db.session.add(post)
 
-            if not file_result:
-                self.error = service_response_builder.validation_error(message="Invalid file type. Please enter the correct type: [jpg, img, jpeg, png, mp4]")
-                return self.result, self.error
+        post_files = []
 
-            post_type = file_result.get("type")
-            media_url, media_id = file_service.save_file(file_result, folder_name="posts")
-            
-        post = Post(content=content, media_url=media_url, media_id=media_id, type=post_type, author=self.current_user)
-        
-        try:
-            db.session.add(post)
+        if files:
+            for file in files.values():
+                file_service = FileService()
+                file_result = file_service.handle_file(file, allowed_extensions={".jpg", ".img", ".jpeg", ".png", ".mp4"})
+
+                if not file_result:
+                    self.error = service_response_builder.validation_error(message="Invalid file type. Please enter the correct type: [jpg, img, jpeg, png, mp4]")
+                    return self.result, self.error
+
+                media_type = file_result.get("type")
+                storage_result = file_service.save_file(file_result, folder_name="posts")
+
+                if not storage_result:
+                    self.error = service_response_builder.internal_server_error(message="Could not create post")
+                    return self.result, self.error
+
+                post_files.append({"file_url": storage_result[0], "file_id": storage_result[1], "media_type": media_type})   
+    
+        try: 
+            db.session.flush()  # Flush to get the post ID before committing 
+            for file in post_files:
+                media = Media(post_id=post.id, file_id=file.get("file_id"), file_url=file.get("file_url"), media_type=file.get("media_type")) 
+                db.session.add(media)  
             db.session.commit()
-            user_service.update_count(self.current_user, "post")
+            logger.info("Post created")
+
+            app = current_app._get_current_object()
+            count_executor.submit(user_service.update_count, app, self.current_user.public_id, "post")
 
         except SQLAlchemyError as e:
             db.session.rollback()
-            print(f"Sqlalchemy error at post_service, create_post\n{e}")
+            logger.error(f"Failed to create post")
             self.error = service_response_builder.internal_server_error(message="Could not create post")
             return self.result, self.error
         
         except Exception as e:
             db.session.rollback()
-            print(f"An error at post_service, create_post\n{e}")
-
+            logger.error(f"Failed to create post: {e}")
             self.error = service_response_builder.internal_server_error(message="Could not create post")
             return self.result, self.error 
         
@@ -71,7 +110,7 @@ class PostService():
         return self.result, self.error
 
 
-    def edit_post(self, post_public_id, data:dict, file):
+    def edit_post(self, post_public_id, data:dict, files):
         post = Post.query.filter_by(public_id=post_public_id).first()
 
         if not post:
@@ -82,44 +121,64 @@ class PostService():
             self.error = service_response_builder.forbidden_error(message="You are not authorized to edit this post")
             return self.result, self.error
 
+        if (post.date_created.replace(tzinfo=timezone.utc) + timedelta(hours=48)) <= (datetime.now(timezone.utc)):
+            self.error = service_response_builder.conflict_error(message="Cannot edit post after 48 hours")
+            return self.result, self.error
+
+        if len(files) > 4:
+            self.error = service_response_builder.bad_request_error(message="Only four files are supported")
+            return self.result, self.error
+
         new_content = data.get("content")
 
-        if (not new_content or new_content == post.content) and not file:
+        if (not new_content or new_content == post.content) and not files:
             self.error = service_response_builder.bad_request_error(message="Please enter atleast one field (text or media)")
-            return self.result, self.error  
+            return self.result, self.error 
 
-        old_post_media_id = ""    
+        old_post_medias = ""  
+
         file_service = FileService()
 
-        if file:
-            file_result = file_service.handle_file(file, allowed_extensions={".jpg", ".img", ".jpeg", ".png", ".mp4"})
+        if files:
+            if post.medias:
+                old_post_medias = post.medias.all() # Store the old media before deletion
 
-            if not file_result:
-                self.error = service_response_builder.validation_error(message="Invalid file type. Please enter the correct type: [jpg, img, jpeg, png, mp4]")
-                return self.result, self.error
-            
-            if post.media_url:
-                old_post_media_id = post.media_id 
+            for file in files.values():
+                file_result = file_service.handle_file(file, allowed_extensions={".jpg", ".img", ".jpeg", ".png", ".mp4"})
 
-            post.type = file_result.get("type")
-            post.media_url , post.media_id = file_service.save_file(file_result, folder_name="posts")
+                if not file_result:
+                    self.error = service_response_builder.validation_error(message="Invalid file type. Please enter the correct type: [jpg, img, jpeg, png, mp4]")
+                    return self.result, self.error
+
+                media_type = file_result.get("type")
+                storage_result = file_service.save_file(file_result, folder_name="posts")
+                            
+                if not storage_result:
+                    self.error = service_response_builder.internal_server_error(message="Could not create post")
+                    return self.result, self.error
+    
+                file_url, file_id = storage_result
+                media = Media(post_id=post.id, file_id=file_id, file_url=file_url, media_type=media_type)
+                db.session.add(media)
             
         post.content = new_content
         post.edited = True
         post.date_updated = datetime.now(timezone.utc)
 
         try:
-            db.session.commit()
-            file_service.delete_file(old_post_media_id) if old_post_media_id else None
-        except SQLAlchemyError as e:
+            self._delete_old_medias_file_from_db(old_post_medias)  # Delete old media from the database
+            db.session.commit()   
+            file_executor.submit(self.__delete_old_medias_file_from_storage, old_post_medias)  # Delete old media from storage in a separate thread               
+
+        except SQLAlchemyError:
             db.session.rollback()
-            print(f"Sqlalchemy error at post_service, edit_post\n{e}")
+            logger.error("Failed to edit post")
             self.error = service_response_builder.internal_server_error(message="Could not update post")
             return self.result, self.error
         
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            print(f"An error at post_service, edit_post\n{e}")
+            logger.error("Failed to edit post")
             self.error = service_response_builder.internal_server_error(message="Could not update post")
             return self.result, self.error 
         
@@ -136,28 +195,32 @@ class PostService():
             self.error = service_response_builder.not_found_error(message="Post not found")
             return self.result, self.error 
 
-        if self.current_user != post.author:
+
+        if self.current_user != post.author and (self.current_user.role != "moderator" and self.current_user.role != "admin"):
             self.error = service_response_builder.forbidden_error(message="You are not authorized to delete this post")
             return self.result, self.error
 
-        media_id = post.media_id
-        file_service = FileService()
+        old_post_medias = post.medias.all()  # Store the old media before deletion
 
         try:
             db.session.delete(post)
             db.session.commit()
-            user_service.update_count(self.current_user, "post", increment=False)
-            file_service.delete_file(media_id) if media_id else None
+            logger.info("Post deleted")
 
-        except SQLAlchemyError as e:
+            # Background Tasks
+            app = current_app._get_current_object()
+            count_executor.submit(user_service.update_count, app, self.current_user.public_id, "post", increment=False)
+            file_executor.submit(self.__delete_old_medias_file_from_storage, old_post_medias)  # Delete old media from storage in a separate thread
+
+        except SQLAlchemyError:
             db.session.rollback()
-            print(f"SQLAlchemy error at post_service, delete_post\n{e}")
+            logger.error("Failed to delete post")
             self.error = service_response_builder.internal_server_error(message="Could not delete post")
             return self.result, self.error 
         
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            print(f"An error at post_service, delete_post\n{e}")
+            logger.error("Failed to delete post")
             self.error = service_response_builder.internal_server_error(message="Could not delete post")
             return self.result, self.error 
         
@@ -172,15 +235,21 @@ class PostService():
         if not post:
             self.error = service_response_builder.not_found_error(message="Post not found")
             return self.result, self.error 
-        
-        count_clicks(post, post.author)
+
+        record_clicks(post, self.current_user)  
 
         self.result = service_response_builder.result(data=post_response_schema.dump(post))
         return self.result, self.error
     
     
-    def view_posts(self, per_page=20, page=1):
-        post_pagination = Post.query.order_by(Post.date_created.desc()).paginate(per_page=per_page, page=page)
+    def view_posts(self, per_page=20, page=1, user_public_id=None):
+        query = Post.query
+        if user_public_id:
+            user = user_service.get_user_object(user_public_id)
+            if user:
+                query = query.filter_by(user_id=user.id)
+
+        post_pagination = query.order_by(Post.date_created.desc()).paginate(per_page=per_page, page=page, error_out=False)
 
         data = {
             "posts": posts_response_schema.dump(post_pagination.items),
@@ -198,44 +267,54 @@ class PostService():
             return post
         
         return post is not None
+
+
+    def update_count(self, app, post_public_id, type_of_count="like", increment=True):
+        
+        with app.app_context():
+            post = self.get_post_object(post_public_id)
+            if not post: return None
+            
+            try:
+                if type_of_count == "like":
+                    db.session.execute(
+                        update(Post)
+                        .where(Post.id==post.id)
+                        .values(num_of_likes=(Post.num_of_likes + 1) if increment else (Post.num_of_likes - 1))
+                        )
+                
+                elif type_of_count == "dislike":
+                    db.session.execute(
+                        update(Post)
+                        .where(Post.id==post.id)
+                        .values(num_of_dislikes=(Post.num_of_dislikes + 1) if increment else (Post.num_of_dislikes - 1))
+                        )
+                    
+                elif type_of_count == "comment":
+                    db.session.execute(
+                        update(Post)
+                        .where(Post.id==post.id)
+                        .values(num_of_comments=(Post.num_of_comments + 1) if increment else (Post.num_of_comments - 1))
+                        )
+                    
+                elif type_of_count == "clicks":
+                    db.session.execute(
+                        update(Post)
+                        .where(Post.id==post.id)
+                        .values(num_of_clicks=(Post.num_of_clicks + 1) if increment else (Post.num_of_clicks - 1))
+                        )
+                else:
+                    raise Exception ("Invalid type_of_count")
+                
+                db.session.commit()
+                logger.info(f"Updated {type_of_count} count for post {post.public_id}")
+                return True
+            
+            except SQLAlchemyError:
+                db.session.rollback()
+                logger.error(f"Failed to update post {type_of_count} count")
+                return False
     
-    def update_count(self, post, type_of_count="like", increment=True):
-        
-        try:
-            if type_of_count == "like":
-                db.session.execute(
-                    update(Post)
-                    .where(Post.id==post.id)
-                    .values(num_of_likes=(Post.num_of_likes + 1) if increment else (Post.num_of_likes - 1))
-                    )
-            
-            elif type_of_count == "dislike":
-                db.session.execute(
-                    update(Post)
-                    .where(Post.id==post.id)
-                    .values(num_of_dislikes=(Post.num_of_dislikes + 1) if increment else (Post.num_of_dislikes - 1))
-                    )
-                
-            elif type_of_count == "comment":
-                db.session.execute(
-                    update(Post)
-                    .where(Post.id==post.id)
-                    .values(num_of_comments=(Post.num_of_comments + 1) if increment else (Post.num_of_comments - 1))
-                    )
-                
-            elif type_of_count == "clicks":
-                db.session.execute(
-                    update(Post)
-                    .where(Post.id==post.id)
-                    .values(num_of_clicks=(Post.num_of_clicks + 1) if increment else (Post.num_of_clicks - 1))
-                    )
-            else:
-                raise Exception ("Invalid type_of_count")
-            
-            db.session.commit()
-            return True
-        
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            print(f"Sqlalchemy error at post_service update_count\n{e}")
-            return False
+    @staticmethod
+    def get_db_model():
+        return Post

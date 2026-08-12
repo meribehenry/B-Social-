@@ -1,9 +1,11 @@
+from app.extensions import logger
 import secrets
 import cloudinary.uploader
 import os
 
 
 class FileService():
+    
     def handle_file(self, file, allowed_extensions):
         file_types = {
             "video": {".mp4", ".mkv"},
@@ -13,7 +15,6 @@ class FileService():
         }
         
         extension = os.path.splitext(file.filename)[1]
-        print(extension)
         if extension not in allowed_extensions:
             return None
         
@@ -23,19 +24,38 @@ class FileService():
             
 
     def save_file(self, file_result, folder_name="folder"):
+        resource_type = {
+            "video": "video",
+            "image": "image",
+            "document": "raw",
+            "audio": "raw"
+        }
         random_name = secrets.token_hex(16)
 
-        result = cloudinary.uploader.upload(
-            file_result.get("file"),
-            public_id = random_name,
-            resoucre_type=file_result.get("type"),
-            folder=folder_name #os.path.join(folder_name, file_result.get("type"))
-        )
-
-        return result["secure_url"], random_name
+        try:
+            result = cloudinary.uploader.upload(
+                file_result.get("file"),
+                public_id = random_name,
+                resoucre_type=resource_type.get(file_result.get("type")),
+                folder=folder_name 
+            )
+            logger.info(f"Saved file to storage with public_id ({random_name})")
+            return result["secure_url"], random_name
+                
+        
+        except:
+            logger.error(f"Could not save file to storage")
 
 
     def delete_file(self, public_id):
-        cloudinary.uploader.destroy(public_id, invalidate=True)
+        try:
+            cloudinary.uploader.destroy(public_id, invalidate=True)
+            logger.info(f"Deleted file with public_id ({public_id}) from storage")
+        except:
+            logger.error(f"Could not delete file with public_id ({public_id}) from storage")   
+            with open("old_media.txt", "a") as file:
+                file.write(f"{public_id}\n")
+                logger.info(f"File ({public_id}) added to old_media.txt")
+                return False     
         return True
 

@@ -10,7 +10,7 @@ class ModeratorTakeDownSchema(ma.Schema):
     def sanitize(self, data, **kwarg):
         if "password" in data:
             data["password" ] = bleach.clean(data["password" ], tags=[], strip=True).strip()
-            return data
+        return data
 
 class ModeratorChangeStatusSchema(ma.Schema):
     password = fields.String(required=True)

@@ -1,5 +1,5 @@
 from datetime import datetime, timezone, timedelta
-from app.extensions import db
+from app.extensions import db, logger
 from app.auth.models.otp import OTP
 from sqlalchemy.exc import SQLAlchemyError
 import random
@@ -10,20 +10,21 @@ class OTPService():
         """ This function generate 6-digit otp and stores it in the database with the email parameter to track users otp"""
         while True:
             otp_code = random.randint(100000, 999999)
-            user_exist = OTP.query.filter_by(email=email).first()
+            check_if_exist = OTP.query.filter_by(email=email).first()
 
-            if not user_exist:
+            if not check_if_exist :
                 otp = OTP(otp_code=otp_code, email=email, expire_time=(datetime.now(timezone.utc) + timedelta(minutes=10)))
                 try:
                     db.session.add(otp)
                     db.session.commit()
                 except SQLAlchemyError:
                     db.session.rollback()
+                    logger.error("Failed to generate otp")
                     return None
                 return otp_code
             
             else: 
-                db.session.delete(user_exist)
+                db.session.delete(check_if_exist )
                 db.session.commit()
 
 
@@ -48,7 +49,7 @@ class OTPService():
         try:
             db.session.commit()
         except SQLAlchemyError as e:
-            print(f"Sqlalchemy error at user_service delete_unverified_users\n{e}")
+            logger.error("Failed to delete unverified user")
             db.session.rollback()
 
         return expired_otps_num

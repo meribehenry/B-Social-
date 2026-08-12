@@ -7,6 +7,10 @@ from flask_migrate import Migrate
 from flask_apscheduler import APScheduler
 from flask_marshmallow import Marshmallow
 from flask_jwt_extended import JWTManager
+from flask_limiter import Limiter
+from app.shared.rate_limit import rate_limit_by_user
+from app.shared.logger_setup import setup_logger
+
 
 
 convention = {
@@ -25,6 +29,10 @@ migrate = Migrate()
 scheduler = APScheduler()
 ma = Marshmallow()
 jwt = JWTManager()
+limiter = Limiter(key_func=rate_limit_by_user, default_limits=["400 per day", "100 per hour"], storage_uri="memory://", retry_after="delta seconds=300")
+logger = setup_logger("b_social_app")
+
+
 
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragms(dbapi_connection, connection_record):
@@ -32,4 +40,5 @@ def set_sqlite_pragms(dbapi_connection, connection_record):
         cursor = dbapi_connection.cursor()
         cursor.execute("PRAGMA foreign_keys=ON")
         cursor.close()
+
 

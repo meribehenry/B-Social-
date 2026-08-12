@@ -1,9 +1,9 @@
 from datetime import datetime, timezone
-import os
 from config import Production, Development
 from flask import Flask
-from app.extensions import db, migrate, bcrypt, ma, jwt
+from app.extensions import db, migrate, bcrypt, ma, jwt, limiter, logger
 from app.extensions import scheduler
+import os
 
 config_classes = {
     'production': Production,
@@ -23,6 +23,7 @@ def create_app(config_name=None):
     bcrypt.init_app(app)
     ma.init_app(app)
     jwt.init_app(app)
+    limiter.init_app(app)
  
 
     from app.auth.services.auth_token_service import TokenService
@@ -33,18 +34,49 @@ def create_app(config_name=None):
         return result 
     
     from app.auth.services.otp_service import OTPService
-    @scheduler.task('interval', id='delete_expired_otps', seconds=600, misfire_grace_time=900)
+    @scheduler.task('interval', id='delete_expired_otps', seconds=600, misfire_grace_time=600)
     def delete_expired_otps():
         with app.app_context():
             expired_otps_num = OTPService().delete_expired_otps()
-            print(f"Deleted {expired_otps_num if expired_otps_num else 0} expired OTPs at {datetime.now(timezone.utc)}")
+            logger.info(f"Deleted {expired_otps_num if expired_otps_num else 0} expired OTPs at {datetime.now(timezone.utc)}")
+
+    from app.auth.services.auth_token_service import TokenService
+    @scheduler.task('interval', id='delete_expired_access_token', seconds=1200, misfire_grace_time=1200)
+    def delete_expired_access_token():
+        with app.app_context():
+            expired_access_token_num = TokenService().delete_expired_jwt_tokens(type="access")
+            if expired_access_token_num:
+                logger.info(f"Deleted {expired_access_token_num} expired access token at {datetime.now(timezone.utc)}")
+
+    @scheduler.task('interval', id='delete_expired_refresh_token', seconds=86400, misfire_grace_time=86400)
+    def delete_expired_refresh_token():
+        with app.app_context():
+            expired_refresh_token_num = TokenService().delete_expired_jwt_tokens(type="refresh")
+            if expired_refresh_token_num:
+                logger.info(f"Deleted {expired_refresh_token_num} expired refresh token at {datetime.now(timezone.utc)}")
     
     from app.user.service import UserService
     @scheduler.task('interval', id='delete_unverified_user', seconds=900, misfire_grace_time=900)
     def delete_unverified_user():
         with app.app_context():
             unverified_user_num = UserService().delete_unverified_users()
-            print(f"Deleted {unverified_user_num if unverified_user_num else 0} unverified_users at {datetime.now(timezone.utc)}")
+            if unverified_user_num:
+                logger.info(f"Deleted {unverified_user_num} unverified_users at {datetime.now(timezone.utc)}")
+
+
+    from app.shared.services.file_service import FileService
+    @scheduler.task('interval', id='delete_old_file_from_storage', seconds=3600, misfire_grace_time=3600)
+    def delete_old_file_from_storage():
+        with app.app_context():
+            with open("old_media.txt", "r") as file:
+                if file:
+                    failed = []
+                    for file_id in file:
+                        r = FileService().delete_file(file_id.strip())
+                        logger.info(f"Deleted file ({file_id.strip()}) in old_media.txt") if r else failed.append(file_id)
+
+                    with open("old_media.txt", "w") as f:
+                        f.writelines(failed)
 
 
     scheduler.init_app(app)

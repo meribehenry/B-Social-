@@ -4,6 +4,7 @@ from app.profile.service import ProfileService
 from app.shared.response import APIResponse
 from marshmallow import ValidationError
 from app.profile.schema import EditProfileSchema
+from app.shared.decorators import active_status_required
 
 
 profile_bp = Blueprint("profile", __name__, url_prefix="/api/v1/")
@@ -13,6 +14,7 @@ api_response = APIResponse()
 
 @profile_bp.route("/users/<user_public_id>/profile", methods=["GET"])
 @jwt_required()
+@active_status_required
 def view_profile(user_public_id):
     results, error = ProfileService(get_jwt_identity()).view_profile(user_public_id)
 
@@ -24,15 +26,15 @@ def view_profile(user_public_id):
 
 @profile_bp.route("/users/<user_public_id>/profile", methods=["PATCH"])
 @jwt_required()
+@active_status_required
 def edit_profile(user_public_id):
     try:
         data: [dict] = EditProfileSchema().load(request.form)
-        print(data)
-        file = request.files.get("file")
+        files = request.files
     except ValidationError as e:
         return api_response.schema_error(errors=e.messages)
     
-    results, error = ProfileService(get_jwt_identity()).edit_profile(user_public_id, data, file)
+    results, error = ProfileService(get_jwt_identity()).edit_profile(user_public_id, data, files)
 
     if error:
         return api_response.error(error=error.get("error"), message=error.get("message"), status_code=error.get("status_code"))

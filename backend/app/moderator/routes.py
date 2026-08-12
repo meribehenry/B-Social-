@@ -3,6 +3,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from app.moderator.service import ModeratorService
 from marshmallow import ValidationError
 from app.shared.response import APIResponse
+from app.shared.decorators import active_status_required, moderator_required
 from app.moderator.schema import ModeratorTakeDownSchema, ModeratorChangeStatusSchema
 
 
@@ -11,11 +12,13 @@ moderator_bp = Blueprint("moderator", __name__, url_prefix="/api/v1/moderator")
 api_response = APIResponse()
 
 
-@moderator_bp.route("/posts/<post_public_id>", methods=["DELETE"])
+@moderator_bp.route("/posts/<post_public_id>", methods=["POST"])
 @jwt_required()
+@active_status_required
+@moderator_required
 def take_down_post(post_public_id):
     try:
-        data: [dict] = ModeratorTakeDownSchema().load(request.get_json())
+        data: [dict] = ModeratorTakeDownSchema().load(request.get_json(silent=True))
     except ValidationError as e:
         return api_response.schema_error(errors=e.messages)
 
@@ -27,8 +30,10 @@ def take_down_post(post_public_id):
     return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))
     
 
-@moderator_bp.route("/comments/<comment_public_id>", methods=["DELETE"])
+@moderator_bp.route("/comments/<comment_public_id>", methods=["POST"])
 @jwt_required()
+@active_status_required
+@moderator_required
 def take_down_comment(comment_public_id):
     try:
         data: [dict] = ModeratorTakeDownSchema().load(request.get_json())
@@ -43,8 +48,10 @@ def take_down_comment(comment_public_id):
     return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))
         
 
-@moderator_bp.route("/user/<user_public_id>/status", methods=["PATCH"])
+@moderator_bp.route("/users/<user_public_id>/", methods=["PATCH"])
 @jwt_required()
+@active_status_required
+@moderator_required
 def change_user_status(user_public_id):
     try:
         data: [dict] = ModeratorChangeStatusSchema().load(request.get_json())

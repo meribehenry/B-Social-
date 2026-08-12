@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, jsonify
+from flask_limiter import RateLimitExceeded
 from app.extensions import db
 
 global_errors_bp = Blueprint("global_errors", __name__)
@@ -20,15 +21,18 @@ def forbidden(error):
 def not_found(error):
     return jsonify({"success": False, "error": "Not Found", "message": "The resource request does not exist"}), 404
 
+@global_errors_bp.app_errorhandler(405)
+def unallowed_method(error):
+    return jsonify({"success": False, "error": "This method is not allowed", "message": str(error) }), 405
 
 @global_errors_bp.app_errorhandler(422)
 def validation_error(error):
     return jsonify({"success": False, "error": "Validation error", "message": str(error) }), 422
 
-
 @global_errors_bp.app_errorhandler(429)
+@global_errors_bp.app_errorhandler(RateLimitExceeded)
 def too_many_request(error):
-    return jsonify({"success": False, "error": "Too many request", "message": str(error) }), 429
+    return jsonify({"success": False, "error": "Too many request", "message": f"Try again in {error.retry_after} seconds"}), 429
 
 @global_errors_bp.app_errorhandler(500)
 def internal_server_error(error):

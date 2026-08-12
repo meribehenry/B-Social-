@@ -12,6 +12,6 @@ class FollowersResponseSchema(ma.Schema):
 class FollowersResponseSchema2(ma.Schema):
     public_id = fields.String()
     follower = fields.Nested("UserResponseSchema", only=('username', 'public_id', 'profile'))
-    followed_user = fields.Nested("UserResponseSchema", only=('username', 'public_id'))
+    followed_user = fields.Nested("UserResponseSchema", only=('username', 'public_id', 'profile'))
     followed_at = fields.DateTime(format="iso")
     

@@ -5,7 +5,7 @@ from app.extensions import db, logger
 from sqlalchemy.exc import SQLAlchemyError
 from app.shared.response import ServiceResponseBuilder
 from app.notification.service import NotificationService
-from app.follow.schema import FollowersResponseSchema2
+from app.follow.schema import FollowersResponseSchema
 from flask import current_app
 from concurrent.futures import ThreadPoolExecutor
 
@@ -127,7 +127,7 @@ class FollowerService():
             raise Exception("Invalid type parameter for get_followers_of_followings method")
             
         data = {
-            "followers": FollowersResponseSchema2(many=True).dump(pagination.items),
+            "followers": FollowersResponseSchema(many=True).dump(pagination.items),
             "pagination": create_pagination_dict(pagination)
         }
 

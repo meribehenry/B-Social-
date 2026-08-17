@@ -1,4 +1,5 @@
 from app.extensions import logger
+from werkzeug.utils import secure_filename
 import secrets
 import cloudinary.uploader
 import os
@@ -14,7 +15,7 @@ class FileService():
             "document": {".txt", ".doc"}
         }
         
-        extension = os.path.splitext(file.filename)[1]
+        extension = os.path.splitext(secure_filename(file.filename))[1]
         if extension not in allowed_extensions:
             return None
         

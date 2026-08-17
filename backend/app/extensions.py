@@ -10,7 +10,9 @@ from flask_jwt_extended import JWTManager
 from flask_limiter import Limiter
 from app.shared.rate_limit import rate_limit_by_user
 from app.shared.logger_setup import setup_logger
-
+from flasgger import Swagger
+from app.swagger.swagger_global_template import temaplate
+from flask_cors import CORS # Import the library[span_3](start_span)[span_3](end_span)
 
 
 convention = {
@@ -22,6 +24,7 @@ convention = {
 }
 
 
+cors = CORS()
 metadata = MetaData(naming_convention=convention)
 db = SQLAlchemy(metadata=metadata)
 bcrypt = Bcrypt()
@@ -31,6 +34,7 @@ ma = Marshmallow()
 jwt = JWTManager()
 limiter = Limiter(key_func=rate_limit_by_user, default_limits=["400 per day", "100 per hour"], storage_uri="memory://", retry_after="delta seconds=300")
 logger = setup_logger("b_social_app")
+swagger = Swagger(template=temaplate)
 
 
 

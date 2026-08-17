@@ -1,8 +1,9 @@
 from datetime import datetime, timezone
 from config import Production, Development
 from flask import Flask
-from app.extensions import db, migrate, bcrypt, ma, jwt, limiter, logger
+from app.extensions import db, migrate, bcrypt, ma, jwt, limiter, logger, swagger, cors
 from app.extensions import scheduler
+
 import os
 
 config_classes = {
@@ -18,12 +19,21 @@ def create_app(config_name=None):
     app = Flask(__name__)
     app.config.from_object(config_classes.get(config_name))
 
+    cors.init_app(app, resources={
+        r"/api/*": {
+            "origins": ["http://127.0.0.1:5500", "http://127.0.0.1:5500"], #[span_8](start_span)[span_8](end_span)
+            "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], #[span_9](start_span)[span_9](end_span)
+            "allow_headers": ["Content-Type", "Authorization"] #[span_10](start_span)[span_10](end_span)
+        }
+    }, supports_credentials=True)
     db.init_app(app)
     migrate.init_app(app, db)
     bcrypt.init_app(app)
     ma.init_app(app)
     jwt.init_app(app)
     limiter.init_app(app)
+    swagger.init_app(app)
+    
  
 
     from app.auth.services.auth_token_service import TokenService

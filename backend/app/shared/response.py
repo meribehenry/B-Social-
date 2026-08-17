@@ -1,4 +1,5 @@
-from flask import jsonify
+from flask import jsonify, make_response
+from datetime import timedelta
 
 class APIResponse():
 
@@ -9,10 +10,23 @@ class APIResponse():
         if data:
             body["data"] = data
         return jsonify(body), status_code
-    
-    # @staticmethod
-    # def created(data=None, message="Created"):
-    #     return APIResponse.success(data=data, message=message, status_code=201)
+
+    @staticmethod
+    def success_extra_data_cookie(name="cookie", data=None, message="Success", status_code=200, value="cookie", httponly=True, secure=True, expires_at=(30 * 24 * 60 * 60), samesite="strict"):
+        response = make_response(
+                jsonify({"success": True, "data":data, "message":message}), status_code)
+        
+        response.set_cookie(
+            key=name,
+            value=value,
+            httponly=httponly,
+            secure=secure,
+            samesite=samesite,
+            max_age=expires_at
+        )
+        print(response)
+        return response, status_code
+
     
     @staticmethod
     def error(error=None, message="An error occurred", status_code=400):
@@ -20,22 +34,6 @@ class APIResponse():
         if error:
             body["error"] = error
         return jsonify(body), status_code
-    
-    # @staticmethod
-    # def forbidden(error=None, message="You are Unauthorized"):
-    #     return APIResponse.error(error=error, message=message, status_code=403)
-    
-    # @staticmethod
-    # def not_found(error=None, message="The resource you requested does not exist"):
-    #     return APIResponse.error(error=error, message=message, status_code=404)
-    
-    # @staticmethod
-    # def vallidation_error(error=None, message="Validation failed. Please check your inputs"):
-    #     return APIResponse.error(error=error, message=message, status_code=422)
-    
-    # @staticmethod
-    # def internal_server_error(error=None, message="Something went wrong. Please try again"):
-    #     return APIResponse.error(error=error, message=message, status_code=500)
     
     @staticmethod
     def schema_error(errors=None, message="Validation failed. Please check your inputs", status_code=422):
@@ -59,7 +57,7 @@ class ServiceResponseBuilder():
         return result
     
 
-    def internal_server_error(self, message="Something wrong happened"):
+    def internal_server_error(self, message="An error occured"):
         error = {
             "error": "Internal server error", 
             "message": f"{message}. Please try again", 

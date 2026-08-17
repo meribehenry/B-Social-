@@ -10,6 +10,7 @@ class Config:
     BREVO_API_KEY=os.environ.get("BREVO_API_KEY")
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=int(os.environ.get("JWT_ACCESS_TOKEN_EXPIRES", 120)))
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=int(os.environ.get("JWT_REFRESH_TOKEN_EXPIRES", 30)))
+    SWAGGER={'openapi': '3.0.0'}
 
 
     cloudinary.config(

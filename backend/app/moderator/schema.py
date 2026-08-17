@@ -1,5 +1,5 @@
 from app.extensions import ma
-from marshmallow import fields,  post_load
+from marshmallow import fields, post_load
 import bleach
 
 

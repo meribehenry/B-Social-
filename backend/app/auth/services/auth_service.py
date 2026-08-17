@@ -84,7 +84,7 @@ class AuthService():
 
         # Check if user exists or if password is correct 
         if not user or not user.check_password(submitted_password): 
-            logger.warning(f"{user.username} failed to login due to invalid credentials")
+            logger.warning(f"Failed to login due to invalid credentials")
             self.error = service_response_builder.unauthenticated_error(message="Invalid credential. Please enter the correct email or password")
             return self.result, self.error
 
@@ -97,7 +97,7 @@ class AuthService():
                                         create_refresh_token(identity=user.public_id)
         
         data = {"user": user_response_schema.dump(user), "access_token": access_token, "refresh_token": refresh_token}
-        self.result = service_response_builder.result(message="Successfully logged in", data=data, status_code=201)
+        self.result = service_response_builder.result(message="Successfully logged in", data=data, status_code=200)
         logger.info(f"User ({user.username}) logged in")
 
         return self.result, self.error
@@ -193,18 +193,17 @@ class AuthService():
         return self.result, self.error
     
 
-    def logout_user(self, access_token_jti, data):
-        refresh_token = data.get("refresh_token").encode("utf-8")
+    def logout_user(self, access_token_jti, refresh_token):
         try:
-            # Decode refresh token to get the payload
-            refresh_token_jti = decode_token(refresh_token).get("jti")
-        except Exception as e:
-            print(f"An error at auth_service logout\n{e}")
-            self.error = service_response_builder.validation_error(message="Could not validate refresh token")
+            payload = decode_token(refresh_token.encode())
+        except Exception:
+            logger.error("Failed to validate refresh token")
+            self.error = service_response_builder.unauthenticated_error(message="Refresh token expired")
             return self.result, self.error
 
+
         # Block both the refresh and access token
-        if auth_token_service.block_jwt_token(access_token_jti, refresh_token_jti):
+        if auth_token_service.block_jwt_token(access_token_jti, payload.get("jti")):
             self.result = service_response_builder.result(message="Successfully logged out")
             logger.info(f"A user logged out")
             return self.result, self.error
@@ -214,15 +213,22 @@ class AuthService():
             return self.result, self.error
            
     
-    def new_jwt_tokens(self, user_public_id, refresh_token_jti):
+    def new_jwt_tokens(self, refresh_token):
+        try:
+            payload = decode_token(refresh_token.encode())
+        except Exception as e:
+            logger.error("Failed to validate refresh token")
+            self.error = service_response_builder.unauthenticated_error(message="Refresh token expired")
+            return self.result, self.error
+
         
         # Create access and refresh token
-        access_token, refresh_token = create_access_token(identity=str(user_public_id)), \
-                                        create_refresh_token(identity=user_public_id)
+        access_token, refresh_token = create_access_token(identity=payload.get("identity")), \
+                                        create_refresh_token(identity=payload.get("identity"))
         
         
         # Block the refresh token used to generate the new jwt tokens
-        if auth_token_service.block_jwt_token(refresh_token_jti=refresh_token_jti):
+        if auth_token_service.block_jwt_token(refresh_token_jti=payload.get("jti")):
             self.result = service_response_builder.result(message="Successfully logged out")
             data = {"access_token": access_token, "refresh_token": refresh_token}
 

@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block content %}
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <div>
+            <h1 class="hero-heading">Post what's on your mind anytime any day</h1>
+            <div class="hero-section-link">
+                <a class="btn btn-primary" href="{{url_for('main.home')}}">Start today</a>
+                <a class="text-link" href="{{url_for('main.about')}}">Learn more</a>
+            </div>
+        </div>
+        <div class="hero-image-grid-container">
+            <img class="hero-image" src="{{url_for('static', filename='images/hero-image-1.jpg')}}" alt="Hero 1">
+            <img class="hero-image" src="{{url_for('static', filename='images/hero-image-2.jpg')}}" alt="Hero 1">
+            <img class="hero-image" src="{{url_for('static', filename='images/hero-image-3.jpg')}}" alt="Hero 1">
+            <img class="hero-image" src="{{url_for('static', filename='images/hero-image-4.jpg')}}" alt="Hero 1">
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="features-section">
+        <h2 class="features-heading">Share your <span class="highlight highlight-tertiary-base">thoughts and engage</span> with others creator</h2>
+        <div class="features-section-card-container">
+            <div class="features-card">
+                <div class="features-image-container">
+                    <img class="features-image" src="{{url_for('static', filename='svgs/add-outline.svg')}}" alt="Features 1">
+                </div> 
+                <div>
+                    <h4 class="features-card-heading">Create post</h4>
+                    <p>Share text and images that reflects you mood and opinion</p>
+                </div>
+            </div>
+            <div class="features-card">
+                <div class="features-image-container">
+                    <img class="features-image" src="{{url_for('static', filename='svgs/chatbubble-outline.svg')}}" alt="Features 2">
+                </div> 
+                <div>
+                    <h4 class="features-card-heading">Comment on posts</h4>
+                    <p>Share text and images that reflects you mood and opinion</p>
+            </div>
+            </div>
+                <div class="features-card">
+                    <div class="features-image-container">
+                        <img class="features-image" src="{{url_for('static', filename='svgs/bar-chart-outline.svg')}}" alt="Features 3">
+                    </div> 
+                <div>
+                    <h4 class="features-card-heading">Grow your profile</h4>
+                    <p>Gain followers, likes and clicks from your posts and comments</p>
+                </div>
+            </div>
+            <div class="features-card">
+                <div class="features-image-container">
+                    <img class="features-image" src="{{url_for('static', filename='svgs/happy-outline.svg')}}" alt="Features 4">
+                </div> 
+                <div>
+                    <h4 class="features-card-heading">Share your reaction</h4>
+                    <p>Reacts on different posts based on your perception on it</p>
+                </div>
+            </div>
+            <div class="features-card">
+                <div class="features-image-container">
+                    <img class="features-image" src="{{url_for('static', filename='svgs/eye-outline.svg')}}" alt="Features 5">
+                </div> 
+                <div>
+                    <h4 class="features-card-heading">View creator profile</h4>
+                    <p>See the profile of different creator and engage with their posts</p>
+                </div>
+            </div>
+            <div class="features-card">
+                <div class="features-image-container">
+                    <img class="features-image" src="{{url_for('static', filename='svgs/notifications-outline.svg')}}" alt="Features 6">
+                </div> 
+                <div>
+                    <h4 class="features-card-heading">Stay up-to-date</h4>
+                    <p>Get lastest post from different creator and react on them</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="cta-card">
+            <div class="cta-card-left-col">
+                <h2 class="cta-card-heading">What's on your mind today</h2>
+                <p class="cta-card-text">Be among the first set of people to try out B-Social and share your thoughts</p>
+                <div class="cta-card-link">
+                    <a class="btn btn-tertiary" href="{{url_for('posts.new_post')}}">Create a post</a>
+
+                </div>
+            </div>
+            <img class="cta-card-image" src="{{url_for('static', filename='images/cta-image-1.jpg')}}" alt="Cta 1">
+        </div>
+    </section>
+    
+    <footer class="footer">
+        <div class="footer-grid-container">
+            <div class="footer-grid-col-1">
+                <img class="logo-lg" src="{{url_for('static', filename='images/logo.png')}}" alt="Logo">
+                <div  class="footer-social-image-container">
+                    <a href="https://www.facebook.com/share/18E1GYj9Wt" target="_blank"><img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/facebook.svg')}}" alt="facebook-Logo"></a>
+                    <a href="https://tiktok.com/@marsboy409" target="_blank"><img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/tiktok.svg')}}" alt="tikTok-Logo"></a>
+                    <a href="https://x.com/MeribeHenry" target="_blank"><img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/x.svg')}}" alt="x-Logo"></a>
+                    <a href="https://www.linkedin.com/in/meribe-henry-24a4913a2?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank"><img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/linkedin.svg')}}" alt="LinkedIn Logo"></a>
+                    <a href="https://github.com/meribehenry"><img class="footer-social-image" src="{{url_for('static', filename='svgs/social-media/github.svg')}}" alt="GitHub"></a>
+                </div>
+            </div>
+            <div class="footer-link-container">
+                <h4>Go</h4>
+                <a class="text-link" href="{{url_for('main.home')}}">B-Social</a>
+                <a class="text-link" href="{{url_for('auth.login')}}">Login</a>
+                <a class="text-link" href="{{url_for('auth.register')}}">Sign up</a>
+                <a class="text-link" href="{{url_for('main.about')}}">About</a>
+                <a class="text-link" href="{{url_for('feedback.view_feedbacks')}}">Feedback</a>
+            </div>
+            <div class="footer-link-container">
+                <h4>Follow us</h4>
+                <a class="text-link" href="https://www.facebook.com/share/18E1GYj9Wt" target="_blank">Facebook</a>
+                <a class="text-link" href="https://x.com/MeribeHenry" target="_blank">X</a>
+                <a class="text-link" href="https://www.linkedin.com/in/meribe-henry-24a4913a2?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank">LinkedIn</a>
+                <a class="text-link" href="https://github.com/meribehenry" target="_blank">Github</a>
+                <a class="text-link" href="https://tiktok.com/@marsboy409" target="_blank">TikTok</a>
+            </div>
+        </div>
+    </footer>
+{% endblock %}

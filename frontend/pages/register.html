@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/base.css"> -->
+    <title>Register</title>
+</head>
+<body data-page="register">
+    <p id="register-error"></p>
+    <form id="register-form" action="" method="POST">
+
+        <label for="firstname">Firstname</label>
+        <input id="firstname" type="text" name="firstname" placeholder="Johnny">
+
+        <label for="lastname">Lastname</label>
+        <input id="lastname" type="text" name="lastname" placeholder="Dep">
+
+        <label for="email">Email</label>
+        <input id="email" type="email" name="email" placeholder="john@example.com">
+
+        <label for="password">Password</label>
+        <input id="password" type="password" name="password" placeholder="irir9494#">
+
+        <label for="confirm-password">Confirm password</label>
+        <input id="confirm-password" type="password" name="confirm_password" placeholder="irir9494#">
+
+        <input type="radio" name="gender" value="male">Male
+        <input type="radio" name="gender" value="female">Female 
+
+        <button type="submit">Login</button>
+    </form>
+
+    <script type="module" src="../js/app.js"></script> 
+</body>
+</html>

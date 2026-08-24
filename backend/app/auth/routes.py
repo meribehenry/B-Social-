@@ -42,7 +42,10 @@ def register():
                       type: string
                       example: "Account created. Please verify email to continue"
                     data: 
-                      $ref: '#/components/schemas/UserResponse'
+                      type: object
+                      properties:
+                        user:
+                          $ref: '#/components/schemas/UserResponse'
       400:
         description: Bad Request
         content:
@@ -86,12 +89,12 @@ def register():
             schema:
               $ref: '#/components/schemas/InternalServerErrorResponse'
             examples:
-              invalid_request:
-                summary: "Invalid request"
+              request_failed:
+                summary: "Request failed"
                 value:
                   success: false
-                  error: "Bad Request"
-                  message: "Invalid request please try again"
+                  error: "Internal Server Error"
+                  message: "Could not create account"
     """
 
     try:
@@ -128,22 +131,21 @@ def login():
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                success:
-                  type: boolean
-                  example: true
-                message:
-                  type: string
-                  example: "Successfully logged in"
-                data:
-                  type: object
+              allOf:
+                - $ref: '#/components/schemas/SuccessResponse'
+                - type: object
                   properties:
-                    access_token:
+                    message: 
                       type: string
-                      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc4NjYxMjczMSwianRpIjoiMTVlM2Y2ZjktYTcyNy00YTIzLWIxYjItMjFkZGM3OGRkODM2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjFmOTY4MTAxLTIwOWMtNDE0MC05Y2M3LTZlMDgwMmY3M2VlOCIsIm5iZiI6MTc4NjYxMjczMSwiY3NyZiI6IjNmYjYxMWM1LTFmYTItNGRkOC05YTJkLTE3YjQzMzA4YzY3MiIsImV4cCI6MTc4NjYxOTkzMX0.mrkSLjEB3eXAm2R5Ivh89X3MNnpoe-PHVpVPjWZtZ3g"
-                    user: 
-                      $ref: '#/components/schemas/UserResponse' 
+                      example: "Successfully logged in"
+                    data:
+                      type: object
+                      properties:
+                        access_token:
+                          type: string 
+                          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc4NjYxMjczMSwianRpIjoiMTVlM2Y2ZjktYTcyNy00YTIzLWIxYjItMjFkZGM3OGRkODM2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjFmOTY4MTAxLTIwOWMtNDE0MC05Y2M3LTZlMDgwMmY3M2VlOCIsIm5iZiI6MTc4NjYxMjczMSwiY3NyZiI6IjNmYjYxMWM1LTFmYTItNGRkOC05YTJkLTE3YjQzMzA4YzY3MiIsImV4cCI6MTc4NjYxOTkzMX0.mrkSLjEB3eXAm2R5Ivh89X3MNnpoe-PHVpVPjWZtZ3g"
+                        user:
+                          $ref: '#/components/schemas/UserResponse'
       400:
         description: Bad Request
         content:
@@ -467,6 +469,7 @@ def logout():
 
 
 @auth_bp.route("/refresh", methods=["POST"])
+# @jwt_required(refresh=True, locations=["headers", "cookies"])
 def get_new_jwt_tokens():
     """
     Refresh Tokens Endpoint
@@ -508,7 +511,7 @@ def get_new_jwt_tokens():
               $ref: '#/components/schemas/InternalServerErrorResponse'
     """
     refresh_token = request.cookies.get("refresh_token")
-    print(refresh_token)
+
     results, error = auth_service.new_jwt_tokens(refresh_token)
 
     if error:

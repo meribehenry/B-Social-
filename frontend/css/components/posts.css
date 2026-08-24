@@ -1,0 +1,216 @@
+@import url("../variables.css");
+
+/* -----POST ARTICLE------- */
+
+/* .post-article {
+    width: 60rem;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--primary-base);
+    box-shadow: 0.1px 0.1px 0.1px 0.1px var(--primary-tint-2);
+    background-color: var(--white-1);
+    gap: 2rem;
+    border-radius: 5px;
+    padding: 2rem 2rem;
+    padding-top: 1rem;
+    margin-bottom: 0.1rem;
+} */
+
+.post-article {
+    width: 60rem;
+    display: flex;
+    flex-direction: column;
+    border: 0.2px solid var(--primary-base);
+    box-shadow: 2px 2px 2px 0px var(--primary-tint-2);
+    background-color: var(--white-1);
+    gap: 2rem;
+    border-radius: 20px;
+    padding: 2rem 2rem;
+    padding-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+/* ----------- POST AND COMMENTS STYLES ------------ */
+
+.post-header, .comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.author-profile {
+    display: flex;
+    justify-content: start;
+    width: 100%;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 10px;
+}
+
+
+.author-profile-image {
+    width: 7rem;
+    height: 7rem;
+    border-radius: 48%;
+    
+}
+
+.author-name {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0rem;
+}
+
+.display-name {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.author-firstname, .author-lastname {
+    margin-bottom: 0px;
+    margin-top: 10px;
+}
+
+.author-username {
+    font-size: var(--text-base);
+    margin-bottom: 0px;
+    margin-top: 1px;
+}
+
+.post-content {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.post-media-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.post-media {
+    max-width: 100%;  
+    border-radius: 6px;
+    max-height: 60rem;
+}
+
+
+.post-reaction-container, .comment-reaction-container {
+    padding-right: 2rem;
+    padding-left: 2rem;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-top: 1rem;
+}
+
+.like-reaction-container, .comment-container, .clicks-container {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: baseline;
+    /* padding-top: 2rem; */
+}
+
+.like-button, .dislike-button, .comment-button, .click-button {
+    background-color: white;
+    border: 0;
+    width: 3rem;
+
+}
+
+.click-icon {
+    width: 3rem;
+}
+
+
+/* ----------- COMMENT ARTICLE -------- */
+
+.comment-article {
+    width: 60rem;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--grey-tint-2);
+    border-top: 1px solid var(--grey-tint-1);
+    gap: 2rem;
+    border-radius: 20px;
+    padding: 2rem 2rem;
+    margin-bottom: 1rem;
+}
+
+
+.comment-reaction-container {
+    justify-content: start;
+    gap: 3rem;
+}
+
+.comments-section {
+    width: 60rem;
+}
+
+.like-button-comment, .dislike-button-comment {
+    background-color: var(--white-2);
+}
+
+.comment-reaction-container {
+
+    padding-top:  0; 
+}
+
+
+
+/* ------------ NOTIFICATION STYLES ---------------- */
+
+.notification-card {
+    width: 60rem;
+    border-top: 0.5px solid;
+    border-left: 1px thick;
+    padding: 1rem;
+    border-radius: 10px;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.actor-profile, .actor-names {
+    display: flex;
+    gap: 1rem;  
+    align-items: center;  
+}
+
+.actor-names {
+    gap: 0.2rem;
+}
+
+.notification-back-icon, .actor-profile-pic, .profile-back-icon, .search-back-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 48%;
+}
+
+.notification-actor-firstname, .notification-actor-lastname {
+    font-weight: 550;
+    color: var(--grey-base)
+
+}
+
+.message-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.message {
+    padding-left: 4.5rem;
+}
+
+.message-type-icon {
+    width: 1.8rem;
+    align-self: self-end;
+}

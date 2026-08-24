@@ -215,22 +215,24 @@ class AuthService():
     
     def new_jwt_tokens(self, refresh_token):
         try:
-            payload = decode_token(refresh_token.encode())
+            print("Here")
+            payload = decode_token(refresh_token)
+            print("Bum")
         except Exception as e:
-            logger.error("Failed to validate refresh token")
+            logger.error(f"Failed to validate refresh token {e}")
             self.error = service_response_builder.unauthenticated_error(message="Refresh token expired")
             return self.result, self.error
 
         
         # Create access and refresh token
-        access_token, refresh_token = create_access_token(identity=payload.get("identity")), \
-                                        create_refresh_token(identity=payload.get("identity"))
+        access_token, new_refresh_token = create_access_token(identity=payload.get("sub")), \
+                                        create_refresh_token(identity=payload.get("sub"))
         
         
         # Block the refresh token used to generate the new jwt tokens
         if auth_token_service.block_jwt_token(refresh_token_jti=payload.get("jti")):
             self.result = service_response_builder.result(message="Successfully logged out")
-            data = {"access_token": access_token, "refresh_token": refresh_token}
+            data = {"access_token": access_token, "refresh_token": new_refresh_token}
 
             self.result = service_response_builder.result(message="New jwt tokens created", data=data, status_code=201)
             logger.info(f"New jwt tokens were created")

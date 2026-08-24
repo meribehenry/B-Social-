@@ -21,7 +21,7 @@ def create_app(config_name=None):
 
     cors.init_app(app, resources={
         r"/api/*": {
-            "origins": ["http://127.0.0.1:5500", "http://127.0.0.1:5500"], #[span_8](start_span)[span_8](end_span)
+            "origins": ["http://127.0.0.1:5500", "http://127.0.0.1:5501", "file:///C:/Users/PC/Desktop/B-Social/frontend/js/app.js"], #[span_8](start_span)[span_8](end_span)
             "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], #[span_9](start_span)[span_9](end_span)
             "allow_headers": ["Content-Type", "Authorization"] #[span_10](start_span)[span_10](end_span)
         }
@@ -58,7 +58,7 @@ def create_app(config_name=None):
             if expired_access_token_num:
                 logger.info(f"Deleted {expired_access_token_num} expired access token at {datetime.now(timezone.utc)}")
 
-    @scheduler.task('interval', id='delete_expired_refresh_token', seconds=86400, misfire_grace_time=86400)
+    @scheduler.task('interval', id='delete_expired_refresh_token', seconds=450, misfire_grace_time=450)
     def delete_expired_refresh_token():
         with app.app_context():
             expired_refresh_token_num = TokenService().delete_expired_jwt_tokens(type="refresh")

@@ -12,7 +12,7 @@ class APIResponse():
         return jsonify(body), status_code
 
     @staticmethod
-    def success_extra_data_cookie(name="cookie", data=None, message="Success", status_code=200, value="cookie", httponly=True, secure=True, expires_at=(30 * 24 * 60 * 60), samesite="strict"):
+    def success_extra_data_cookie(name="cookie", data=None, message="Success", status_code=200, value="cookie", httponly=True, secure=False, expires_at=(30 * 24 * 60 * 60), samesite=None):
         response = make_response(
                 jsonify({"success": True, "data":data, "message":message}), status_code)
         
@@ -24,7 +24,6 @@ class APIResponse():
             samesite=samesite,
             max_age=expires_at
         )
-        print(response)
         return response, status_code
 
     

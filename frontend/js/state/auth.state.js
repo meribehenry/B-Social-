@@ -13,17 +13,17 @@ export const authState = {
 
 
 export const setUser = (user) =>  {
-    authState.user =  user;
+    authState.user =  user || {};
 };
 
 export const setAuthenticated = (user, accessToken) =>  {
     authState.user =  user;
-    authState.accessToken =  accessToken,
+    authState.accessToken =  accessToken;
     authState.isAuthenticated = true
 };
 
 export const clearAuth = () =>  {
     authState.user =  null;
-    authState.accessToken =  null,
-    authState.isAuthenticated = false
+    authState.accessToken =  null;
+    authState.isAuthenticated = false;
 };

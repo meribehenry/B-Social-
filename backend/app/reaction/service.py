@@ -139,8 +139,8 @@ class PostReactionService(BaseReactionService):
                 dislikes.append(reaction.post.public_id)
 
         data = {
-                    "likes": likes,
-                    "dislikes": dislikes
+                    "liked": likes,
+                    "disliked": dislikes
                 }
         
         self.result = service_response_builder.result(data=data, status_code=200)

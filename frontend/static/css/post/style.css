@@ -169,17 +169,21 @@
     
 }
 
-.post-profile-display-name {
+.author-name {
     display: flex;
     flex-direction: column;
     gap: 0rem;
 }
 
-.post-profile-username {
+.author-username {
     font-size: var(--text-base);
 }
 
-.post-image {
+.post-media-container {
+    display: grid;
+}
+
+.post-media {
     max-width: 100%;
     min-width: 50rem;
     border-radius: 6px;

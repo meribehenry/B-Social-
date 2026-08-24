@@ -12,7 +12,7 @@ posts_bp = Blueprint("posts", __name__, url_prefix="/api/v1/posts")
 api_response = APIResponse()
 
 
-@posts_bp.route("/", methods=["POST"])
+@posts_bp.route("", methods=["POST"])
 @jwt_required()
 @active_status_required
 def new_post():

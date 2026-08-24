@@ -14,7 +14,8 @@ let refreshPromise = null;
 
 export const setAccessToken = (token) => {
     authState.accessToken = token;
-}
+    // localStorage.setItem("token", token)
+};
 
 // ==================================================
 // MAIN API REQUEST
@@ -24,7 +25,7 @@ export const apiRequest = async (
     path,
     requestOptions = {},
     config = {}
-) => {
+    ) => {
 
     const {
         retryOn401 = true
@@ -51,7 +52,7 @@ export const apiRequest = async (
     if (authState.accessToken) {
         headers["Authorization"] =
             `Bearer ${authState.accessToken}`;
-    }
+        }
 
 
     // ----------------------------------------------
@@ -78,11 +79,11 @@ export const apiRequest = async (
         retryOn401
     ) {
 
-        const refreshed =
-            await refreshAccessToken();
+        const refreshed = await refreshAccessToken();
 
 
         if (refreshed) {
+            console.log(refreshed)
 
             return apiRequest(
                 path,
@@ -92,8 +93,7 @@ export const apiRequest = async (
                 }
             );
 
-        }
-
+        };
 
         // Refresh failed.
         // The session is no longer valid.
@@ -166,6 +166,9 @@ const actuallyRefreshAccessToken = async () => {
           `${API_BASE_URL}/auth/refresh`,
           {
               method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+                    },
               credentials: "include"
           }
       );
@@ -173,22 +176,49 @@ const actuallyRefreshAccessToken = async () => {
 
       if (!response.ok) {
           return false;
-      }
+      };
 
 
-      const data =
-          await parseResponse(response);
+      const data = await parseResponse(response);
 
 
-      if (!data?.access_token) {
+      if (!data?.data?.access_token) {
           return false;
-      }
+      };
 
-
-      setAccessToken(
-          data.access_token
-      );
-
-
+    // authState.accessToken = data.data.access_token;
+      setAccessToken(data.data.access_token);
       return true;
+};
+
+
+// ==================================================
+// RESPONSE PARSER
+// ==================================================
+
+const parseResponse = async (response) => {
+
+    const contentType =
+        response.headers.get("content-type");
+
+
+    if (
+        contentType &&
+        contentType.includes("application/json")
+    ) {
+
+        return await response.json();
+    }
+
+    return null;
+}
+
+
+// ==================================================
+// REDIRECT
+// ==================================================
+
+const redirectToLogin = () => {
+
+    window.location.href = "./login.html";
 };

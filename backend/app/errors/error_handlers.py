@@ -11,6 +11,7 @@ def bad_request(error):
 
 @global_errors_bp.app_errorhandler(401)
 def unauthenticated(error):
+    print(f"{error.message}")
     return jsonify({"success": False, "error": "Unauthenticated", "message": "Please login to access this page" }), 401
 
 @global_errors_bp.app_errorhandler(403)
@@ -27,6 +28,7 @@ def unallowed_method(error):
 
 @global_errors_bp.app_errorhandler(422)
 def validation_error(error):
+    print(f"{error.message}")
     return jsonify({"success": False, "error": "Validation error", "message": str(error) }), 422
 
 @global_errors_bp.app_errorhandler(429)

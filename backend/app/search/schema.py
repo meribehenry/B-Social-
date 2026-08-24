@@ -9,17 +9,18 @@ class ProfileSearchSchema(ma.Schema):
     profile_pic_url = fields.Str()
 
 
-class PostSearchSchema(ma.Schema):
-    public_id = fields.String()
-    content = fields.String()
-    medias = fields.Nested("MediaResponseSchema")
-    date_created = fields.DateTime(format="iso")
-    date_updated = fields.DateTime(format="iso", dump_default=None)
-    edited = fields.Boolean()
-    num_of_likes = fields.Integer()
-    num_of_dislikes = fields.Integer()
-    num_of_clicks = fields.Integer()
-    num_of_comments = fields.Integer()
+# class PostSearchSchema(ma.Schema):
+#     public_id = fields.String()
+#     content = fields.String()
+#     medias = fields.Nested("MediaResponseSchema")
+#     date_created = fields.DateTime(format="iso")
+#     date_updated = fields.DateTime(format="iso", dump_default=None)
+#     edited = fields.Boolean()
+#     num_of_likes = fields.Integer()
+#     num_of_dislikes = fields.Integer()
+#     num_of_clicks = fields.Integer()
+#     num_of_comments = fields.Integer()
+#     author = fields.Nested("UserResponseSchema", only=("public_id", "username", "profile"))
 
     
 
@@ -28,13 +29,11 @@ class SearchUserResponseSchema(ma.Schema):
     username = fields.String()
     status = fields.String()
     profile = fields.Nested(ProfileSearchSchema)
-    posts = fields.Nested(PostSearchSchema, many=True, dump_default=[]) 
+    posts = fields.Nested("PostResponseSchema", many=True, dump_default=[]) 
 
     @post_dump
     def limit_num_of_posts(self, data, **kwargs):
-        print(data)
         data["posts"] = data["posts"][:5]  # Limit to the first 5 posts
-        print("Here")
         return data
 
 

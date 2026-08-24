@@ -1,11 +1,10 @@
 // login.js — page-specific script for login.html
 
 import { login } from "../../api/auth.api.js";
-import { setAuthenticated } from "../../state/auth.state.js";
+import { setAccessToken } from "../../api/client.js";
+import { setAuthenticated} from "../../state/auth.state.js";
 
 const errorEl = document.querySelector("#login-error");
-
-
 
 export const handleLogin = async (event) => {
   event.preventDefault();
@@ -17,12 +16,12 @@ export const handleLogin = async (event) => {
 
   try {
     const data = await login(email, password);
-    setAuthenticated(data.user, data.access_token);
-    console.log("Done")
-    errorEl.textContent = data.message || "Login succeeded.";
+    
+    sessionStorage.setItem("user", JSON.stringify(data.data.user))
+    setAccessToken(data.data.access_token);
+    sessionStorage.setItem("user", JSON.stringify(data.data.user))
     window.location.assign("./index.html"); 
   } catch (err) {
-    errorEl.textContent = err.message || "Login failed. Try again.";
-    // console.log(err.message)
+
   }
 };

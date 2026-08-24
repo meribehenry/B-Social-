@@ -116,7 +116,7 @@ class NotificationService():
     def get_notifications(self, per_page=20, page=1):
         notification_pagination = self.current_user.notifications.order_by(Notification.date_created.desc()).paginate(per_page=per_page, page=page)
         data = {
-            "notications": notification_response_schema.dump(notification_pagination.items),
+            "notifications": notification_response_schema.dump(notification_pagination.items),
             "pagination": create_pagination_dict(notification_pagination)
         }
         self._mark_notifications_has_read()

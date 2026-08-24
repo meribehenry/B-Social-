@@ -5,41 +5,32 @@ import { authState, setAuthenticated } from "./state/auth.state.js";
 import { apiRequest } from "./api/client.js";
 import {initLogin} from './page/login.js';
 import {initRegister} from "./page/register.js"
+import { initHome } from "./page/feed.js";
+import { handleGetPostReactionsList } from "./features/reaction/post.reaction.js";
+import { handleGetCommentReactionsList } from "./features/reaction/comment-reaction.js";
+import { initNotification } from "./page/notification.js";
+import { initMyProfile } from "./page/profile.js";
+import { initSearch } from "./page/page.js";
 
+export const loadTemplates = async () => {
+  const res = await fetch('./templates.html'); // 1. Get the file
+  const html = await res.text(); // 2. Turn it into a string
+ 
+  const div = document.createElement('div'); // 3. Make a temp container
+  div.innerHTML = html; // 4. Browser parses the string into real DOM nodes
+ 
+  document.body.append(...div.children); // 5. Move all <template> into the real DOM
+}
 
-const restoreSession= async () => {
-    try {
-      // If a refresh cookie exists, this returns a fresh access token.
-      const data = await apiRequest("/auth/refresh", { method: "POST" });
-      setAuthenticated(data.user, data.access_token);
-      window.location.href = "./index.html";
-
-    } catch {
-      console.log("Pop")
-      // No valid session — that's fine, user is just logged out.
-    } finally {
-      authState.initialized = true;
-    }
-};
-
-// async function startApp() {
-//   await restoreSession();
-
-//   const page = document.body.dataset.page;
-//   console.log("app initialized. page:", page, "authenticated:", authState.isAuthenticated);
-
-//   // Later: route to page-specific init (initHome(), initProfile(), etc.)
-//   // based on `page`, and redirect to /login if a protected page requires auth.
-// }
-
-// startApp();
 
 const startApp = async () => {
-  // await restoreSession();
+
+  handleGetPostReactionsList()
+  handleGetCommentReactionsList()
+  loadTemplates()
 
   const page = document.body.dataset.page;
   console.log("app initialized. page:", page, "authenticated:", authState.isAuthenticated);
-  console.log("here");
 
   switch (page) {
 
@@ -55,9 +46,23 @@ const startApp = async () => {
           initHome();
           break;
 
+      case "notification":
+          initNotification();
+          break
+      
+      case "profile":
+          initMyProfile();
+          break
+      
+      case "search":
+          initSearch();
+          break
+
       default:
           console.warn("Unknown Page:", page);
   }
+
+
 }
-console.log("here");
+
 startApp();

@@ -73,7 +73,7 @@ def remove_comment_reaction(comment_public_id):
     return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))
 
 
-@reactions_bp.route("users/<user_public_id>/posts/reactions/list", methods=["GET"])
+@reactions_bp.route("/posts/reactions", methods=["GET"])
 @jwt_required()
 @active_status_required
 def get_reacted_posts_public_id_list():
@@ -85,7 +85,7 @@ def get_reacted_posts_public_id_list():
     return api_response.success(data=results.get("data"), message=results.get("message"), status_code=results.get("status_code"))
 
 
-@reactions_bp.route("users/<user_public_id>/comments/reactions/list", methods=["GET"])
+@reactions_bp.route("comments/reactions", methods=["GET"])
 @jwt_required()
 @active_status_required
 def get_reacted_comments_public_id_list():

@@ -1,0 +1,163 @@
+
+<!---------------- POST TEMPLATES ------------ -->
+<template id="post-template">
+    <div class="post-article" data-post-id="">
+        <div class="post-header">
+            <div class="author-profile">
+                <div class="author-image-container">
+                    <img id="author-profile-image" class="author-profile-image" src="#" alt="Author Profile image">
+                </div>
+                <div class="author-name">
+                    <div class="display-name">
+                        <h4 class="author-firstname"></h4>
+                        <h4 class="author-lastname"></h4>
+                    </div>
+                    <p class="author-username"></p>
+                </div>
+            </div>
+            <div>
+                <button data-action="P" data-button="follow-button" class="btn btn-primary"></button>
+                <img src="" alt="">
+            </div>
+        </div>
+        <div class="post-body">
+            <p class="post-content"></p>
+            <div class="post-media-container">
+                
+            </div>
+        </div>
+        <div class="post-footer">
+            <div class="post-reaction-container">
+                <div class="like-reaction-container">
+                    <button data-action="like" class="like-button">
+                        <img class="like-icon" src="" alt="like">
+                    </button>
+                    <p class="like-count"></p>
+                </div> 
+                <button data-action="dislike" class="dislike-button">
+                    <img class="dislike-icon" src="" alt="dislike">
+                </button>
+                <div class="comment-container">
+                    <button data-action="comment" class="comment-button">
+                        <img class="comment-icon" src="../reaction/chatbubble-ellipses-outline.svg" alt="comment">
+                    </button>
+                    <p class="comment-count"></p>
+                </div>
+                <div class="clicks-container">
+                    <button data-action="click" class="click-button">
+                        <img class="click-icon" src="../reaction/click.svg" alt="click">
+                    </button>
+                    <p class="clicks-count"></p>
+                </div>
+                <p class="time-ago"></p>
+            </div>
+        </div>
+    </div>
+</template>
+
+
+<!------------ COMMENT TEMPLATE ---------------->
+<template id="comment-template">
+    <div class="comment-article">
+        <div class="comment-header">
+            <div class="author-profile">
+                <div class="author-image-container">
+                    <img id="author-profile-image" class="author-profile-image" src="#" alt="Author Profile image">
+                </div>
+                <div class="author-name">
+                    <div class="display-name">
+                        <h5 class="author-firstname"></h5>
+                        <h5 class="author-lastname"></h5>
+                    </div>
+                    <p class="author-username"></p>
+                </div>
+            </div>
+            <div>
+                <button data-action="P" data-button="follow-button" class="btn btn-primary"></button>
+                <img src="" alt="">
+            </div>
+        </div>
+        <div class="comment-body">
+            <p class="comment-content"></p>
+        </div>
+        <div class="comment-footer">
+            <div class="comment-reaction-container">
+                <div class="like-reaction-container">
+                    <button data-action="like" class="like-button like-button-comment">
+                        <img class="like-icon" src="" alt="like">
+                    </button>
+                    <p class="like-count"></p>
+                </div> 
+                <button data-action="dislike" class="dislike-button dislike-button-comment">
+                    <img class="dislike-icon" src="" alt="dislike">
+                </button>
+                <p class="time-ago"></p>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!----------- NOTIFICATION TEMPLATE --------------->
+<template id="notification-template">
+    <div class="notification-card">
+        <div class="notification-header">
+            <div class="actor-profile">
+                <img class="actor-profile-pic" src="" alt="Actor Profile Pic">
+                <div class="actor-names">
+                    <p class="firstname notification-actor-firstname"></p>
+                    <p class="lastname notification-actor-lastname"></p>
+                </div>
+            </div>
+            <p class="time-ago">2h</p>
+        </div>
+        <div class="message-container">
+            <p class="message"></p>
+            <img class="message-type-icon" src="../svgs/chatbubble-outline.svg" alt="">
+        </div>
+    </div>
+</template>
+
+
+<template id="profile-template">
+    <section class="container profile-section-container">
+        <div class="profile-section-first-inner-flex-container">
+            <div class="profile-section-first-inner-flex-container-left-side">
+                <img class="profile-pic" src="" alt="Profile Picture">
+                <div class="profile-names">
+                    <div class="profile-display-name">
+                        <h4 class="firstname"></h4>
+                        <h4 class="lastname"></h4>
+                    </div>
+                    <p class="username"></p>
+                </div>
+            </div>
+            <button data-action="follow" data-button="follow" class=""></button>
+        </div>
+        <div class="followers-count-container">
+            <p class="following-count"></p>
+            <p class="followers-count"></p>
+        </div>
+        <p class="bio"></p>
+    </section>
+
+</template>
+
+
+<template id="search-template">
+    <div class="post-article" data-post-id="">
+        <div class="post-header">
+            <div class="author-profile">
+                <div class="author-image-container">
+                    <img id="author-profile-image" class="author-profile-image" src="#" alt="Author Profile image">
+                </div>
+                <div class="author-name">
+                    <div class="display-name">
+                        <h4 class="author-firstname"></h4>
+                        <h4 class="author-lastname"></h4>
+                    </div>
+                    <p class="author-username"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

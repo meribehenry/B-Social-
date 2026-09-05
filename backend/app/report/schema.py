@@ -5,9 +5,9 @@ import bleach
 
 class ReportResponseSchema(ma.Schema):
     public_id = fields.String()
-    type = fields.String()
-    case_id = fields.String()
-    case = fields.String()
+    case_type = fields.String()
+    reported_case_id = fields.String()
+    reported_case = fields.String()
     date = fields.DateTime(format="iso")
 
 

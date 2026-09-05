@@ -25,7 +25,7 @@ class FollowerService():
         followed_user = user_service.get_user_object(followed_user_public_id)
 
         if followed_user_public_id == self.current_user.public_id:
-            self.error = service_response_builder.conflict_error(message="Cannot follow yourself")
+            self.error = service_response_builder.validation_error(message="Cannot follow yourself")
             return self.result, self.error
 
         if not followed_user:
@@ -137,8 +137,6 @@ class FollowerService():
 
     def get_following_users_public_id_list(self):
         following_user_public_id_list = [ follower.followed_user.public_id for follower in self.current_user.following]
-
-        print(f"Following users public id list: {following_user_public_id_list}")
         
         self.result = service_response_builder.result(data=following_user_public_id_list, status_code=200)
         return self.result, self.error 

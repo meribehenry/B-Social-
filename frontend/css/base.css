@@ -332,38 +332,49 @@ ul {
 /* ---------------------INDEX.HTML STYLES------------- */
 
 /* -----------HOME----------- */
-.feed {
+.feed-section {
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: center;
 }
 
-.menu {
+.navbar-Home {
     width: 4rem;
     height: 4rem;
     border-radius: 50%;
     text-align: center;
 }
 
-.home-page-first-section {
+.home-offcanvas {
+    border: 0px solid;
+    background-color: var(--white-2);
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    text-align: center;
+}
+
+.navbar-back {
+    width: 4rem;
+    height: 3rem;
+}
+
+.app-navbar {
     display: flex;
     justify-content: space-between;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     flex-direction: column;
 
 }
 
-.home-page-first-section-image-container {
+.app-navbar-image-container {
     display: flex;
     justify-content: space-between;
-    padding: 0 1rem;
-    margin-bottom: 1rem;
-    padding-top: 1rem;
 }
 
 /* ------------- VIEW COMMENTS --------- */
-.view-comments-container {
+.view-post-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -375,6 +386,22 @@ ul {
     margin: 2rem 0;
 
 }
+
+.comment-section-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-content: center;
+    
+
+}
+
+.comment-section-icon {
+    width: 4rem;
+    padding-right: 1rem;
+    justify-self: flex-end;
+    margin: 2rem 0;
+}
+
 
 .comment-content {
     margin: 0;
@@ -412,8 +439,9 @@ ul {
 .profile-section-container {
     box-shadow: -0rem -0.2rem 0.1rem 0 var(--primary-base);
     border-top: 1px solid var(--primary-base);
-    border-radius: 5px;
+    border-radius: 7px;
     padding: 1rem 2rem;
+    min-width: 31.5rem;
 }
 
 .profile-section-first-inner-flex-container {
@@ -470,7 +498,7 @@ ul {
 }
 
 
-.profile-posts-section {
+.posts-section {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -479,6 +507,13 @@ ul {
 
 
 /* ------------SEARCH -------------- */
+.search-results-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+}
 
 .search-box {
     border: 0px solid;

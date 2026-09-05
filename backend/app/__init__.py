@@ -58,7 +58,7 @@ def create_app(config_name=None):
             if expired_access_token_num:
                 logger.info(f"Deleted {expired_access_token_num} expired access token at {datetime.now(timezone.utc)}")
 
-    @scheduler.task('interval', id='delete_expired_refresh_token', seconds=450, misfire_grace_time=450)
+    @scheduler.task('interval', id='delete_expired_refresh_token', seconds=2400, misfire_grace_time=2400)
     def delete_expired_refresh_token():
         with app.app_context():
             expired_refresh_token_num = TokenService().delete_expired_jwt_tokens(type="refresh")
@@ -118,6 +118,9 @@ def create_app(config_name=None):
     app.register_blueprint(search_bp)
     from app.errors.error_handlers import global_errors_bp
     app.register_blueprint(global_errors_bp)
-
+    from app.pages.route import pages_bp
+    app.register_blueprint(pages_bp)
+    from app.user.route import user_bp 
+    app.register_blueprint(user_bp)
 
     return app

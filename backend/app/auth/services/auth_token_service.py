@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone
 from flask import current_app
 from app.extensions import db, logger
 from sqlalchemy.exc import SQLAlchemyError
@@ -68,7 +69,12 @@ class TokenService():
         if type not in {"access", "refresh"}:
             raise ValueError("Invalid type only (access or refresh) can be used")
 
-        result = TokenBlocklist.query.filter_by(type=type).delete()
+        result = 0
+        if type == "refresh":
+            cutoff_time = datetime.now() - timedelta(days=7)
+            result = TokenBlocklist.query.filter(TokenBlocklist.type==type, TokenBlocklist.date_added < cutoff_time ).delete()
+        else:
+            result = TokenBlocklist.query.filter_by(type=type).delete()
         try:
             db.session.commit()
             return result

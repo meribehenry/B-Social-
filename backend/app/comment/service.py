@@ -86,7 +86,7 @@ class CommentService():
         new_content = data.get("content")
 
         if (comment.date_created.replace(tzinfo=timezone.utc) + timedelta(hours=48)) <= (datetime.now(timezone.utc)):
-            self.error = service_response_builder.conflict_error(message="Cannot edit comment after 48 hours")
+            self.error = service_response_builder.validation_error(message="Cannot edit comment after 48 hours")
             return self.result, self.error
 
         if not new_content or new_content == comment.content:

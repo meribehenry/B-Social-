@@ -28,7 +28,7 @@ class PostReactionService(BaseReactionService):
 
     def toggle_reaction(self, post_public_id, reaction_type):
         if reaction_type not in ("like", "dislike"):
-            self.error = service_response_builder.bad_request_error("Invalid reaction type")
+            self.error = service_response_builder.bad_request_error("Invalid reaction type must be either (like) or (dislike)")
             return  self.result, self.error
 
         post = PostService(self.current_user.public_id).get_post_object(post_public_id)
@@ -152,7 +152,7 @@ class CommentReactionService(BaseReactionService):
 
     def toggle_reaction(self, comment_public_id, reaction_type):
         if reaction_type not in ("like", "dislike"):
-            self.error = service_response_builder.bad_request_error("Invalid reaction type")
+            self.error = service_response_builder.bad_request_error("Invalid reaction type must be either (like) or (dislike)")
             return  self.result, self.error
 
         comment = CommentService(self.current_user.public_id).get_comment_object(comment_public_id)

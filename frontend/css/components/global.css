@@ -25,7 +25,7 @@
     transform: scale(1.05);
 }
 
-.btn-primary-outline:link, .btn-primary-outline:visited {
+.btn-primary-outline {
     background-color: var(--white-1);
     color: var(--primary-base);
     border: 2px solid var(--primary-base);
@@ -188,6 +188,11 @@
     background-color: var(--grey-base);
 }
 
+.offcanvas-text {
+    background-color: var(--primary-tint-3);
+    padding: 1rem 2rem;
+    border-radius: 5px;
+}
 .logo-md {
     width: 12rem;
 }
@@ -198,6 +203,10 @@
 
 .logo-footer {
     width: 100px;
+}
+
+.dropdown-img {
+    width: 2.5rem;
 }
 
 /* ------ALERT-------- */
@@ -364,12 +373,12 @@
     background-color: var(--primary-tint-3);
     border-radius: 10px;
 }
-.nav-icon {
+.app-nav-panel-icon {
     width: 4rem;
 
 }
 
-.new-post-nav-icon-container {
+.new-post-app-nav-panel-icon-container {
     width: 7rem;
     height: 7rem;
     background-color: var(--primary-base);
@@ -383,10 +392,4 @@
 .nav-icon-current {
     width: 4rem;
     background-color: var(--white-1);
-}
-
-.view-comments-upper-part {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 0.5rem;
 }

@@ -4,11 +4,11 @@ import bleach
 
 
 class NewCommentSchema(ma.Schema):
-    content = fields.String(load_default=None,
-                validate=validate.Length(max=1000, error="Comment content cannot exceed 1000 words"))
+    content = fields.String(validate=validate.Length(max=1000, error="Comment content cannot exceed 1000 words"))
     
     @post_load
     def sanitize(self, data, **kwarg):
+        print(data)
         if "content" in data:
             data["content"] = bleach.clean(data["content"], tags=[], strip=True).strip()
             return data

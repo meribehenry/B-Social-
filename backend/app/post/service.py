@@ -50,7 +50,7 @@ class PostService():
         content = data.get("content")
 
         if len(files) > 4:
-            self.error = service_response_builder.bad_request_error(message="Only four files are supported")
+            self.error = service_response_builder.bad_request_error(message="Only four files are supported max")
             return self.result, self.error
 
         if not content and not files:
@@ -64,11 +64,13 @@ class PostService():
 
         if files:
             for file in files.values():
+                if not file.filename:
+                    return
                 file_service = FileService()
-                file_result = file_service.handle_file(file, allowed_extensions={".jpg", ".img", ".jpeg", ".png", ".mp4"})
+                file_result = file_service.handle_file(file, allowed_extensions={".jpg", ".img", ".jpeg", ".png"})
 
                 if not file_result:
-                    self.error = service_response_builder.validation_error(message="Invalid file type. Please enter the correct type: [jpg, img, jpeg, png, mp4]")
+                    self.error = service_response_builder.validation_error(message="Invalid file type. Please enter the correct type: [jpg, img, jpeg, png]")
                     return self.result, self.error
 
                 media_type = file_result.get("type")
@@ -122,7 +124,7 @@ class PostService():
             return self.result, self.error
 
         if (post.date_created.replace(tzinfo=timezone.utc) + timedelta(hours=48)) <= (datetime.now(timezone.utc)):
-            self.error = service_response_builder.conflict_error(message="Cannot edit post after 48 hours")
+            self.error = service_response_builder.validation_error(message="Cannot edit post after 48 hours")
             return self.result, self.error
 
         if len(files) > 4:
@@ -144,17 +146,17 @@ class PostService():
                 old_post_medias = post.medias.all() # Store the old media before deletion
 
             for file in files.values():
-                file_result = file_service.handle_file(file, allowed_extensions={".jpg", ".img", ".jpeg", ".png", ".mp4"})
+                file_result = file_service.handle_file(file, allowed_extensions={".jpg", ".img", ".jpeg", ".png",})
 
                 if not file_result:
-                    self.error = service_response_builder.validation_error(message="Invalid file type. Please enter the correct type: [jpg, img, jpeg, png, mp4]")
+                    self.error = service_response_builder.validation_error(message="Invalid file type. Please enter the correct type: [jpg, img, jpeg, png]")
                     return self.result, self.error
 
                 media_type = file_result.get("type")
                 storage_result = file_service.save_file(file_result, folder_name="posts")
                             
                 if not storage_result:
-                    self.error = service_response_builder.internal_server_error(message="Could not create post")
+                    self.error = service_response_builder.internal_server_error(message="Could not update post")
                     return self.result, self.error
     
                 file_url, file_id = storage_result
@@ -250,7 +252,6 @@ class PostService():
                 query = query.filter_by(user_id=user.id)
 
         post_pagination = query.order_by(Post.date_created.desc()).paginate(per_page=per_page, page=page, error_out=False)
-
         data = {
             "posts": posts_response_schema.dump(post_pagination.items),
             "pagination": create_pagination_dict(post_pagination)

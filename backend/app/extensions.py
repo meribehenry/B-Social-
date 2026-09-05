@@ -32,7 +32,7 @@ migrate = Migrate()
 scheduler = APScheduler()
 ma = Marshmallow()
 jwt = JWTManager()
-limiter = Limiter(key_func=rate_limit_by_user, default_limits=["400 per day", "100 per hour"], storage_uri="memory://", retry_after="delta seconds=300")
+limiter = Limiter(key_func=rate_limit_by_user, default_limits=["400 per day", "100 per hour"], storage_uri="memory://", retry_after="delta seconds=60")
 logger = setup_logger("b_social_app")
 swagger = Swagger(template=temaplate)
 

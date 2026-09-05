@@ -74,7 +74,7 @@ class EmailService():
 
     def send_request_token(self, token, email):
         html =  render_template("reset_request.html", token=token)
-        print(f"{url_for("auth.reset_password", token=token)}")
+        print(f"http://127.0.0.1:5000/auth?view=reset-password&token={token}")
         subject = "Reset Password"
 
         executor.submit(self._send_async_email,

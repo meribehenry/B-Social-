@@ -5,11 +5,17 @@ from app.shared.response import ServiceResponseBuilder
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import  update
 from datetime import datetime, timezone, timedelta
+from app.user.schema import UserResponseSchema
+
 
 service_response_builder = ServiceResponseBuilder()
+user_response_schema = UserResponseSchema()
 
 
 class UserService():
+    def __init__(self):
+        self.error = {}
+        self.result = {}
 
     def _retrieve_user(self, identifier, retrival_method):
         if retrival_method == "email":
@@ -24,6 +30,16 @@ class UserService():
             raise Exception ("Invalid retrival method or identifier could not retrieve user")
         
         return user
+
+    def get_user(self, public_id): 
+        user = self._retrieve_user(public_id, "public_id")
+        if not user:
+            self.error = service_response_builder.not_found_error(message="Only four files are supported")
+            return self.result, self.error
+
+        self.result = service_response_builder.result(data= user_response_schema.dump(user), status_code=200) 
+        return self.result, self.error
+
 
     def get_user_object(self, identifier, retrival_method="public_id", return_bool=False):
         """ 

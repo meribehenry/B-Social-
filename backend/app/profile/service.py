@@ -49,6 +49,10 @@ class ProfileService():
         
         if file:
             file_result = file_service.handle_file(file, allowed_extensions=[".jpg", ".img", ".png", ".jpeg"])
+            
+            if not file_result:
+                self.error = service_response_builder.validation_error(message="Invalid file type. Please enter the correct type: [jpg, img, jpeg, png]")
+                return self.result, self.error
 
             if self.current_user.profile.profile_pic_id != "default":
                 old_profile_pic_id = self.current_user.profile.profile_pic_id

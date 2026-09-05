@@ -45,7 +45,10 @@ class AuthService():
         
         # Checks if user already exist and if they aren't verified to delete them
         if user_exist and not user_exist.is_verified:
-           user_service.delete_user(user_exist.email, retrival_method="email")
+        #    user_service.delete_user(user_exist.email, retrival_method="email")
+           self.result = service_response_builder.result(message="Verify email to continue", 
+                                                                 data=user_response_schema.dump(user_exist))
+           return self.result, self.error
         
         # Create a new user
         user = user_service.create_new_user(email, hashed_password, username, firstname, lastname, gender)
@@ -69,7 +72,7 @@ class AuthService():
         email_service.send_otp(email, otp)
 
         self.result = service_response_builder.result(message="Account created. Verify email to continue", 
-                                                      data=user_response_schema.dump(user))
+                                                      data=user_response_schema.dump(user), status_code=201)
         
         return self.result, self.error
     
@@ -162,7 +165,7 @@ class AuthService():
             self.error = service_response_builder.conflict_error(message="New password cannot be the same as old password")
             return self.result, self.error
         
-        new_hashed_password = bcrypt.generate_password_hash(new_password) # Hash new password
+        new_hashed_password = bcrypt.generate_password_hash(new_password).decode("utf-8") # Hash new password
 
         # Change user password and check if it changed
         if user_service.change_user_password(new_hashed_password, user.email, retrival_method="email"):
@@ -194,6 +197,9 @@ class AuthService():
     
 
     def logout_user(self, access_token_jti, refresh_token):
+        if not refresh_token:
+            self.error = service_response_builder.validation_error(message="Refresh token missing")
+            return self.result, self.error
         try:
             payload = decode_token(refresh_token.encode())
         except Exception:
@@ -214,10 +220,11 @@ class AuthService():
            
     
     def new_jwt_tokens(self, refresh_token):
+        if not refresh_token:
+            self.error = service_response_builder.validation_error(message="Refresh token missing")
+            return self.result, self.error
         try:
-            print("Here")
             payload = decode_token(refresh_token)
-            print("Bum")
         except Exception as e:
             logger.error(f"Failed to validate refresh token {e}")
             self.error = service_response_builder.unauthenticated_error(message="Refresh token expired")
@@ -239,5 +246,5 @@ class AuthService():
             return self.result, self.error
         
         else:
-            self.error = service_response_builder.internal_server_error(message="Could generate new jwt tokens")
+            self.error = service_response_builder.internal_server_error(message="Could not generate new jwt tokens")
             return self.result, self.error

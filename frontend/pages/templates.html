@@ -15,9 +15,16 @@
                     <p class="author-username"></p>
                 </div>
             </div>
-            <div>
-                <button data-action="P" data-button="follow-button" class="btn btn-primary"></button>
-                <img src="" alt="">
+            <div class="button-and-dropdown">
+                <button data-action="" data-button="follow-button" data-user-id=""></button>
+                <div class="dropdown">
+                    <img class="dropdown-img" role="button" src="/svgs/ellipsis-vertical-outline.svg" alt="Drowdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <ul class="dropdown-menu">
+                        <li><a id="edit-post" class="dropdown-item" href="#">Edit</a></li>
+                        <li><a id="delete-post" class="dropdown-item" href="#">Delete</a></li>
+                        <li><a id="report-post" class="dropdown-item" href="#">Report</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="post-body">
@@ -39,13 +46,13 @@
                 </button>
                 <div class="comment-container">
                     <button data-action="comment" class="comment-button">
-                        <img class="comment-icon" src="../reaction/chatbubble-ellipses-outline.svg" alt="comment">
+                        <img class="comment-icon" src="/svgs/reaction/chatbubble-ellipses-outline.svg" alt="comment">
                     </button>
                     <p class="comment-count"></p>
                 </div>
                 <div class="clicks-container">
                     <button data-action="click" class="click-button">
-                        <img class="click-icon" src="../reaction/click.svg" alt="click">
+                        <img class="click-icon" src="/svgs/reaction/click.svg" alt="click">
                     </button>
                     <p class="clicks-count"></p>
                 </div>
@@ -72,9 +79,16 @@
                     <p class="author-username"></p>
                 </div>
             </div>
-            <div>
-                <button data-action="P" data-button="follow-button" class="btn btn-primary"></button>
-                <img src="" alt="">
+            <div class="button-and-dropdown">
+                <button data-action="" data-button="follow-button" data-user-id=""></button>
+                <div class="dropdown">
+                    <img class="dropdown-img" role="button" src="/svgs/ellipsis-vertical-outline.svg" alt="Drowdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <ul class="dropdown-menu">
+                        <li><a id="edit-comment" class="dropdown-item" href="#">Edit</a></li>
+                        <li><a id="delete-comment" class="dropdown-item" href="#">Delete</a></li>
+                        <li><a id="report-comment" class="dropdown-item" href="#">Report</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="comment-body">
@@ -112,7 +126,7 @@
         </div>
         <div class="message-container">
             <p class="message"></p>
-            <img class="message-type-icon" src="../svgs/chatbubble-outline.svg" alt="">
+            <img class="message-type-icon" src="/svgs/chatbubble-outline.svg" alt="">
         </div>
     </div>
 </template>
@@ -131,7 +145,7 @@
                     <p class="username"></p>
                 </div>
             </div>
-            <button data-action="follow" data-button="follow" class=""></button>
+            <button data-action="follow" data-button="follow" class="" data-user-id=""></button>
         </div>
         <div class="followers-count-container">
             <p class="following-count"></p>
@@ -156,6 +170,15 @@
                         <h4 class="author-lastname"></h4>
                     </div>
                     <p class="author-username"></p>
+                </div>
+            </div>
+            <div class="button-and-dropdown">
+                <button data-action="" data-button="follow-button" data-user-id=""></button>
+                <div class="dropdown">
+                    <img class="dropdown-img" role="button" src="/svgs/ellipsis-vertical-outline.svg" alt="Drowdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <ul class="dropdown-menu">
+                        <li><a id="report-post" class="dropdown-item" href="#">Report</a></li>
+                    </ul>
                 </div>
             </div>
         </div>

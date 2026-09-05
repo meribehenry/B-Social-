@@ -9,7 +9,7 @@ class Config:
     MAX_CONTENT_LENGTH=int(os.environ.get("MAX_CONTENT_LENGTH", 16777216))
     BREVO_API_KEY=os.environ.get("BREVO_API_KEY")
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=int(os.environ.get("JWT_ACCESS_TOKEN_EXPIRES", 15)))
-    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=int(os.environ.get("JWT_REFRESH_TOKEN_EXPIRES", 30)))
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=int(os.environ.get("JWT_REFRESH_TOKEN_EXPIRES", 7)))
     JWT_REFRESH_COOKIE_NAME = "refresh_token"
     SWAGGER={'openapi': '3.0.0'}
 

@@ -34,7 +34,7 @@ def validation_error(error):
 @global_errors_bp.app_errorhandler(429)
 @global_errors_bp.app_errorhandler(RateLimitExceeded)
 def too_many_request(error):
-    return jsonify({"success": False, "error": "Too many request", "message": f"Try again in {error.retry_after} seconds"}), 429
+    return jsonify({"success": False, "error": "Too many request", "message": f"Try again in {error.retry_after or 60} seconds"}), 429
 
 @global_errors_bp.app_errorhandler(500)
 def internal_server_error(error):
